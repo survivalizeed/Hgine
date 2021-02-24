@@ -4,6 +4,9 @@
 
 #pragma comment(lib,"gdiplus.lib")
 
+#pragma warning(disable: 26812)
+#pragma warning(disable: 26451)
+#pragma warning(disable: 26495)
 
 #include <Windows.h>
 #include <gdiplus.h>
@@ -27,11 +30,13 @@ exit(-1)
 using namespace std::this_thread;
 using namespace std::chrono;
 
+//#include <LuaSur.h>
+
 #include "Datatypes.h"
 #include "Array.h"
 #include "functional.h"
-#include "Classes.h"
 #include "LoadObj.h"
+#include "Classes.h"
 
 
 extern sur::Vec2 _window_size;

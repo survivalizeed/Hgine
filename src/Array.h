@@ -14,7 +14,7 @@ namespace analyses {
 		size_t size = 0;
 		sur::Vec2 sizeSep;
 	public:
-		Array() {}
+		Array() = default;
 
 		explicit Array(T* arrptr, sur::Vec2 size)
 			: arr(arrptr), size(size.x* size.y), sizeSep(size) {}

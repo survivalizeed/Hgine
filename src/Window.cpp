@@ -8,7 +8,7 @@ LRESULT WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	return DefWindowProc(hwnd, msg, wParam, lParam);
 }
 
-void win() {
+void win(const char* Name,int params) {
 
 	HINSTANCE hInstance = GetModuleHandle(0);
 	Gdiplus::GdiplusStartupInput gdiplusStartupInput;
@@ -28,7 +28,7 @@ void win() {
 	wc.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
 	RegisterClassEx(&wc);
 	SetWindowLong(_hwnd, GWL_STYLE, GetWindowLong(_hwnd, GWL_STYLE) & ~WS_MAXIMIZEBOX);
-	_hwnd = CreateWindowEx(WS_EX_CLIENTEDGE, "CLASS", "Test", WS_POPUP | WS_CAPTION | WS_BORDER, CW_USEDEFAULT, CW_USEDEFAULT, _window_size.x, _window_size.y, NULL, NULL, hInstance, NULL);
+	_hwnd = CreateWindowEx(WS_EX_CLIENTEDGE, "CLASS", Name ,params, CW_USEDEFAULT, CW_USEDEFAULT, _window_size.x, _window_size.y, NULL, NULL, hInstance, NULL);
 	ShowWindow(_hwnd, SW_SHOW);
 	UpdateWindow(_hwnd);
 	while (GetMessage(&Msg, NULL, 0, 0) > 0)
@@ -40,8 +40,8 @@ void win() {
 }
 
 
-void Window() {
-	std::thread wins(win);
+void Window(const char* Name,int params) {
+	std::thread wins(win,Name,params);
 	wins.detach();
 	Sleep(100);
 }

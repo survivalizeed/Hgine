@@ -9,11 +9,38 @@ extern HWND _hwnd;
 
 namespace sur {
 	//
-	//static
+	//	Static var
 	//
-	static std::vector<int> identitys;
+
 	//
-	// class
+	//	Static func
+	//
+
+	//
+	//	Classes
+	//
+	//
+	//	Master: Defines the standard attributes of an object
+	//
+	class Master {
+	protected:
+		std::string name;
+			
+		Master(const std::string& name) : name(name) {}
+
+		inline void SetName(const std::string& name) { this->name = name; }
+
+	public:
+		int id;
+		cb_ptr<Master*> callback = nullptr;
+
+		inline const std::string& GetName() const { return name; }
+
+
+		void GenId();
+	};
+	//
+	//	Render class
 	//
 	class Render
 	{
@@ -37,66 +64,48 @@ namespace sur {
 	//
 	//	Shape: Rectangle
 	//
-	class Rectangle {
-	private:
-		size_t idindex;
+	class Rectangle : public Master {
+	private:	
 		sur::Vec2 position;
 		sur::Vec2 size;
-		std::string name;
 		Color color;
 	public:
-		int id;
+		Rectangle() = default;
+
 		Rectangle(sur::Vec2 position, sur::Vec2 size, Color color, std::string name)
-			: position(position), size(size), color(color), name(name){}
+			: position(position), size(size), color(color), Master(name) {}
 		
-		inline void operator()(sur::Vec2 position, sur::Vec2 size, Color color, std::string name) {
-			this->position = position;
-			this->size = size;
-			this->color = color;
-			this->name = name;
-		}
-		
-		void Id();
+		inline void operator()(sur::Vec2 position, sur::Vec2 size, Color color, std::string name) 
+		{ this->position = position; this->size = size; this->color = color; this->name = name; }
 
 		void Bind(bool Collider);
 
 		void Move(sur::Vec2 direction);
-
-		
 	};
 	//
 	//	Shape: Procedual Line
 	//
-	class Line{
+	class Line : public Master{
 	private:
-		size_t idindex;
 		sur::Vec2 start;
 		sur::Vec2 end;
 		Color color;
 		size_t lenght = 0;
-		HDC dc;
 	public:
-		int id;
-		Line(sur::Vec2 start, sur::Vec2 end, Color color)
-			: start(start), end(end), color(color) { dc = GetDC(_hwnd); }
+
+		Line() = default;
+
+		Line(sur::Vec2 start, sur::Vec2 end, Color color, std::string name)
+			: start(start), end(end), color(color), Master(name) {}
 		
-		inline void operator()(sur::Vec2 start, sur::Vec2 end, Color color) {
-			this->start = start;
-			this->end = end;
-			this->color = color;
-		}
+		inline void operator()(sur::Vec2 start, sur::Vec2 end, Color color) 
+		{ this->start = start; this->end = end; this->color = color; SetName(name); }
 
-		inline void End(sur::Vec2 end){ 
-			this->end = end;
-		}
+		inline void End(sur::Vec2 end) { this->end = end; }
 
-		inline void Start(sur::Vec2 start) {
-			this->start = start;
-		}
+		inline void Start(sur::Vec2 start) { this->start = start; }
 
-		inline void SetColor(Color color) {
-			this->color = color;
-		}
+		inline void SetColor(Color color) { this->color = color; }
 
 		void Bind();
 	};
@@ -105,12 +114,12 @@ namespace sur {
 	//
 	struct Input {
 		struct Mouse {
-			sur::Vec2 Position();
-			bool LClick();
-			bool RClick();
+			sur::Vec2 Position() const;
+			bool LClick() const;
+			bool RClick() const;
 		};
 		struct Keyboard {
-			bool Key(Keys key);
+			bool Key(Keys key) const;
 		};
 		Mouse mouse;
 		Keyboard keyboard;

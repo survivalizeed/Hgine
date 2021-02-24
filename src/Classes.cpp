@@ -2,7 +2,21 @@
 
 #include "Classes.h"
 
+
+
+inline static std::vector<int> identitys;
+inline static std::vector<void*> ptrs;
+
 extern sur::Map_Analyses _Amap;
+//
+//	Master
+//
+void sur::Master::GenId()
+{
+	id = Hash(this, name);
+	identitys.push_back(id);
+	ptrs.push_back(this);
+}
 //
 //	Render
 //
@@ -48,7 +62,6 @@ void sur::Render::FPS()
 		frameCounter = 0;
 	}
 }
-
 //
 //	Rectangle
 //
@@ -56,31 +69,32 @@ void sur::Rectangle::Bind(bool Collider)
 {
 	for (int i = position.y; i < position.y + size.y; i++) {
 		for (int j = position.x; j < position.x + size.x; j++) {
-			_Amap.Render(j, i, color.ToCOLORREF());
-			_Amap.Collider(j, i, id);
+			if (j >= 1 && i >= 1 && j <= _window_size.x - 1 && i <= _window_size.y - 1) {
+				_Amap.Render(j, i, color.ToCOLORREF());
+				if (Collider && j > 1 && i > 1 && j < _window_size.x - 1 && i < _window_size.y - 1)
+					_Amap.Collider(j - 1, i - 1, id);
+			}
 		}
 	}
-}
-
-void sur::Rectangle::Id()
-{
-	id = Hash(*this, name);
-	identitys.push_back(id);
-	idindex = identitys.size();
 }
 
 void sur::Rectangle::Move(sur::Vec2 direction)
 {
 	int CurMove = 0;
+
 	if (direction.y > 0) {
 		for (int a = 1; a <= direction.y; a++) {
 			for (int i = position.x; i < position.x + size.x; i++) {
 				if (i - a <= 0) {
-					break;							//Perfekt (99%)
+					break;						
 				}
 				for (int j = 0; j < identitys.size(); j++) {
-					if (_Amap.Collider(position.y - a, i) == identitys[j]) {
-						goto dir1;
+					if (i > 0 && (position.y - a - 1) > 0 && i < _window_size.x && (position.y - a - 1) < _window_size.y) {
+						if (_Amap.Collider(i, position.y - a - 1) == identitys[j] && this->id != identitys[j]) {
+							callback(static_cast<Master*>(ptrs[j]));
+							static_cast<Master*>(ptrs[j])->callback(this);
+							goto dir1;
+						}
 					}
 				}
 			}
@@ -93,12 +107,15 @@ void sur::Rectangle::Move(sur::Vec2 direction)
 		for (int a = 1; a <= direction.x; a++) {
 			for (int i = position.y; i < position.y + size.y; i++) {
 				if (i - a <= 0) {
-					break;							//Perfekt (99%)
+					break;							
 				}
-				l(_Amap.Collider(i, position.x - a));
 				for (int j = 0; j < identitys.size(); j++) {
-					if (_Amap.Collider(i, position.x - a) == identitys[j]) {
-						goto dir2;
+					if ((position.x + size.x + a - 1) < _window_size.x && i < _window_size.y) {
+						if (_Amap.Collider(position.x + size.x + a - 1, i) == identitys[j] && this->id != identitys[j]) {
+							callback(static_cast<Master*>(ptrs[j]));
+							static_cast<Master*>(ptrs[j])->callback(this);
+							goto dir2;
+						}
 					}
 				}
 			}
@@ -109,14 +126,18 @@ void sur::Rectangle::Move(sur::Vec2 direction)
 	}
 	if (direction.y < 0) {
 		direction.y *= -1;
-		for (int a = 1; a <= direction.y; a++) {
+		for (int a = 0; a <= direction.y; a++) {
 			for (int i = position.x; i < position.x + size.x; i++) {
 				if (i - a <= 0) {
-					break;							//Perfekt (99%)
+					break;							
 				}
 				for (int j = 0; j < identitys.size(); j++) {
-					if (_Amap.Collider(position.y + size.y + a - 1, i) == identitys[j]){
-						goto dir3;
+					if ((position.y + size.y + a - 1) < _window_size.x && i < _window_size.y) {
+						if (_Amap.Collider(position.y + size.y + a - 1, i) == identitys[j] && this->id != identitys[j]) {
+							callback(static_cast<Master*>(ptrs[j]));
+							static_cast<Master*>(ptrs[j])->callback(this);
+							goto dir3;
+						}
 					}
 				}
 			}
@@ -130,11 +151,15 @@ void sur::Rectangle::Move(sur::Vec2 direction)
 		for (int a = 1; a <= direction.x; a++) {
 			for (int i = position.y; i < position.y + size.y; i++) {
 				if (i - a <= 0) {
-					break;							//Perfekt (99%)
+					break;						
 				}
 				for (int j = 0; j < identitys.size(); j++) {
-					if (_Amap.Collider(i, position.x + size.x + a - 1) == identitys[j]) {
-						goto dir4;
+					if ((position.x - a - 1) > 0 && i > 0 && (position.x - a - 1) < _window_size.x && i < _window_size.y) {
+						if (_Amap.Collider(position.x - a - 1, i) == identitys[j] && this->id != identitys[j]) {
+							callback(static_cast<Master*>(ptrs[j]));
+							static_cast<Master*>(ptrs[j])->callback(this);
+							goto dir4;
+						}
 					}
 				}
 			}
@@ -213,7 +238,7 @@ void sur::Line::Bind()
 //
 
 //	Mouse
-sur::Vec2 sur::Input::Mouse::Position()
+sur::Vec2 sur::Input::Mouse::Position() const
 {
 	POINT point;
 	GetCursorPos(&point);
@@ -221,14 +246,14 @@ sur::Vec2 sur::Input::Mouse::Position()
 	return{ point.x, point.y };
 }
 
-bool sur::Input::Mouse::LClick()
+bool sur::Input::Mouse::LClick() const
 {
 	if (GetAsyncKeyState(VK_LBUTTON))
 		return true;
 	return false;
 }
 
-bool sur::Input::Mouse::RClick()
+bool sur::Input::Mouse::RClick() const
 {
 	if (GetAsyncKeyState(VK_RBUTTON))
 		return true;
@@ -236,7 +261,7 @@ bool sur::Input::Mouse::RClick()
 }
 
 // Keyboard
-bool sur::Input::Keyboard::Key(Keys key)
+bool sur::Input::Keyboard::Key(Keys key) const
 {
 	if (GetAsyncKeyState(key))
 		return true;
@@ -258,4 +283,5 @@ void sur::Map_Analyses::operator()(int* cptr, int* tptr, DWORD* rptr, sur::Vec2 
 	Trigger(tptr, size);
 	Render(rptr, size);
 }
+
 

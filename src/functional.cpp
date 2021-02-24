@@ -10,7 +10,8 @@ sur::Maps sur::Initialize()
 	if (_window_size.x == 0 || _window_size.y == 0) {
 		Error("_window_size not initialized");
 	}
-	return { new int[_window_size.x * _window_size.y],new int[_window_size.x * _window_size.y], new DWORD[_window_size.x * _window_size.y] };
+	return { new int[_window_size.x * _window_size.y],new int[_window_size.x * _window_size.y], 
+	new DWORD[_window_size.x * _window_size.y] };
 }
 
 int sur::CharCounter(char Char, std::string Data) {

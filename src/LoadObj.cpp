@@ -19,7 +19,6 @@ void sur::LoadObj::Load()
 	}
 	std::ostringstream ss;
 
-
 	ss << file.rdbuf();
 	Data = ss.str();
 	file.close();

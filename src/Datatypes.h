@@ -29,11 +29,11 @@ namespace sur {
 		inline float magnitude() {
 			return (float)sqrt(pow(x,2) + pow(y,2));
 		}
-		//
+		
 		inline void operator ()(int x, int y) {this->x = x;this->y = y;}
-		//
+		
 		inline void operator ()(const Vec2& vector2d) {x = vector2d.x; y = vector2d.y;}
-		//
+		
 		inline friend Vec2 operator +(const Vec2& first, const Vec2& second) {
 			return { first.x + second.x, first.y + second.y };
 		}

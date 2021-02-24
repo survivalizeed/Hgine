@@ -33,6 +33,5 @@ namespace sur {
 		void Bind();
 
 		void Move(sur::Vec2 direction);
-
 	};
 }
