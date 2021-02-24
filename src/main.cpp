@@ -22,7 +22,7 @@ int main() {
 	Window("Demo",WS_BORDER | WS_SYSMENU | WS_CAPTION);
 	sur::Render render(Color(85, 107, 47));
 	render.FPS();
-	//sur::LoadObj a("C:\\Users\\gero\\Desktop\\Hardcore Engine\\Hgineres\\Tree.Hgineres", { 0,0 });
+	//sur::LoadObj a("C:\\Users\\....\\Desktop\\Hardcore Engine\\Hgineres\\Tree.Hgineres", { 0,0 });
 	sur::Rectangle a({ -100,1 }, { 200,200 }, Color(100, 255, 100), "A", 12);
 	sur::Rectangle b({ 400,400 }, { 50,50 }, Color(255, 100, 100), "B",12);
 	a.callback = Callbacka;
