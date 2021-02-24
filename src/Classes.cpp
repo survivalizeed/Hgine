@@ -11,12 +11,12 @@ extern sur::Map_Analyses _Amap;
 //
 //	Master
 //
-void sur::Master::GenId()
-{
-	id = Hash(this, name);
-	identitys.push_back(id);
-	ptrs.push_back(this);
-}
+//void sur::Master::GenId()
+//{
+//	id = Hash(this, name);
+//	identitys.push_back(id);
+//	ptrs.push_back(this);
+//}
 //
 //	Render
 //
@@ -65,6 +65,13 @@ void sur::Render::FPS()
 //
 //	Rectangle
 //
+sur::Rectangle::Rectangle(sur::Vec2 position, sur::Vec2 size, Color color, std::string name, int id)
+	: position(position), size(size), color(color), Master(name,id)
+{
+	identitys.push_back(id);
+	ptrs.push_back(this);
+}
+
 void sur::Rectangle::Bind(bool Collider)
 {
 	for (int i = position.y; i < position.y + size.y; i++) {

@@ -26,7 +26,7 @@ namespace sur {
 	protected:
 		std::string name;
 			
-		Master(const std::string& name) : name(name) {}
+		Master(const std::string& name, int id) : name(name), id(id) {}
 
 		inline void SetName(const std::string& name) { this->name = name; }
 
@@ -37,7 +37,7 @@ namespace sur {
 		inline const std::string& GetName() const { return name; }
 
 
-		void GenId();
+		//void GenId();
 	};
 	//
 	//	Render class
@@ -72,8 +72,7 @@ namespace sur {
 	public:
 		Rectangle() = default;
 
-		Rectangle(sur::Vec2 position, sur::Vec2 size, Color color, std::string name)
-			: position(position), size(size), color(color), Master(name) {}
+		Rectangle(sur::Vec2 position, sur::Vec2 size, Color color, std::string name,int id);		
 		
 		inline void operator()(sur::Vec2 position, sur::Vec2 size, Color color, std::string name) 
 		{ this->position = position; this->size = size; this->color = color; this->name = name; }
@@ -95,8 +94,8 @@ namespace sur {
 
 		Line() = default;
 
-		Line(sur::Vec2 start, sur::Vec2 end, Color color, std::string name)
-			: start(start), end(end), color(color), Master(name) {}
+		Line(sur::Vec2 start, sur::Vec2 end, Color color, std::string name ,int id)
+			: start(start), end(end), color(color), Master(name,id) {}
 		
 		inline void operator()(sur::Vec2 start, sur::Vec2 end, Color color) 
 		{ this->start = start; this->end = end; this->color = color; SetName(name); }

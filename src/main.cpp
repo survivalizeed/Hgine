@@ -7,11 +7,12 @@ extern sur::Map_Analyses _Amap;
 extern sur::Input _input;
 
 void Callbacka(sur::Master* obj) {
-	l(obj->GetName());
+	l("CallbackA: " << obj->GetName());
 }
 
 void Callbackb(sur::Master* obj) {
-	l(obj->GetName());
+	
+	l("CallbackB: "<<obj->GetName());
 }
 
 int main() {
@@ -22,17 +23,14 @@ int main() {
 	sur::Render render(Color(85, 107, 47));
 	render.FPS();
 	//sur::LoadObj a("C:\\Users\\gero\\Desktop\\Hardcore Engine\\Hgineres\\Tree.Hgineres", { 0,0 });
-	sur::Rectangle a({ -100,1 }, { 200,200 }, Color(100, 255, 100), "cool");
-	sur::Rectangle b({ 400,400 }, { 50,50 }, Color(255, 100, 100), "Test");
-	a.GenId();
+	sur::Rectangle a({ -100,1 }, { 200,200 }, Color(100, 255, 100), "A", 12);
+	sur::Rectangle b({ 400,400 }, { 50,50 }, Color(255, 100, 100), "B",12);
 	a.callback = Callbacka;
-	b.GenId();
 	b.callback = Callbackb;
 	for(;;) {
 		render.ClearScreenBuffer();	
 		a.Bind(true);
-		//b.Bind(true);
-
+		b.Bind(true);
 		if (_input.keyboard.Key(sur::W))
 			a.Move({ 0,1 });
 		if (_input.keyboard.Key(sur::A))
@@ -41,11 +39,7 @@ int main() {
 			a.Move({ 0,-1 });
 		if (_input.keyboard.Key(sur::D))
 			a.Move({ 1,0 });
-
-		if (_input.mouse.RClick()) {
-			system("CLS");
-			l(_Amap.Collider(_input.mouse.Position().x, _input.mouse.Position().y));
-		}
 		render.RenderScreenBuffer();
 	}
 }
+
