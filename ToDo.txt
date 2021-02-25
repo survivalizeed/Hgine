@@ -1,0 +1,4 @@
+Camera movement
+Collisions for Line and OBJ
+Upload HGINERES editor <- fix bugs
+Triggers
