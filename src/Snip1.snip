@@ -6,3 +6,41 @@
 			a.Move({ 0,-1 });
 		if (_input.keyboard.Key(sur::D))
 			a.Move({ 1,0 });
+		if (_input.keyboard.Key(sur::F))
+			a.SetPos({ 100, 100 });
+
+		if (_input.keyboard.Key(sur::W)) {
+			a.Move({ 0,5 });
+			b.Move({ 0,5 });
+		}
+		if (_input.keyboard.Key(sur::A)) {
+			a.Move({ -5,0 });
+			b.Move({ -5,0 });
+		}
+		if (_input.keyboard.Key(sur::S)) {
+			a.Move({ 0,-5 });
+			b.Move({ 0,-5 });
+		}
+		if (_input.keyboard.Key(sur::D)) {
+			a.Move({ 5,0 });
+			b.Move({ 5,0 });
+		}
+
+
+
+		
+	//template<typename T>
+	//void Overwrite(const T& obj,)
+
+	//Unsafe!
+	template<typename T>
+	int Hash(const T& Content, const std::string& id)
+	{
+		int count = 0;
+		std::string chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+		for (int i = 0; i < chars.size(); i++) {
+			count += CharCounter(chars[i], id) * CharCounter(chars[i], id);
+		}
+		return sizeof(Content) * id.size() + count;
+	}
+	//

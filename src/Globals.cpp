@@ -12,3 +12,5 @@ sur::Maps _map;
 sur::Map_Analyses _Amap;
 
 sur::Input _input;
+
+bool Debug = false;
