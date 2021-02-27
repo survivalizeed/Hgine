@@ -1,4 +1,7 @@
 Camera movement
-Collisions for Line and OBJ
+Collisions for line
 Upload HGINERES editor <- fix bugs
 Triggers
+Create destructors
+Create runtime object handler 
+Fix Lua...
