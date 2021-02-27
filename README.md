@@ -4,4 +4,4 @@ I am thinking about calling it Hardcore Engine :)
 
 Note:
 Im 15 years old and still learning C++ so understand if this is not the best code you will ever see ;)
-
+Discord: survivalizeed#7659
