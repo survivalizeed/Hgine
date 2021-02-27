@@ -7,3 +7,4 @@ Create runtime object handler
 Fix Lua...
 Custom collider creator??? Using LUA???
 Sound manager
+Fastcheck for outside of screen
