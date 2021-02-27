@@ -23,10 +23,11 @@ int main() {
 	Window("Demo", WS_BORDER | WS_SYSMENU | WS_CAPTION);
 	sur::Render render(Color(100, 107, 47));
 	render.FPS();
-	sur::LoadObj a("C:\\Users\\gero\\Desktop\\Hardcore Engine\\Hgineres\\Human.Hgineres", { 0, 350 },"OBJ", 50);
+	sur::LoadObj a("C:\\Users\\...\\Desktop\\Hardcore Engine\\Hgineres\\Human.Hgineres", { 0, 350 },"OBJ", 50);
 	sur::Rectangle b({ 500,400 }, { 50,50 }, Color(255, 100, 100), "B",13);
 	for(;;) {
 		render.ClearScreenBuffer();	
+		//Example
 		a.Bind(true,ColliderType::Outline);
 		b.Bind(true);
 		if (_input.keyboard.Key(W))
@@ -45,7 +46,7 @@ int main() {
 			system("CLS");
 			l(_Amap.Collider(_input.mouse.Position().x, _input.mouse.Position().y));
 		}
-
+		//
 		render.RenderScreenBuffer();
 	}
 }
