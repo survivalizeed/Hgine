@@ -24,7 +24,7 @@ int main() {
 	sur::Render render(Color(100, 107, 47));
 	render.FPS();
 	render.DebugConsole(false);
-	sur::LoadObj a("C:\\Users\\gero\\Desktop\\Hardcore Engine\\Hgineres\\Shot.Hgineres", { 100, 100 },"OBJ", 50);
+	sur::LoadObj a("C:\\Users\\...\\Desktop\\Hardcore Engine\\Hgineres\\Shot.Hgineres", { 100, 100 },"OBJ", 50);
 	for(;;) {
 		render.ClearScreenBuffer();	
 		a.Bind(true, ColliderType::Outline);
