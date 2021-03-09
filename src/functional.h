@@ -12,6 +12,7 @@ namespace sur {
 
 	void Sound(const char* path, unsigned int params);
 
+	int RandomRange(int min, int max);
 }
 
 //namespace lua {

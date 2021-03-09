@@ -31,6 +31,11 @@ void sur::Sound(const char* path, unsigned int params)
 	PlaySoundA(path, NULL, params);
 }
 
+int sur::RandomRange(int min, int max)
+{
+	return  rand() % (max - min + 1) + min;
+}
+
 
 //lua_State* lua::LuaLoadFile(const std::string Data) {
 //	lua_State* L = luaL_newstate();

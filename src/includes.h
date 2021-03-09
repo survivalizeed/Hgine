@@ -59,4 +59,4 @@ using namespace std::chrono;
 extern sur::Vec2 _window_size;
 extern HWND _hwnd;
 extern sur::Maps _map;
-extern bool Debug;
+extern bool _debug;

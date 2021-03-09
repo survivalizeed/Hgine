@@ -13,13 +13,14 @@ extern sur::Map_Analyses _Amap;
 //
 void sur::Master::Move(sur::Vec2 direction)
 {
+
 	int CurMove = 0;
 	if (direction.y > 0) {	//Up
 		for (int a = 1; a <= direction.y; a++) {
 			for (int i = position.x; i < position.x + size.x; i++) {
 				for (int j = 0; j < identitys.size(); j++) {
 					if (i > 0 && (position.y - a - 1) > 0 && i < _window_size.x - 1&& (position.y - a - 1) < _window_size.y - 1) {
-						if (Debug)
+						if (_debug)
 							_Amap.Render(i, position.y - a - 1, Color(0, 255, 0));
 						if (_Amap.Collider(i, position.y - a - 1) == identitys[j] && this->id != identitys[j]) {
 							if (callback != nullptr)
@@ -41,7 +42,7 @@ void sur::Master::Move(sur::Vec2 direction)
 			for (int i = position.y; i < position.y + size.y; i++) {
 				for (int j = 0; j < identitys.size(); j++) {
 					if ((position.x + size.x + a - 1) > 0 && i > 0 && (position.x + size.x + a - 1) < _window_size.x - 1 && i < _window_size.y - 1) {
-						if (Debug)
+						if (_debug)
 							_Amap.Render(position.x + size.x + a - 1, i, Color(0, 255, 0));
 						if (_Amap.Collider(position.x + size.x + a - 1, i) == identitys[j] && this->id != identitys[j]) {
 							if (callback != nullptr)
@@ -64,7 +65,7 @@ void sur::Master::Move(sur::Vec2 direction)
 			for (int i = position.x; i < position.x + size.x; i++) {
 				for (int j = 0; j < identitys.size(); j++) {
 					if ((position.y + size.y + a - 1) > 0 && i > 0 && (position.y + size.y + a - 1) < _window_size.x - 1 && i < _window_size.y - 1) {
-						if (Debug)
+						if (_debug)
 							_Amap.Render(i, position.y + size.y + a, Color(0, 255, 0));
 						if (_Amap.Collider(i, position.y + size.y + a) == identitys[j] && this->id != identitys[j]) {
 							if (callback != nullptr)
@@ -87,7 +88,7 @@ void sur::Master::Move(sur::Vec2 direction)
 			for (int i = position.y; i < position.y + size.y; i++) {
 				for (int j = 0; j < identitys.size(); j++) {
 					if ((position.x - a - 1) > 0 && i > 0 && (position.x - a - 1) < _window_size.x - 1 && i < _window_size.y - 1) {
-						if (Debug)
+						if (_debug)
 							_Amap.Render(position.x - a - 1, i, Color(0, 255, 0));
 						if (_Amap.Collider(position.x - a - 1, i) == identitys[j] && this->id != identitys[j]) {
 							if (callback != nullptr)
@@ -152,6 +153,12 @@ void sur::Render::FPS()
 	}
 }
 
+void sur::Render::DebugConsole(bool Show)
+{
+	if (!Show)
+		ShowWindow(GetConsoleWindow(), SW_HIDE);
+}
+
 //
 //	Rectangle
 //
@@ -196,7 +203,14 @@ void sur::Rectangle::Bind(bool Collider)
 //
 //	Line
 //
-void sur::Line::Bind()
+sur::Line::Line(sur::Vec2 start, sur::Vec2 end, Color color, std::string name, int id)
+	: start(start), end(end), color(color), Master(name, id)
+{
+	identitys.push_back(id);
+	ptrs.push_back(this);
+}
+
+void sur::Line::Bind(bool Collider)
 {
 	int lcounter = 0;
 	sur::Vec2 end = this->end;
@@ -215,9 +229,13 @@ void sur::Line::Bind()
 		float counter = 0.0f;
 		int countcounter = 1;
 		for (int i = start.x; i <= end.x; i++) {
+			if (Collider)
+				_Amap.Collider(i - 1, tempy - 1, id);
 			_Amap.Render(i, tempy, color.ToCOLORREF());
 			while (counter >= countcounter) {
 				tempy++;
+				if (Collider)
+					_Amap.Collider(i - 1, tempy - 1, id);
 				_Amap.Render(i, tempy, color.ToCOLORREF());
 				countcounter++;
 			}
@@ -231,9 +249,13 @@ void sur::Line::Bind()
 		int countcounter = 1;
 		bool runned = false;
 		for (int i = start.x; i <= end.x; i++) {
+			if (Collider)
+				_Amap.Collider(i - 1, tempy - 1, id);
 			_Amap.Render(i, tempy, color.ToCOLORREF());
 			while (counter >= countcounter) {
 				tempy--;
+				if (Collider)
+					_Amap.Collider(i - 1, tempy - 1, id);
 				_Amap.Render(i, tempy, color.ToCOLORREF());
 				countcounter++;
 			}
@@ -245,9 +267,13 @@ void sur::Line::Bind()
 			RunsThrough *= -1;
 			int tempx = start.x;
 			for (int i = start.y; i <= end.y; i++) {
+				if (Collider)
+					_Amap.Collider(tempx - 1, i - 1, id);
 				_Amap.Render(tempx, i, color.ToCOLORREF());
 				while (counter >= countcounter) {
 					tempx--;
+					if (Collider)
+						_Amap.Collider(tempx - 1, i - 1, id);
 					_Amap.Render(tempx, i, color.ToCOLORREF());
 					countcounter++;
 				}
@@ -266,6 +292,10 @@ sur::Vec2 sur::Input::Mouse::Position() const
 	POINT point;
 	GetCursorPos(&point);
 	ScreenToClient(_hwnd, &point);
+	if (point.x < 0 || point.y < 0)
+		return { 0,0 };
+	if (point.x > _window_size.x - 1 || point.y > _window_size.y - 1)
+		return { _window_size.x - 1, _window_size.y - 1};
 	return{ point.x, point.y };
 }
 

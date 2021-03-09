@@ -24,6 +24,7 @@ namespace sur {
 	//
 	class Master {
 	protected:
+		sur::Vec2 moveiter;
 		std::string name;
 		sur::Vec2 position;
 		sur::Vec2 size;
@@ -44,6 +45,12 @@ namespace sur {
 		cb_ptr<Master*> callback = nullptr;	
 
 		inline const std::string& GetName() const { return name; }
+
+		inline sur::Vec2 GetPosition() const { return position; }
+
+		inline sur::Vec2 GetSize() const { return size; }
+		
+		inline void SetPos(sur::Vec2 position) { this->position = position; }
 
 		void Move(sur::Vec2 direction);
 	};
@@ -68,6 +75,7 @@ namespace sur {
 
 		void FPS();
 
+		void DebugConsole(bool Show);
 	};			
 	//
 	//	Shape: Rectangle
@@ -85,9 +93,6 @@ namespace sur {
 		{ this->position = position; this->size = size; this->color = color; this->name = name; this->id = id; }
 
 		void Bind(bool Collider);
-
-		inline void SetPos(sur::Vec2 newposition) 
-		{ position = newposition; }
 
 		//Destructor
 	};
@@ -116,14 +121,13 @@ namespace sur {
 		LoadObj(const char* Path, sur::Vec2 position, std::string name, int id);
 
 		void operator()(const char* Path, sur::Vec2 position, std::string name, int id)
-		{
-			this->Path = Path; this->position = position; this->name = name; this->id = id; Load();
-		}
+		{ this->Path = Path; this->position = position; this->name = name; this->id = id; Load(); }
 
 		void Bind(bool Collider, ColliderType collidertype);
 
-
-		//Destructor
+		~LoadObj() {
+			delete YCoords, XCoords,Colors;
+		}
 	};
 	//
 	//	Shape: Procedual Line
@@ -138,8 +142,7 @@ namespace sur {
 
 		Line() = default;
 
-		Line(sur::Vec2 start, sur::Vec2 end, Color color, std::string name ,int id)
-			: start(start), end(end), color(color), Master(name,id) {}
+		Line(sur::Vec2 start, sur::Vec2 end, Color color, std::string name, int id);
 		
 		inline void operator()(sur::Vec2 start, sur::Vec2 end, Color color, std::string name, int id)
 		{ this->start = start; this->end = end; this->color = color; this->name = name; this->id = id; }
@@ -150,7 +153,7 @@ namespace sur {
 
 		inline void SetColor(Color color) { this->color = color; }
 
-		void Bind();
+		void Bind(bool Collider);
 
 		//Destructor
 	};

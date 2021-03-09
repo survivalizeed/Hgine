@@ -20,12 +20,16 @@ namespace sur {
 	//
 	// struct 
 	//
-	struct Vec2 {	
+	//
+	// Vec2 -> int
+	//
+	struct Vec2 {
+
 		int x, y;
 		
 		Vec2() { x = 0; y = 0; }
 
-		Vec2(int x, int y) : x(x), y(y){}
+		Vec2(int x, int y)	: x(x), y(y){}
 		inline float magnitude() {
 			return (float)sqrt(pow(x,2) + pow(y,2));
 		}
@@ -51,7 +55,7 @@ namespace sur {
 		}
 	};
 	//
-	// struct <- should be in the classes.h
+	// Map pointer for Rendering, Collision and Trigger detection
 	//
 	struct Maps {
 		int* ColliderMap, * TriggerMap;
