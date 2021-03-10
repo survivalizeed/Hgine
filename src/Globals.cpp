@@ -5,6 +5,8 @@
 
 HWND _hwnd;
 
+HWND _consolehwnd;
+
 sur::Vec2 _window_size;
 
 sur::Maps _map;

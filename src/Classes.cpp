@@ -190,15 +190,13 @@ void sur::Rectangle::MoveInject(int index, int CurMove)
 
 void sur::Rectangle::Bind(bool Collider)
 {
-	for (int i = position.y; i < position.y + size.y; i++) {
-		for (int j = position.x; j < position.x + size.x; j++) {
+	for (int i = position.y; i < position.y + size.y; i++)
+		for (int j = position.x; j < position.x + size.x; j++)
 			if (j >= 1 && i >= 1 && j <= _window_size.x - 1 && i <= _window_size.y - 1) {
 				_Amap.Render(j, i, color.ToCOLORREF());
 				if (Collider && j > 1 && i > 1 && j < _window_size.x - 1 && i < _window_size.y - 1)
 					_Amap.Collider(j - 1, i - 1, id);
 			}
-		}
-	}
 }
 //
 //	Line
@@ -281,6 +279,75 @@ void sur::Line::Bind(bool Collider)
 			}
 		}
 	}
+}
+//
+//	Instancer
+//
+void sur::Instancer::Add(void* object, Types type)
+{
+	switch (type) {
+	case Types::Rectangle:
+		restricted::rectangles->push_back(static_cast<Rectangle*>(object));
+		break;
+	case Types::Line:
+		restricted::lines->push_back(static_cast<Line*>(object));
+		break;
+	case Types::Obj:
+		restricted::objects->push_back(static_cast<LoadObj*>(object));
+		break;
+	}
+}
+
+sur::Rectangle* sur::Instancer::GetRect(const std::string& name, int index)
+{
+	if (name != "")
+		for (auto&& it : *restricted::rectangles)
+			if (it->GetName() == name) return it;
+			else if (index >= 0 && index < restricted::rectangles->size()) return restricted::rectangles->at(index);
+	return restricted::Rdefault;
+}
+
+sur::Line* sur::Instancer::GetLine(const std::string& name, int index)
+{
+	if (name != "")
+		for (auto&& it : *restricted::lines)
+			if (it->GetName() == name) return it;
+			else if (index >= 0 && index < restricted::lines->size()) return restricted::lines->at(index);
+	return restricted::Ldefault;
+}
+
+sur::LoadObj* sur::Instancer::GetObj(const std::string& name, int index)
+{
+	if (name != "")
+		for (auto&& it : *restricted::objects)
+			if (it->GetName() == name) return it;
+			else if (index >= 0 && index < restricted::objects->size()) return restricted::objects->at(index);
+	return restricted::Odefault;
+}
+
+void sur::Instancer::Delete(Types type, const std::string& name, int index)
+{
+	if (type == Types::Rectangle)
+		if (name != "")
+			for (int j = 0; j < restricted::rectangles->size(); ++j)
+				if (restricted::rectangles->at(j)->GetName() == name)
+					restricted::rectangles->erase(restricted::rectangles->begin() + j);
+				else if (index >= 0)
+					restricted::rectangles->erase(restricted::rectangles->begin() + index);
+	if (type == Types::Line)
+		if (name != "")
+			for (int j = 0; j < restricted::lines->size(); ++j)
+				if (restricted::lines->at(j)->GetName() == name)
+					restricted::lines->erase(restricted::lines->begin() + j);
+				else if (index >= 0)
+					restricted::lines->erase(restricted::lines->begin() + index);
+	if (type == Types::Obj)
+		if (name != "")
+			for (int j = 0; j < restricted::objects->size(); ++j)
+				if (restricted::objects->at(j)->GetName() == name)
+					restricted::objects->erase(restricted::objects->begin() + j);
+				else if (index >= 0)
+					restricted::objects->erase(restricted::objects->begin() + index);
 }
 //
 //	Input

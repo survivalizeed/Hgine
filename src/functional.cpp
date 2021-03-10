@@ -37,6 +37,16 @@ int sur::RandomRange(int min, int max)
 }
 
 
+
+
+
+
+
+
+
+
+
+
 //lua_State* lua::LuaLoadFile(const std::string Data) {
 //	lua_State* L = luaL_newstate();
 //	luaL_openlibs(L);

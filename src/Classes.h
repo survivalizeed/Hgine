@@ -35,7 +35,7 @@ namespace sur {
 		Master(const std::string& name, int id, sur::Vec2 position)
 			: name(name), id(id), position(position) {}		//OBJ
 
-		Master(const std::string& name, int id, sur::Vec2 position, sur::Vec2 size) 
+		Master(const std::string& name, int id, sur::Vec2 position, sur::Vec2 size)
 			: name(name), id(id), position(position), size(size) {}		//Rectangle
 
 		virtual void MoveInject(int index, int curmove) {}
@@ -53,6 +53,7 @@ namespace sur {
 		inline void SetPos(sur::Vec2 position) { this->position = position; }
 
 		void Move(sur::Vec2 direction);
+
 	};
 	//
 	//	Render class
@@ -76,7 +77,7 @@ namespace sur {
 		void FPS();
 
 		void DebugConsole(bool Show);
-	};			
+	};
 	//
 	//	Shape: Rectangle
 	//
@@ -87,10 +88,12 @@ namespace sur {
 	public:
 		Rectangle() = default;
 
-		Rectangle(sur::Vec2 position, sur::Vec2 size, Color color, std::string name,int id);		
+		Rectangle(sur::Vec2 position, sur::Vec2 size, Color color, std::string name,int id);
 		
-		inline void operator()(sur::Vec2 position, sur::Vec2 size, Color color, std::string name, int id) 
-		{ this->position = position; this->size = size; this->color = color; this->name = name; this->id = id; }
+		inline void operator()(sur::Vec2 position, sur::Vec2 size, Color color, std::string name, int id)
+		{
+			this->position = position; this->size = size; this->color = color; this->name = name; this->id = id;
+		}
 
 		void Bind(bool Collider);
 
@@ -120,13 +123,15 @@ namespace sur {
 
 		LoadObj(const char* Path, sur::Vec2 position, std::string name, int id);
 
-		void operator()(const char* Path, sur::Vec2 position, std::string name, int id)
-		{ this->Path = Path; this->position = position; this->name = name; this->id = id; Load(); }
+		inline void operator()(const char* Path, sur::Vec2 position, std::string name, int id)
+		{
+			this->Path = Path; this->position = position; this->name = name; this->id = id; Load();
+		}
 
 		void Bind(bool Collider, ColliderType collidertype);
 
 		~LoadObj() {
-			delete YCoords, XCoords,Colors;
+			delete YCoords, XCoords, Colors;
 		}
 	};
 	//
@@ -145,7 +150,9 @@ namespace sur {
 		Line(sur::Vec2 start, sur::Vec2 end, Color color, std::string name, int id);
 		
 		inline void operator()(sur::Vec2 start, sur::Vec2 end, Color color, std::string name, int id)
-		{ this->start = start; this->end = end; this->color = color; this->name = name; this->id = id; }
+		{
+			this->start = start; this->end = end; this->color = color; this->name = name; this->id = id;
+		}
 
 		inline void End(sur::Vec2 end) { this->end = end; }
 
@@ -157,6 +164,34 @@ namespace sur {
 
 		//Destructor
 	};
+	//
+	// Instancer <- For object management
+	//
+	namespace Instancer {
+		namespace restricted {
+			static std::vector<Rectangle*>* rectangles = new std::vector<Rectangle*>;
+			static std::vector<Line*>* lines = new std::vector<Line*>;
+			static std::vector<LoadObj*>* objects = new std::vector<LoadObj*>;
+
+			// To return if nothing was found -> prevent error of nullpointer
+			static Rectangle* Rdefault = new Rectangle({ 0,0 }, { 0,0 }, Color(0, 0, 0), "invalid", 0);
+			static Line* Ldefault = new Line({ 0,0 }, { 0,0 }, Color(0, 0, 0), "invalid", 0);
+			static LoadObj* Odefault = new LoadObj("invalid", { 0,0 }, "invalid", 0);
+		}
+		enum class Types {
+			Rectangle, Line, Obj
+		};
+
+		void Add(void* object, Types type);
+
+		sur::Rectangle* GetRect(const std::string& name = "", int index = -1);
+
+		sur::Line* GetLine(const std::string& name = "", int index = -1);
+
+		sur::LoadObj* GetObj(const std::string& name = "", int index = -1);
+
+		void Delete(Types type, const std::string& name = "", int index = -1);
+	}
 	//
 	// Input
 	//

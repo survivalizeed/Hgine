@@ -2,7 +2,7 @@
 
 #pragma once
 
-#pragma comment(lib,"F:\\C++\\###Includes###\\Lua x86\\liblua54.a")  //Be aware of x64 and x86 -> dll aswell!!!
+#pragma comment(lib,"F:\\C++\\###Includes###\\Lua x86\\liblua54.a")  //Be aware of x64 and x86 -> dll aswell
 #pragma comment(lib, "gdiplus.lib")
 #pragma comment(lib, "winmm.lib")
 
@@ -52,11 +52,14 @@ using namespace std::chrono;
 
 #include "Datatypes.h"
 #include "Array.h"
-#include "functional.h"
 #include "Classes.h"
+#include "functional.h"
+
+
 
 
 extern sur::Vec2 _window_size;
 extern HWND _hwnd;
+extern HWND _consolehwnd;
 extern sur::Maps _map;
 extern bool _debug;

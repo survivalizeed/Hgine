@@ -13,7 +13,10 @@ namespace sur {
 	void Sound(const char* path, unsigned int params);
 
 	int RandomRange(int min, int max);
+
 }
+
+
 
 //namespace lua {
 //	lua_State* LuaLoadFile(const std::string Data);
