@@ -20,7 +20,7 @@ int main() {
 	renderer.FPS();
 	renderer.DebugConsole(true);
 
-	sur::Instancer::Add(new sur::LoadObj("C:\\Users\\gero\\Desktop\\Hardcore Engine\\Hgineres\\Human.Hgineres", { 100, 100 }, "shot", 50),Types::Obj);
+	sur::Instancer::Add(new sur::LoadObj("C:\\Users\\...\\Desktop\\Hardcore Engine\\Hgineres\\Human.Hgineres", { 100, 100 }, "shot", 50),Types::Obj);
 	for(;;) {
 		renderer.ClearScreenBuffer();	
 		sur::Instancer::GetObj("shot")->Bind(true, ColliderType::Static);
