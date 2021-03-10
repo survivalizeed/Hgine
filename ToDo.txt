@@ -1,10 +1,10 @@
 Camera movement
 Collisions for line
-Upload HGINERES editor <- fix bugs
+Line outside of screen fix
+Upload HGINERES editor & fix bugs
 Triggers
-Create destructors
-Create runtime object handler 
+Create runtime object handler |DONE|
 Fix Lua...
 Custom collider creator??? Using LUA???
-Sound manager
-Fastcheck for outside of screen
+Sound manager |DONE|
+Fastcheck for outside of screen |DONE|
