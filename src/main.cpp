@@ -14,7 +14,7 @@ int main() {
 	_map = sur::Initialize();
 	_Amap(_map, _window_size);
 	
-	Window("Fuck Adrian", WS_BORDER | WS_SYSMENU | WS_CAPTION);
+	Window("Demo", WS_BORDER | WS_SYSMENU | WS_CAPTION);
 	
 	sur::Render renderer(Color(100, 107, 47));
 	renderer.FPS();
