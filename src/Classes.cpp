@@ -136,7 +136,7 @@ void sur::Render::RenderScreenBuffer()
 	bi.bmiHeader.biPlanes = 1;
 	bi.bmiHeader.biBitCount = 32;
 	bi.bmiHeader.biCompression = BI_RGB;
-	sleep_for(milliseconds(Wait));
+	sleep_for(microseconds(Wait));
 	SetDIBitsToDevice(dc, 0, 0, _window_size.y, _window_size.x, 0, 0, 0, _window_size.x, _map.RenderMap, &bi, 0);
 	frameCounter++;
 }

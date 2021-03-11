@@ -16,26 +16,28 @@ int main() {
 	
 	Window("Fuck Adrian", WS_BORDER | WS_SYSMENU | WS_CAPTION);
 	
-	sur::Render renderer(Color(100, 107, 47));
+	sur::Render renderer(Color(100, 107, 47),1);
 	renderer.FPS();
 	renderer.DebugConsole(true);
 
 	sur::Instancer::Add(new sur::LoadObj("C:\\Users\\gero\\Desktop\\Hardcore Engine\\Hgineres\\Human.Hgineres", { 0, 0 }, "shot", 50),Types::Obj);
 	sur::Instancer::Add(new sur::LoadObj("C:\\Users\\gero\\Desktop\\Hardcore Engine\\Hgineres\\Human.Hgineres", { 200, 200 }, "shot2", 51), Types::Obj);
 	sur::Instancer::Add(new sur::LoadObj("C:\\Users\\gero\\Desktop\\Hardcore Engine\\Hgineres\\Human.Hgineres", { 100, 500 }, "shot3", 52), Types::Obj);
+	sur::Instancer::Add(new sur::LoadObj("C:\\Users\\gero\\Desktop\\Hardcore Engine\\Hgineres\\Human.Hgineres", { 100, 300 }, "shot4", 53), Types::Obj);
 	for (;;) {
 		renderer.ClearScreenBuffer();
 		sur::Instancer::GetObj("shot")->Bind(true, ColliderType::Outline);
 		sur::Instancer::GetObj("shot2")->Bind(true, ColliderType::Outline);
 		sur::Instancer::GetObj("shot3")->Bind(true, ColliderType::Outline);
+		sur::Instancer::GetObj("shot4")->Bind(true, ColliderType::Outline);
 		if (_input.keyboard.Key(Keys::W))
-			sur::Camera::Move({ 0,1 });
+			sur::Camera::Move({ 0,10 });
 		if (_input.keyboard.Key(Keys::A))
-			sur::Camera::Move({ -1,0 });
+			sur::Camera::Move({ -10,0 });
 		if (_input.keyboard.Key(Keys::S))
-			sur::Camera::Move({ 0,-1 });
+			sur::Camera::Move({ 0,-10 });
 		if (_input.keyboard.Key(Keys::D))
-			sur::Camera::Move({ 1,0 });
+			sur::Camera::Move({ 10,0 });
 		renderer.RenderScreenBuffer();
 	}
 }
