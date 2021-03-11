@@ -1,4 +1,4 @@
-Camera movement
+Camera movement |Done|
 Collisions for line
 Line outside of screen fix
 Upload HGINERES editor & fix bugs
@@ -8,3 +8,5 @@ Fix Lua...
 Custom collider creator??? Using LUA???
 Sound manager |DONE|
 Fastcheck for outside of screen |DONE|
+Target FPS / stable FPS
+
