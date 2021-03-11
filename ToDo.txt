@@ -8,5 +8,5 @@ Fix Lua...
 Custom collider creator??? Using LUA???
 Sound manager |DONE|
 Fastcheck for outside of screen |DONE|
-Target FPS / stable FPS
+Target FPS / stable FPS <- if second param in render constructor isn't 0 it limits it to 60 FPS??? Idk why xD
 
