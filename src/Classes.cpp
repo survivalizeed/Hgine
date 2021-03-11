@@ -11,101 +11,111 @@ extern sur::Map_Analyses _Amap;
 //
 //	Master
 //
-void sur::Master::Move(sur::Vec2 direction)
+void sur::Master::Move(sur::Vec2 direction, bool detect)
 {
-
-	int CurMove = 0;
-	if (direction.y > 0) {	//Up
-		for (int a = 1; a <= direction.y; a++) {
-			for (int i = position.x; i < position.x + size.x; i++) {
-				for (int j = 0; j < identitys.size(); j++) {
-					if (i > 0 && (position.y - a - 1) > 0 && i < _window_size.x - 1&& (position.y - a - 1) < _window_size.y - 1) {
-						if (_debug)
-							_Amap.Render(i, position.y - a - 1, Color(0, 255, 0));
-						if (_Amap.Collider(i, position.y - a - 1) == identitys[j] && this->id != identitys[j]) {
-							if (callback != nullptr)
-								callback(static_cast<Master*>(ptrs[j]));
-							if (static_cast<Master*>(ptrs[j])->callback != nullptr)
-								static_cast<Master*>(ptrs[j])->callback(this);
-							goto dir1;
+	if (detect) {
+		int CurMove = 0;
+		if (direction.y > 0) {	//Up
+			for (int a = 1; a <= direction.y; a++) {
+				for (int i = position.x; i < position.x + size.x; i++) {
+					for (int j = 0; j < identitys.size(); j++) {
+						if (i > 0 && (position.y - a - 1) > 0 && i < _window_size.x - 1 && (position.y - a - 1) < _window_size.y - 1) {
+							if (_debug)
+								_Amap.Render(i, position.y - a - 1, Color(0, 255, 0));
+							if (_Amap.Collider(i, position.y - a - 1) == identitys[j] && this->id != identitys[j]) {
+								if (callback != nullptr)
+									callback(static_cast<Master*>(ptrs[j]));
+								if (static_cast<Master*>(ptrs[j])->callback != nullptr)
+									static_cast<Master*>(ptrs[j])->callback(this);
+								goto dir1;
+							}
 						}
 					}
 				}
+				CurMove = a;
 			}
-			CurMove = a;
+		dir1:
+			MoveInject(1, CurMove);
 		}
-	dir1:
-		MoveInject(1, CurMove);	
-	}
-	if (direction.x > 0) {	//Right
-		for (int a = 1; a <= direction.x; a++) {
-			for (int i = position.y; i < position.y + size.y; i++) {
-				for (int j = 0; j < identitys.size(); j++) {
-					if ((position.x + size.x + a - 1) > 0 && i > 0 && (position.x + size.x + a - 1) < _window_size.x - 1 && i < _window_size.y - 1) {
-						if (_debug)
-							_Amap.Render(position.x + size.x + a - 1, i, Color(0, 255, 0));
-						if (_Amap.Collider(position.x + size.x + a - 1, i) == identitys[j] && this->id != identitys[j]) {
-							if (callback != nullptr)
-								callback(static_cast<Master*>(ptrs[j]));
-							if (static_cast<Master*>(ptrs[j])->callback != nullptr)
-								static_cast<Master*>(ptrs[j])->callback(this);
-							goto dir2;
+		if (direction.x > 0) {	//Right
+			for (int a = 1; a <= direction.x; a++) {
+				for (int i = position.y; i < position.y + size.y; i++) {
+					for (int j = 0; j < identitys.size(); j++) {
+						if ((position.x + size.x + a - 1) > 0 && i > 0 && (position.x + size.x + a - 1) < _window_size.x - 1 && i < _window_size.y - 1) {
+							if (_debug)
+								_Amap.Render(position.x + size.x + a - 1, i, Color(0, 255, 0));
+							if (_Amap.Collider(position.x + size.x + a - 1, i) == identitys[j] && this->id != identitys[j]) {
+								if (callback != nullptr)
+									callback(static_cast<Master*>(ptrs[j]));
+								if (static_cast<Master*>(ptrs[j])->callback != nullptr)
+									static_cast<Master*>(ptrs[j])->callback(this);
+								goto dir2;
+							}
 						}
 					}
 				}
+				CurMove = a;
 			}
-			CurMove = a;
+		dir2:
+			MoveInject(2, CurMove);
 		}
-	dir2:
-		MoveInject(2, CurMove);
-	}
-	if (direction.y < 0) {	//Down
-		direction.y *= -1;
-		for (int a = 0; a <= direction.y; a++) {
-			for (int i = position.x; i < position.x + size.x; i++) {
-				for (int j = 0; j < identitys.size(); j++) {
-					if ((position.y + size.y + a - 1) > 0 && i > 0 && (position.y + size.y + a - 1) < _window_size.x - 1 && i < _window_size.y - 1) {
-						if (_debug)
-							_Amap.Render(i, position.y + size.y + a, Color(0, 255, 0));
-						if (_Amap.Collider(i, position.y + size.y + a) == identitys[j] && this->id != identitys[j]) {
-							if (callback != nullptr)
-								callback(static_cast<Master*>(ptrs[j]));
-							if (static_cast<Master*>(ptrs[j])->callback != nullptr)
-								static_cast<Master*>(ptrs[j])->callback(this);
-							goto dir3;
+		if (direction.y < 0) {	//Down
+			direction.y *= -1;
+			for (int a = 0; a <= direction.y; a++) {
+				for (int i = position.x; i < position.x + size.x; i++) {
+					for (int j = 0; j < identitys.size(); j++) {
+						if ((position.y + size.y + a - 1) > 0 && i > 0 && (position.y + size.y + a - 1) < _window_size.x - 1 && i < _window_size.y - 1) {
+							if (_debug)
+								_Amap.Render(i, position.y + size.y + a, Color(0, 255, 0));
+							if (_Amap.Collider(i, position.y + size.y + a) == identitys[j] && this->id != identitys[j]) {
+								if (callback != nullptr)
+									callback(static_cast<Master*>(ptrs[j]));
+								if (static_cast<Master*>(ptrs[j])->callback != nullptr)
+									static_cast<Master*>(ptrs[j])->callback(this);
+								goto dir3;
+							}
 						}
 					}
 				}
+				CurMove = a;
 			}
-			CurMove = a;
+		dir3:
+			MoveInject(3, CurMove);
 		}
-	dir3:
-		MoveInject(3, CurMove);
-	}
-	if (direction.x < 0) {	//Left
-		direction.x *= -1;
-		for (int a = 1; a <= direction.x; a++) {
-			for (int i = position.y; i < position.y + size.y; i++) {
-				for (int j = 0; j < identitys.size(); j++) {
-					if ((position.x - a - 1) > 0 && i > 0 && (position.x - a - 1) < _window_size.x - 1 && i < _window_size.y - 1) {
-						if (_debug)
-							_Amap.Render(position.x - a - 1, i, Color(0, 255, 0));
-						if (_Amap.Collider(position.x - a - 1, i) == identitys[j] && this->id != identitys[j]) {
-							if (callback != nullptr)
-								callback(static_cast<Master*>(ptrs[j]));
-							if (static_cast<Master*>(ptrs[j])->callback != nullptr)
-								static_cast<Master*>(ptrs[j])->callback(this);
-							goto dir4;
+		if (direction.x < 0) {	//Left
+			direction.x *= -1;
+			for (int a = 1; a <= direction.x; a++) {
+				for (int i = position.y; i < position.y + size.y; i++) {
+					for (int j = 0; j < identitys.size(); j++) {
+						if ((position.x - a - 1) > 0 && i > 0 && (position.x - a - 1) < _window_size.x - 1 && i < _window_size.y - 1) {
+							if (_debug)
+								_Amap.Render(position.x - a - 1, i, Color(0, 255, 0));
+							if (_Amap.Collider(position.x - a - 1, i) == identitys[j] && this->id != identitys[j]) {
+								if (callback != nullptr)
+									callback(static_cast<Master*>(ptrs[j]));
+								if (static_cast<Master*>(ptrs[j])->callback != nullptr)
+									static_cast<Master*>(ptrs[j])->callback(this);
+								goto dir4;
+							}
 						}
 					}
 				}
+				CurMove = a;
 			}
-			CurMove = a;
+		dir4:
+			MoveInject(4, CurMove);
 		}
-	dir4:
-		MoveInject(4,CurMove);
 	}
-
+	else {
+		if(direction.y > 0)
+			position.y -= direction.y;
+		if(direction.x > 0)
+			position.x += direction.x;
+		if (direction.y < 0)
+			position.y -= direction.y;
+		if (direction.x < 0)
+			position.x += direction.x;
+	}
 }
 //
 //	Render
@@ -158,7 +168,21 @@ void sur::Render::DebugConsole(bool Show)
 	if (!Show)
 		ShowWindow(GetConsoleWindow(), SW_HIDE);
 }
-
+//
+//	Camera
+//
+void sur::Camera::Move(sur::Vec2 direction)
+{
+	for (int i = 0; i < sur::Instancer::GetCount(sur::Instancer::Types::Rectangle); i++) {
+		sur::Instancer::GetRect("", i)->Move(direction.invert(), false);
+	}
+	for (int i = 0; i < sur::Instancer::GetCount(sur::Instancer::Types::Line); i++) {
+		sur::Instancer::GetLine("", i)->Move(direction.invert(), false);
+	}
+	for (int i = 0; i < sur::Instancer::GetCount(sur::Instancer::Types::Obj); i++) {
+		sur::Instancer::GetObj("", i)->Move(direction.invert(), false);
+	}
+}
 //
 //	Rectangle
 //
@@ -300,29 +324,43 @@ void sur::Instancer::Add(void* object, Types type)
 
 sur::Rectangle* sur::Instancer::GetRect(const std::string& name, int index)
 {
-	if (name != "")
+	if (name != "") {
 		for (auto&& it : *restricted::rectangles)
 			if (it->GetName() == name) return it;
-			else if (index >= 0 && index < restricted::rectangles->size()) return restricted::rectangles->at(index);
+	}
+	else if (index >= 0 && index < restricted::rectangles->size()) return restricted::rectangles->at(index);
 	return restricted::Rdefault;
 }
 
 sur::Line* sur::Instancer::GetLine(const std::string& name, int index)
 {
-	if (name != "")
+	if (name != "") {
 		for (auto&& it : *restricted::lines)
 			if (it->GetName() == name) return it;
-			else if (index >= 0 && index < restricted::lines->size()) return restricted::lines->at(index);
+	}
+	else if (index >= 0 && index < restricted::lines->size()) return restricted::lines->at(index);
 	return restricted::Ldefault;
 }
 
 sur::LoadObj* sur::Instancer::GetObj(const std::string& name, int index)
 {
-	if (name != "")
+	if (name != "") {
 		for (auto&& it : *restricted::objects)
 			if (it->GetName() == name) return it;
-			else if (index >= 0 && index < restricted::objects->size()) return restricted::objects->at(index);
+	}
+	else if (index >= 0 && index < restricted::objects->size()) return restricted::objects->at(index);
 	return restricted::Odefault;
+}
+
+int sur::Instancer::GetCount(Types type) {
+	switch (type) {
+	case Types::Rectangle:
+		return restricted::rectangles->size();
+	case Types::Line:
+		return restricted::lines->size();
+	case Types::Obj:
+		return restricted::objects->size();
+	}
 }
 
 void sur::Instancer::Delete(Types type, const std::string& name, int index)

@@ -52,7 +52,7 @@ namespace sur {
 		
 		inline void SetPos(sur::Vec2 position) { this->position = position; }
 
-		void Move(sur::Vec2 direction);
+		void Move(sur::Vec2 direction, bool detect);
 
 	};
 	//
@@ -77,6 +77,12 @@ namespace sur {
 		void FPS();
 
 		void DebugConsole(bool Show);
+	};
+	//
+	// Camera class
+	//
+	namespace Camera {
+		void Move(sur::Vec2 direction);
 	};
 	//
 	//	Shape: Rectangle
@@ -174,9 +180,9 @@ namespace sur {
 			static std::vector<LoadObj*>* objects = new std::vector<LoadObj*>;
 
 			// To return if nothing was found -> prevent error of nullpointer
-			static Rectangle* Rdefault = new Rectangle({ 0,0 }, { 0,0 }, Color(0, 0, 0), "invalid", 0);
-			static Line* Ldefault = new Line({ 0,0 }, { 0,0 }, Color(0, 0, 0), "invalid", 0);
-			static LoadObj* Odefault = new LoadObj("invalid", { 0,0 }, "invalid", 0);
+			static Rectangle* Rdefault = new Rectangle({ 0,0 }, { 0,0 }, Color(0, 0, 0), "invalid", -1);
+			static Line* Ldefault = new Line({ 0,0 }, { 0,0 }, Color(0, 0, 0), "invalid", -1);
+			static LoadObj* Odefault = new LoadObj("invalid", { 0,0 }, "invalid", -1);
 		}
 		enum class Types {
 			Rectangle, Line, Obj
@@ -189,6 +195,8 @@ namespace sur {
 		sur::Line* GetLine(const std::string& name = "", int index = -1);
 
 		sur::LoadObj* GetObj(const std::string& name = "", int index = -1);
+
+		int GetCount(Types type);
 
 		void Delete(Types type, const std::string& name = "", int index = -1);
 	}

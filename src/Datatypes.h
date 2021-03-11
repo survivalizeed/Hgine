@@ -38,6 +38,9 @@ namespace sur {
 		
 		inline void operator ()(const Vec2& vector2d) {x = vector2d.x; y = vector2d.y;}
 		
+		inline Vec2 invert() {
+			return { this->x * -1, this->y * -1 };
+		}
 		inline friend Vec2 operator +(const Vec2& first, const Vec2& second) {
 			return { first.x + second.x, first.y + second.y };
 		}

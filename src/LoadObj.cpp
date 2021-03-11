@@ -157,12 +157,3 @@ void sur::LoadObj::Bind(bool Collider, ColliderType collidertype)
 		}
 }
 
-//void sur::LoadObj::Move(sur::Vec2 direction)
-//{
-//	for (int i = 0; i < YCoords->size(); i++) {
-//		YCoords->at(i) -= direction.y;
-//		XCoords->at(i) += direction.x;
-//	}
-//	position.y -= direction.y;
-//	position.x += direction.x;
-//}

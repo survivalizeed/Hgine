@@ -44,3 +44,10 @@
 		return sizeof(Content) * id.size() + count;
 	}
 	//
+
+
+			if (_input.mouse.LClick()) {
+			if (_Amap.Collider(_input.mouse.Position().x, _input.mouse.Position().y) == sur::Instancer::GetObj("shot")->id) {
+				sur::Instancer::GetObj("shot")->SetPos({ sur::RandomRange(0,_window_size.x - sur::Instancer::GetObj("shot")->GetSize().x), sur::RandomRange(0,_window_size.y - sur::Instancer::GetObj("shot")->GetSize().y) });
+			}
+		}

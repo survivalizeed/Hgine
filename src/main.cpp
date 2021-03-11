@@ -14,21 +14,28 @@ int main() {
 	_map = sur::Initialize();
 	_Amap(_map, _window_size);
 	
-	Window("Demo", WS_BORDER | WS_SYSMENU | WS_CAPTION);
+	Window("Fuck Adrian", WS_BORDER | WS_SYSMENU | WS_CAPTION);
 	
 	sur::Render renderer(Color(100, 107, 47));
 	renderer.FPS();
 	renderer.DebugConsole(true);
 
-	sur::Instancer::Add(new sur::LoadObj("C:\\Users\\...\\Desktop\\Hardcore Engine\\Hgineres\\Human.Hgineres", { 100, 100 }, "shot", 50),Types::Obj);
-	for(;;) {
-		renderer.ClearScreenBuffer();	
-		sur::Instancer::GetObj("shot")->Bind(true, ColliderType::Static);
-		if (_input.mouse.LClick()) {
-			if (_Amap.Collider(_input.mouse.Position().x, _input.mouse.Position().y) == sur::Instancer::GetObj("shot")->id) {
-				sur::Instancer::GetObj("shot")->SetPos({ sur::RandomRange(0,_window_size.x - sur::Instancer::GetObj("shot")->GetSize().x), sur::RandomRange(0,_window_size.y - sur::Instancer::GetObj("shot")->GetSize().y) });
-			}
-		}
+	sur::Instancer::Add(new sur::LoadObj("C:\\Users\\gero\\Desktop\\Hardcore Engine\\Hgineres\\Human.Hgineres", { 0, 0 }, "shot", 50),Types::Obj);
+	sur::Instancer::Add(new sur::LoadObj("C:\\Users\\gero\\Desktop\\Hardcore Engine\\Hgineres\\Human.Hgineres", { 200, 200 }, "shot2", 51), Types::Obj);
+	sur::Instancer::Add(new sur::LoadObj("C:\\Users\\gero\\Desktop\\Hardcore Engine\\Hgineres\\Human.Hgineres", { 100, 500 }, "shot3", 52), Types::Obj);
+	for (;;) {
+		renderer.ClearScreenBuffer();
+		sur::Instancer::GetObj("shot")->Bind(true, ColliderType::Outline);
+		sur::Instancer::GetObj("shot2")->Bind(true, ColliderType::Outline);
+		sur::Instancer::GetObj("shot3")->Bind(true, ColliderType::Outline);
+		if (_input.keyboard.Key(Keys::W))
+			sur::Camera::Move({ 0,1 });
+		if (_input.keyboard.Key(Keys::A))
+			sur::Camera::Move({ -1,0 });
+		if (_input.keyboard.Key(Keys::S))
+			sur::Camera::Move({ 0,-1 });
+		if (_input.keyboard.Key(Keys::D))
+			sur::Camera::Move({ 1,0 });
 		renderer.RenderScreenBuffer();
 	}
 }
