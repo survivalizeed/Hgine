@@ -1,9 +1,8 @@
-Use the x86 for a x86 build\n
-Use the x64 for a x64 build
+Use the x86 for a x86 build. Use the x64 for a x64 build.
 
 Note:
-The includes are written in C so you need to wrap the includes in an extern "C" { }
-The static library is a .a file and not a .lib file. Just so you know ;)
+The includes are written in C so you need to wrap the includes in an extern "C" { }.
+ The static library is a .a file and not a .lib file. Just so you know ;)
 
 
 visit lua's site -> http://www.lua.org/ 
