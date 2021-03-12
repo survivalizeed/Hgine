@@ -1,4 +1,4 @@
-Use the x86 for a x86 build
+Use the x86 for a x86 build\n
 Use the x64 for a x64 build
 
 Note:
