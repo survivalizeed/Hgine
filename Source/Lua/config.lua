@@ -1,5 +1,4 @@
 configuration = {
-	debug = 1,
-
-
+	debug_mode = 1,
+	application_name = "Hgine Demo"
 }
