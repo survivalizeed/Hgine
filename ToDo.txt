@@ -10,4 +10,5 @@ Sound manager |DONE|
 Fastcheck for outside of screen |DONE|
 Target FPS / stable FPS <- if second param in render constructor isn't 0 it limits it to 60 FPS??? Idk why but it's exactly what i want xD
 Fix only Quad window
+Improve speed of the Triangle drawing :(
 
