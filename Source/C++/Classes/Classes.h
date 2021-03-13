@@ -30,7 +30,7 @@ namespace sur {
 		sur::Vec2 size;
 
 		Master(const std::string& name, int id)	
-			: name(name), id(id) {}		//Line
+			: name(name), id(id) {}		//Line, Triangle
 
 		Master(const std::string& name, int id, sur::Vec2 position)
 			: name(name), id(id), position(position) {}		//OBJ
@@ -44,13 +44,13 @@ namespace sur {
 		int id;
 		cb_ptr<Master*> callback = nullptr;	
 
-		inline const std::string& GetName() const { return name; }
+		virtual inline const std::string& GetName() const { return name; }
 
-		inline sur::Vec2 GetPosition() const { return position; }
+		virtual inline sur::Vec2 GetPosition() const { return position; }
 
-		inline sur::Vec2 GetSize() const { return size; }
+		virtual inline sur::Vec2 GetSize() const { return size; }
 		
-		inline void SetPos(sur::Vec2 position) { this->position = position; }
+		virtual inline void SetPosition(sur::Vec2 position) { this->position = position; }
 
 		void Move(sur::Vec2 direction, bool detect);
 
@@ -92,11 +92,11 @@ namespace sur {
 		Color color;
 		void MoveInject(int index, int curmove) override;
 	public:
-		Rectangle() = default;
+		Rectangle() = delete;
 
-		Rectangle(sur::Vec2 position, sur::Vec2 size, Color color, std::string name,int id);
+		Rectangle(sur::Vec2 position, sur::Vec2 size, Color color, const std::string& name,int id);
 		
-		inline void operator()(sur::Vec2 position, sur::Vec2 size, Color color, std::string name, int id)
+		inline void operator()(sur::Vec2 position, sur::Vec2 size, Color color, const std::string& name, int id)
 		{
 			this->position = position; this->size = size; this->color = color; this->name = name; this->id = id;
 		}
@@ -125,11 +125,11 @@ namespace sur {
 		void MoveInject(int index, int curmove) override;
 
 	public:
-		LoadObj() = default;
+		LoadObj() = delete;
 
-		LoadObj(const char* Path, sur::Vec2 position, std::string name, int id);
+		LoadObj(const char* Path, sur::Vec2 position, const std::string& name, int id);
 
-		inline void operator()(const char* Path, sur::Vec2 position, std::string name, int id)
+		inline void operator()(const char* Path, sur::Vec2 position, const std::string& name, int id)
 		{
 			this->Path = Path; this->position = position; this->name = name; this->id = id; Load();
 		}
@@ -151,11 +151,11 @@ namespace sur {
 		size_t lenght = 0;
 	public:
 
-		Line() = default;
+		Line() = delete;
 
-		Line(sur::Vec2 start, sur::Vec2 end, Color color, std::string name, int id);
+		Line(sur::Vec2 start, sur::Vec2 end, Color color, const std::string& name, int id);
 		
-		inline void operator()(sur::Vec2 start, sur::Vec2 end, Color color, std::string name, int id)
+		inline void operator()(sur::Vec2 start, sur::Vec2 end, Color color, const std::string& name, int id)
 		{
 			this->start = start; this->end = end; this->color = color; this->name = name; this->id = id;
 		}
@@ -169,6 +169,52 @@ namespace sur {
 		void Bind(bool Collider);
 
 		//Destructor
+	};
+	//
+	//	Shape: Triangle
+	//
+	class Triangle : public Master {
+	private:
+		sur::Vec2 p1, p2, p3;
+		Color color;
+
+		struct LineVector {
+			bool* check = new bool[3];
+			LineVector() { memset(check, false, 3); }
+			std::vector<Vec2>* Line1 = new std::vector<Vec2>;
+			std::vector<Vec2>* Line2 = new std::vector<Vec2>;
+			std::vector<Vec2>* Line3 = new std::vector<Vec2>;			
+			
+			void clear();
+			
+			std::vector<Vec2>* get(int i);
+			
+			std::vector<Vec2>* getother();
+		} linevector;
+
+		void Line(sur::Vec2 start, sur::Vec2 end, std::vector<sur::Vec2>* line, bool Collider);
+
+		void Fill(LineVector& linevector);
+
+	public:
+		Triangle() = delete;
+
+		Triangle(sur::Vec2 p1, sur::Vec2 p2, sur::Vec2 p3, Color color, const std::string& name, int id);
+
+		inline void operator ()(sur::Vec2 p1, sur::Vec2 p2, sur::Vec2 p3, Color color, const std::string& name, int id)
+		{
+			this->p1 = p1; this->p2 = p2; this->p3 = p3; this->color = color; this->name = name; this->id = id;
+		}
+
+		inline void SetPosition(int which, sur::Vec2 pos){
+			switch (which) {
+			case 1: p1 = pos; return;
+			case 2: p2 = pos; return;
+			case 3: p3 = pos; return;
+			}
+		}
+
+		void Bind(bool Collider);
 	};
 	//
 	// Instancer <- For object management

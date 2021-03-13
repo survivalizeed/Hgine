@@ -64,7 +64,7 @@ void sur::LoadObj::Load()
 		}
 }
 
-sur::LoadObj::LoadObj(const char* Path, sur::Vec2 position, std::string name, int id) 
+sur::LoadObj::LoadObj(const char* Path, sur::Vec2 position, const std::string& name, int id)
 	: Path(Path), Master(name, id, position)
 {
 	identitys.push_back(id);

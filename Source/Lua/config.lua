@@ -1,4 +1,4 @@
 configuration = {
-	debug_mode = 1,
-	application_name = "Hgine Demo"
+	debug_mode = 0,
+	application_name = "Hardcore Engine Demo"
 }
