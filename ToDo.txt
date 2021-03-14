@@ -12,5 +12,4 @@ Target FPS / stable FPS <- if second param in render constructor isn't 0 it limi
 Fix only Quad window
 Collisions for Triangle
 Triangle out of screen fix
-Improve speed of the Triangle drawing :(
 
