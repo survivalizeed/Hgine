@@ -319,6 +319,9 @@ void sur::Instancer::Add(void* object, Types type)
 	case Types::Obj:
 		restricted::objects->push_back(static_cast<LoadObj*>(object));
 		break;
+	case Types::Triangle:
+		restricted::triangles->push_back(static_cast<Triangle*>(object));
+		break;
 	}
 }
 
@@ -350,6 +353,16 @@ sur::LoadObj* sur::Instancer::GetObj(const std::string& name, int index)
 	}
 	else if (index >= 0 && index < restricted::objects->size()) return restricted::objects->at(index);
 	return restricted::Odefault;
+}
+
+sur::Triangle* sur::Instancer::GetTri(const std::string& name, int index)
+{
+	if (name != "") {
+		for (auto&& it : *restricted::triangles)
+			if (it->GetName() == name) return it;
+	}
+	else if (index >= 0 && index < restricted::triangles->size()) return restricted::triangles->at(index);
+	return restricted::Tdefault;
 }
 
 int sur::Instancer::GetCount(Types type) {

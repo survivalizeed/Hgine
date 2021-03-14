@@ -224,14 +224,15 @@ namespace sur {
 			static std::vector<Rectangle*>* rectangles = new std::vector<Rectangle*>;
 			static std::vector<Line*>* lines = new std::vector<Line*>;
 			static std::vector<LoadObj*>* objects = new std::vector<LoadObj*>;
-
+			static std::vector<Triangle*>* triangles = new std::vector<Triangle*>;
 			// To return if nothing was found -> prevent error of nullpointer
 			static Rectangle* Rdefault = new Rectangle({ 0,0 }, { 0,0 }, Color(0, 0, 0), "invalid", -1);
 			static Line* Ldefault = new Line({ 0,0 }, { 0,0 }, Color(0, 0, 0), "invalid", -1);
 			static LoadObj* Odefault = new LoadObj("invalid", { 0,0 }, "invalid", -1);
+			static Triangle* Tdefault = new Triangle({ 0,0 }, { 0,0 }, { 0,0 }, Color(0, 0, 0), "invalid", -1);
 		}
 		enum class Types {
-			Rectangle, Line, Obj
+			Rectangle, Line, Obj, Triangle
 		};
 
 		void Add(void* object, Types type);
@@ -241,6 +242,8 @@ namespace sur {
 		sur::Line* GetLine(const std::string& name = "", int index = -1);
 
 		sur::LoadObj* GetObj(const std::string& name = "", int index = -1);
+
+		sur::Triangle* GetTri(const std::string& name = "", int index = -1);
 
 		int GetCount(Types type);
 

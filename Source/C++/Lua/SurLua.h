@@ -53,7 +53,7 @@ namespace lua {
 				stoi(var);
 				return type::number;
 			}
-			catch (std::exception& e) {
+			catch (std::exception e) {
 				return type::string;
 			}
 		};
@@ -72,9 +72,9 @@ namespace lua {
 					vec.push_back(lua_tostring(L, -1));
 					lua_pop(L, 1);
 				}
-			}
-			return vec;
+			}		
 		}
+		return vec;
 	}
 
 	std::string CallFunction(lua_State* L, const char* Name, const std::vector<std::string>& params = { "" }) {
@@ -99,8 +99,8 @@ namespace lua {
 				lua_pcall(L, (int)params.size(), 1, 0);
 				return lua_tostring(L, -1);
 			}
-			return "nil";
 		}
+		return "nil";
 	}
 
 	std::string GetTableContent(lua_State* L, const char* TName, const char* Name) {
@@ -111,8 +111,8 @@ namespace lua {
 			if (lua_isstring(L, -1) || lua_isnumber(L, -1) || lua_isboolean(L, -1)) {
 				return lua_tostring(L, -1);
 			}
-			return "nil";
 		}
+		return "nil";
 	}
 
 	std::string GetContent(lua_State* L, const char* Name) {

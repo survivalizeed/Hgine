@@ -28,7 +28,7 @@ std::vector<sur::Vec2>* sur::Triangle::LineVector::get(int i)
 		check[2] = true;
 		return this->Line3;
 	default:
-		break;
+		return nullptr;
 	}
 }
 
@@ -46,6 +46,7 @@ std::vector<sur::Vec2>* sur::Triangle::LineVector::getother()
 		check[2] = true;
 		return this->Line3;
 	}
+	return nullptr;
 }
 
 void sur::Triangle::Line(sur::Vec2 start, sur::Vec2 end, std::vector<sur::Vec2>* line, bool Collider)
@@ -123,23 +124,24 @@ void sur::Triangle::Line(sur::Vec2 start, sur::Vec2 end, std::vector<sur::Vec2>*
 	}
 }
 
+auto max_val = [](int a, int b, int c) {
+	if (a >= b && a >= c)
+		return 1;
+	if (b >= a && b >= c)
+		return 2;
+	if (c >= a && c >= b)
+		return 3;
+	return 0;
+};
+
+auto min_val = [](int a, int b) { return a <= b ? 1 : 2; };
+
+auto near_comp = [](int target, int a, int b) { return (abs(target - a) < abs(target - b)) ? 1 : 2; };
+
 void sur::Triangle::Fill(LineVector& linevector)
 {
-	auto max_val = [](int a, int b, int c) {
-		if (a >= b && a >= c)
-			return 1;
-		if (b >= a && b >= c)
-			return 2;
-		if (c >= a && c >= b)
-			return 3;
-	};
-	
-	auto min_val = [](int a, int b) { return a <= b ? 1 : 2; };
-	
-	auto near_comp = [](int target, int a, int b) { return (abs(target - a) < abs(target - b)) ? 1 : 2; };
-	
-	int maxv = max_val(linevector.Line1->size(), linevector.Line2->size(), linevector.Line3->size());
 
+	int maxv = max_val((int)linevector.Line1->size(), (int)linevector.Line2->size(), (int)linevector.Line3->size());
 	std::vector<sur::Vec2>* hypo = nullptr;
 	std::vector<sur::Vec2>* other = nullptr;
 	std::vector<sur::Vec2>* temp = nullptr;
@@ -157,7 +159,7 @@ void sur::Triangle::Fill(LineVector& linevector)
 
 	int dir = 0;
 	if (near_comp(hypo->at(0).y, other->at(0).y, temp->at(0).y) == 1) {
-		other->insert(other->end(), temp->begin(), temp->end());
+		other->insert(other->end(), temp->begin(), temp->end());	//Ersetzen mit else unten
 		dir = min_val(hypo->at(hypo->size() / 2).x, other->at(other->size() / 2).x);
 		int counter = 0;
 		for (int i = hypo->at(0).y; i < hypo->at(hypo->size() - 1).y; i++) {

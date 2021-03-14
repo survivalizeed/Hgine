@@ -19,16 +19,15 @@ int main() {
 	
 	Window(lua::GetTableContent(L, "configuration", "application_name").c_str(), WS_BORDER | WS_SYSMENU | WS_CAPTION);
 	
-	sur::Render renderer(Color(100, 107, 47));
+	sur::Render renderer(Color(100, 107, 47),1);
 	renderer.FPS();
 	renderer.DebugConsole(_debug);
 	int varx = 97;
 	int vary = 56;
-	sur::Triangle a({ 56,302 }, { 45,476 }, { 431,300 }, Color(123, 123, 123), "Cool", 12);
+	sur::Instancer::Add(new sur::Triangle({ 56,0 }, { 45,476 }, { 431,300 }, Color(123, 123, 123), "Cool", 12),Types::Triangle);
 	for (;;) {
 		renderer.ClearScreenBuffer();
-		a.Bind(false);
-		a.SetPosition(1, { varx, vary });
+		sur::Instancer::GetTri("Cool")->Bind(false);
 		renderer.RenderScreenBuffer();
 	}
 }
