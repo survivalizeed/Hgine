@@ -51,6 +51,8 @@ std::vector<sur::Vec2>* sur::Triangle::LineVector::getother()
 
 void sur::Triangle::Line(sur::Vec2 start, sur::Vec2 end, std::vector<sur::Vec2>* line, bool Collider)
 {
+	if (start.x == end.x)
+	    start.x--;	//A little cheat
 	int lcounter = 0;
 	if (start.y > end.y && start.x > end.x) {
 		std::swap(start.y, end.y);
