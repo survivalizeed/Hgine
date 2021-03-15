@@ -1,6 +1,6 @@
 # CppRawEnginePrototype
 Just an Engine that uses the gdiplus.h. The average FPS are around 50 with 30 sprites. I know it is not the fastest Engine out there but it is really hardcoded.
-Make sure you are using C++ 20. For the best results compile it in x64 release!
+Make sure you are using C++ 20. For the best results compile it in x64 release! I am trying to re-create some algorithms from the graphics card.
 I am thinking about calling it Hardcore Engine :)
 
 Note:
