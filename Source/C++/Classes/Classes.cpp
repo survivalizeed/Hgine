@@ -131,13 +131,13 @@ void sur::Render::RenderScreenBuffer()
 {
 	BITMAPINFO bi = { 0 };
 	bi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-	bi.bmiHeader.biWidth = _window_size.y;
-	bi.bmiHeader.biHeight = _window_size.x;
+	bi.bmiHeader.biWidth = _window_size.x;
+	bi.bmiHeader.biHeight = _window_size.y;
 	bi.bmiHeader.biPlanes = 1;
 	bi.bmiHeader.biBitCount = 32;
 	bi.bmiHeader.biCompression = BI_RGB;
-	sleep_for(microseconds(Wait));
-	SetDIBitsToDevice(dc, 0, 0, _window_size.y, _window_size.x, 0, 0, 0, _window_size.x, _map.RenderMap, &bi, 0);
+	sleep_for(milliseconds(Wait));
+	SetDIBitsToDevice(dc, 0, 0, _window_size.x, _window_size.y, 0, 0, 0, _window_size.x, _map.RenderMap, &bi, 0);
 	frameCounter++;
 }
 
