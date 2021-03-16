@@ -1,7 +1,7 @@
 Camera movement |Done|
 Collisions for line
 Line outside of screen fix
-Upload HGINERES editor & fix bugs
+Upload HGINERES editor & fix bugs |(DONE)|
 Triggers
 Create runtime object handler |DONE|
 Fix Lua... |DONE|
