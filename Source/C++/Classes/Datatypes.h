@@ -13,8 +13,7 @@ typedef Gdiplus::Color Color;
 
 typedef const int size;
 
-template <typename CallBackType>
-using cb_ptr = void(*)(CallBackType);
+
 
 namespace sur {
 	//
@@ -56,6 +55,14 @@ namespace sur {
 			}
 			return { first.x / second.x, first.y / second.y };
 		}
+		inline friend Vec2 operator --(const Vec2& first) {
+			return { first.x - 1, first.y - 1 };
+		}
+
+		friend std::ostream& operator<<(std::ostream& os, const Vec2& vector2d) {
+			os << "X: " << vector2d.x << " Y: " << vector2d.y;
+			return os;
+		}
 	};
 	//
 	// Map pointer for Rendering, Collision and Trigger detection
@@ -81,4 +88,12 @@ enum class ColliderType {
 	Static, Filled, Outline
 };
 
+// Template stuff
+template <typename CallBackType>
+using cb_ptr = void(*)(CallBackType);
 
+template <typename T>
+inline constexpr bool is_Vec2 = std::_Is_any_of_v<std::remove_cv_t<T>, sur::Vec2>;
+
+template <typename T>
+concept VEC = is_Vec2<T>;	// Done with a concept because the variadic functionality is only availabe in templates 

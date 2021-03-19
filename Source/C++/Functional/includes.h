@@ -22,7 +22,7 @@
 #include <algorithm>
 #include <fstream>
 #include <sstream>
-
+#include <type_traits>
 
 #define l(x) std::cout << x << "\n"
 #define byte(x) sizeof(x)

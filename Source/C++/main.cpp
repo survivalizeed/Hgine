@@ -1,9 +1,8 @@
-
-
 #include "Functional/includes.h"
 #include "Lua/SurLua.h"
 
-extern void Window(const char* name,int params);
+lua_State* Start();
+extern void Window(const char* name, int params);
 extern sur::Map_Analyses _Amap;
 extern sur::Input _input;
 
@@ -11,24 +10,35 @@ using sur::Instancer::Types;
 
 
 int main() {
-	lua_State* L = lua::LoadFile("F:\\C++\\Engine\\Engine\\Source\\Lua\\config.lua");
-	_debug = stoi(lua::GetTableContent(L,"configuration","debug_mode"));
-	_window_size(750, 750);
-	_map = sur::Initialize();
-	_Amap(_map, _window_size);
+	lua_State* L = Start();
 	
-	Window(lua::GetTableContent(L, "configuration", "application_name").c_str(), WS_BORDER | WS_SYSMENU | WS_CAPTION);
-	
-	sur::Render renderer(Color(100, 107, 47),1);
-	renderer.FPS();
+	sur::Render renderer(Color(100, 107, 47), 1);
 	renderer.DebugConsole(_debug);
-	int varx = 97;
-	int vary = 56;
-	sur::Instancer::Add(new sur::Triangle({ 56,0 }, { 45,476 }, { 431,300 }, Color(123, 123, 123), "Cool", 12),Types::Triangle);
+	renderer.FPS();
+	
 	for (;;) {
 		renderer.ClearScreenBuffer();
-		sur::Instancer::GetTri("Cool")->Bind(false);
+
 		renderer.RenderScreenBuffer();
 	}
 }
 
+
+
+lua_State* Start() {
+	lua_State* L = lua::LoadFile("F:\\C++\\Engine\\Engine\\Source\\Lua\\config.lua");
+	
+	_debug = stoi(lua::GetTableContent(L, "configuration", "debug_mode"));
+	
+	_window_size(stoi(lua::GetTableContent(L, "configuration", "window_size_x")),
+		stoi(lua::GetTableContent(L, "configuration", "window_size_y")));
+	
+	_map = sur::Initialize();
+	
+	_Amap(_map, _window_size);
+	
+	//Create the Window with some parameters
+	Window(lua::GetTableContent(L, "configuration", "application_name").c_str(), WS_BORDER | WS_SYSMENU | WS_CAPTION);
+
+	return L;
+}

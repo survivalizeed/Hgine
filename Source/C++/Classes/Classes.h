@@ -38,11 +38,13 @@ namespace sur {
 		Master(const std::string& name, int id, sur::Vec2 position, sur::Vec2 size)
 			: name(name), id(id), position(position), size(size) {}		//Rectangle
 
-		virtual void MoveInject(int index, int curmove) {}
+		virtual void MoveInject(int index, int curmove) {};
 
 	public:
 		int id;
 		cb_ptr<Master*> callback = nullptr;	
+
+		Master() = default;
 
 		virtual inline const std::string& GetName() const { return name; }
 
@@ -92,7 +94,7 @@ namespace sur {
 		Color color;
 		void MoveInject(int index, int curmove) override;
 	public:
-		Rectangle() = delete;
+		Rectangle() {}
 
 		Rectangle(sur::Vec2 position, sur::Vec2 size, Color color, const std::string& name,int id);
 		
@@ -125,7 +127,7 @@ namespace sur {
 		void MoveInject(int index, int curmove) override;
 
 	public:
-		LoadObj() = delete;
+		LoadObj() {}
 
 		LoadObj(const char* Path, sur::Vec2 position, const std::string& name, int id);
 
@@ -151,7 +153,7 @@ namespace sur {
 		size_t lenght = 0;
 	public:
 
-		Line() = delete;
+		Line() {}
 
 		Line(sur::Vec2 start, sur::Vec2 end, Color color, const std::string& name, int id);
 		
@@ -197,7 +199,7 @@ namespace sur {
 		void Fill(LineVector& linevector);
 
 	public:
-		Triangle() = delete;
+		Triangle() {}
 
 		Triangle(sur::Vec2 p1, sur::Vec2 p2, sur::Vec2 p3, Color color, const std::string& name, int id);
 
@@ -217,7 +219,40 @@ namespace sur {
 		void Bind(bool Collider);
 	};
 	//
-	// Instancer <- For object management
+	//	Shape: Custom wire shape
+	//
+	class Shape : public Master
+	{
+	private:
+		Color color;
+		std::vector<sur::Vec2>* vec = new std::vector<sur::Vec2>;
+		std::vector<sur::Line*>* lines = new std::vector<sur::Line*>;
+		
+		void Gen();
+
+		template<VEC R>
+		void Pass(R r){
+			vec->push_back((sur::Vec2)r);
+			Gen();
+		}
+
+	public:
+		Shape(Color color, int id) 
+			: color(color)
+		{
+			this->id = id;
+		}
+
+		template<VEC F, VEC ... R>
+		void Pass(F f, R ... r) {
+			vec->push_back((sur::Vec2)f);
+			Pass(r...);
+		}
+		
+		void Bind(bool Collider);
+	};
+	//
+	//	Instancer <- For object management
 	//
 	namespace Instancer {
 		namespace restricted {
@@ -231,6 +266,7 @@ namespace sur {
 			static LoadObj* Odefault = new LoadObj("invalid", { 0,0 }, "invalid", -1);
 			static Triangle* Tdefault = new Triangle({ 0,0 }, { 0,0 }, { 0,0 }, Color(0, 0, 0), "invalid", -1);
 		}
+
 		enum class Types {
 			Rectangle, Line, Obj, Triangle
 		};

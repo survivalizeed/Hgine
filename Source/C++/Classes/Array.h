@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "includes.h"
+#include "../Functional/includes.h"
 
 
 namespace analyses {
@@ -35,7 +35,7 @@ namespace analyses {
 		inline void operator ()(int x, int y, T what) {
 			if (typeid(T) == typeid(DWORD)) {
 				y = sizeSep.y - y;
-				x--;
+				y--;
 			}
 			arr[x + sizeSep.x * y] = what;
 		}

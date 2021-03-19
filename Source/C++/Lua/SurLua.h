@@ -20,7 +20,7 @@ extern "C"
 #if _WIN64
 #pragma comment(lib,"F:\\C++\\###Includes###\\Lua x64\\liblua53.a")  //Be aware of x64 and x86 -> dll aswell
 #else
-#pragma comment(lib,"F:\\C++\\###Includes###\\Lua x86\\liblua53.a")  //Be aware of x64 and x86 -> dll aswell
+#pragma comment(lib,"F:\\C++\\###Includes###\\Lua x86\\liblua54.a")  //Be aware of x64 and x86 -> dll aswell
 #endif
 #endif
 

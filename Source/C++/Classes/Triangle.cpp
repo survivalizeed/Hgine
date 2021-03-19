@@ -52,7 +52,7 @@ std::vector<sur::Vec2>* sur::Triangle::LineVector::getother()
 void sur::Triangle::Line(sur::Vec2 start, sur::Vec2 end, std::vector<sur::Vec2>* line, bool Collider)
 {
 	if (start.x == end.x)
-	    start.x--;	//A little cheat
+		start.x--;
 	int lcounter = 0;
 	if (start.y > end.y && start.x > end.x) {
 		std::swap(start.y, end.y);
@@ -70,13 +70,13 @@ void sur::Triangle::Line(sur::Vec2 start, sur::Vec2 end, std::vector<sur::Vec2>*
 		int countcounter = 1;
 		for (int i = start.x; i <= end.x; i++) {
 			if (Collider)
-				_Amap.Collider(i - 1, tempy - 1, id);
+				_Amap.Collider(i, tempy, id);
 			_Amap.Render(i, tempy, color.ToCOLORREF());
 			while (counter >= countcounter) {
 				tempy++;
 				line->push_back({ i,tempy });
 				if (Collider)
-					_Amap.Collider(i - 1, tempy - 1, id);
+					_Amap.Collider(i, tempy, id);
 				_Amap.Render(i, tempy, color.ToCOLORREF());
 				countcounter++;
 			}
@@ -91,13 +91,13 @@ void sur::Triangle::Line(sur::Vec2 start, sur::Vec2 end, std::vector<sur::Vec2>*
 		bool runned = false;
 		for (int i = start.x; i <= end.x; i++) {
 			if (Collider)
-				_Amap.Collider(i - 1, tempy - 1, id);
+				_Amap.Collider(i, tempy, id);
 			_Amap.Render(i, tempy, color.ToCOLORREF());
 			while (counter >= countcounter) {
 				tempy--;
 				line->push_back({ i,tempy });
 				if (Collider)
-					_Amap.Collider(i - 1, tempy - 1, id);
+					_Amap.Collider(i, tempy, id);
 				_Amap.Render(i, tempy, color.ToCOLORREF());
 				countcounter++;
 			}
@@ -111,12 +111,12 @@ void sur::Triangle::Line(sur::Vec2 start, sur::Vec2 end, std::vector<sur::Vec2>*
 			for (int i = start.y; i <= end.y; i++) {
 				line->push_back({ tempx,i });
 				if (Collider)
-					_Amap.Collider(tempx - 1, i - 1, id);
+					_Amap.Collider(tempx, i, id);
 				_Amap.Render(tempx, i, color.ToCOLORREF());
 				while (counter >= countcounter) {
 					tempx--;
 					if (Collider)
-						_Amap.Collider(tempx - 1, i - 1, id);
+						_Amap.Collider(tempx, i, id);
 					_Amap.Render(tempx, i, color.ToCOLORREF());
 					countcounter++;
 				}
