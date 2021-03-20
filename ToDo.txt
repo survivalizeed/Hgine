@@ -13,4 +13,5 @@ Fix only Quad window |DONE|
 Collisions for Triangle
 Triangle out of screen fix
 If window is not Quad, out of bounds not working correctly
+Activate and unactivate Objects through the Instancer
 
