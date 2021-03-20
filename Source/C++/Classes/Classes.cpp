@@ -107,9 +107,9 @@ void sur::Master::Move(sur::Vec2 direction, bool detect)
 		}
 	}
 	else {
-		if(direction.y > 0)
+		if (direction.y > 0)
 			position.y -= direction.y;
-		if(direction.x > 0)
+		if (direction.x > 0)
 			position.x += direction.x;
 		if (direction.y < 0)
 			position.y -= direction.y;
@@ -137,7 +137,7 @@ void sur::Render::RenderScreenBuffer()
 	bi.bmiHeader.biBitCount = 32;
 	bi.bmiHeader.biCompression = BI_RGB;
 	sleep_for(milliseconds(Wait));
-	SetDIBitsToDevice(dc, 0, 0, _window_size.x, _window_size.y, 0, 0, 0, _window_size.x, _map.RenderMap, &bi, 0);
+	SetDIBitsToDevice(dc, 0, 0, (DWORD)_window_size.x, (DWORD)_window_size.y, 0, 0, 0, _window_size.x, _map.RenderMap, &bi, 0);
 	frameCounter++;
 }
 
@@ -187,7 +187,7 @@ void sur::Camera::Move(sur::Vec2 direction)
 //	Rectangle
 //
 sur::Rectangle::Rectangle(sur::Vec2 position, sur::Vec2 size, Color color, const std::string& name, int id)
-	:color(color), Master(name,id, --position, --size)
+	:color(color), Master(name,id, position, size)
 {
 	identitys.push_back(id);
 	ptrs.push_back(this);
@@ -219,7 +219,7 @@ void sur::Rectangle::Bind(bool Collider)
 			if (j >= 1 && i >= 1 && j <= _window_size.x - 1 && i <= _window_size.y - 1) {
 				_Amap.Render(j, i, color.ToCOLORREF());
 				if (Collider && j > 1 && i > 1 && j < _window_size.x - 1 && i < _window_size.y - 1)
-					_Amap.Collider(j, i, id);
+					_Amap.Collider(j - 1, i - 1, id);
 			}
 }
 //
@@ -253,12 +253,12 @@ void sur::Line::Bind(bool Collider)
 		int countcounter = 1;
 		for (int i = start.x; i <= end.x; i++) {
 			if (Collider)
-				_Amap.Collider(i, tempy, id);
+				_Amap.Collider(i - 1, tempy - 1, id);
 			_Amap.Render(i, tempy, color.ToCOLORREF());
 			while (counter >= countcounter) {
 				tempy++;
 				if (Collider)
-					_Amap.Collider(i, tempy, id);
+					_Amap.Collider(i - 1, tempy - 1, id);
 				_Amap.Render(i, tempy, color.ToCOLORREF());
 				countcounter++;
 			}
@@ -273,12 +273,12 @@ void sur::Line::Bind(bool Collider)
 		bool runned = false;
 		for (int i = start.x; i <= end.x; i++) {
 			if (Collider)
-				_Amap.Collider(i, tempy, id);
+				_Amap.Collider(i - 1, tempy - 1, id);
 			_Amap.Render(i, tempy, color.ToCOLORREF());
 			while (counter >= countcounter) {
 				tempy--;
 				if (Collider)
-					_Amap.Collider(i, tempy, id);
+					_Amap.Collider(i - 1, tempy - 1, id);
 				_Amap.Render(i, tempy, color.ToCOLORREF());
 				countcounter++;
 			}
@@ -291,12 +291,12 @@ void sur::Line::Bind(bool Collider)
 			int tempx = start.x;
 			for (int i = start.y; i <= end.y; i++) {
 				if (Collider)
-					_Amap.Collider(tempx, i, id);
+					_Amap.Collider(tempx - 1, i - 1, id);
 				_Amap.Render(tempx, i, color.ToCOLORREF());
 				while (counter >= countcounter) {
 					tempx--;
 					if (Collider)
-						_Amap.Collider(tempx, i, id);
+						_Amap.Collider(tempx - 1, i - 1, id);
 					_Amap.Render(tempx, i, color.ToCOLORREF());
 					countcounter++;
 				}
