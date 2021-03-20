@@ -253,12 +253,12 @@ void sur::Line::Bind(bool Collider)
 		int countcounter = 1;
 		for (int i = start.x; i <= end.x; i++) {
 			if (Collider)
-				_Amap.Collider(i - 1, tempy - 1, id);
+				_Amap.Collider(i, tempy, id);
 			_Amap.Render(i, tempy, color.ToCOLORREF());
 			while (counter >= countcounter) {
 				tempy++;
 				if (Collider)
-					_Amap.Collider(i - 1, tempy - 1, id);
+					_Amap.Collider(i, tempy, id);
 				_Amap.Render(i, tempy, color.ToCOLORREF());
 				countcounter++;
 			}
@@ -273,12 +273,12 @@ void sur::Line::Bind(bool Collider)
 		bool runned = false;
 		for (int i = start.x; i <= end.x; i++) {
 			if (Collider)
-				_Amap.Collider(i - 1, tempy - 1, id);
+				_Amap.Collider(i, tempy, id);
 			_Amap.Render(i, tempy, color.ToCOLORREF());
 			while (counter >= countcounter) {
 				tempy--;
 				if (Collider)
-					_Amap.Collider(i - 1, tempy - 1, id);
+					_Amap.Collider(i, tempy, id);
 				_Amap.Render(i, tempy, color.ToCOLORREF());
 				countcounter++;
 			}
@@ -291,12 +291,12 @@ void sur::Line::Bind(bool Collider)
 			int tempx = start.x;
 			for (int i = start.y; i <= end.y; i++) {
 				if (Collider)
-					_Amap.Collider(tempx - 1, i - 1, id);
+					_Amap.Collider(tempx, i, id);
 				_Amap.Render(tempx, i, color.ToCOLORREF());
 				while (counter >= countcounter) {
 					tempx--;
 					if (Collider)
-						_Amap.Collider(tempx - 1, i - 1, id);
+						_Amap.Collider(tempx, i, id);
 					_Amap.Render(tempx, i, color.ToCOLORREF());
 					countcounter++;
 				}

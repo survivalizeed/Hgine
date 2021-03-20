@@ -22,18 +22,25 @@ int main() {
 	sur::Instancer::Add(new sur::LoadObj("C:\\Users\\gero\\Desktop\\Hardcore Engine\\Hgineres\\Enemy.Hgineres",
 		{0,0}, "Enemy", 2), Types::Obj);
 
+	sur::Instancer::Add(new sur::LoadObj("C:\\Users\\gero\\Desktop\\Hardcore Engine\\Hgineres\\Shot.Hgineres",
+		{ 0,0 }, "shot", 3),Types::Obj);
+
+	sur::Line left({ 1,1 }, { 1,_window_size.y - 1}, Color(255, 0, 0), "border", 50);
+	sur::Line right({ _window_size.x - 20 ,1 }, { _window_size.x - 20,_window_size.y - 1}, Color(255, 0, 0), "border", 50);
 	for (;;) {
 		renderer.ClearScreenBuffer();		
 		sur::Instancer::GetObj("Enemy")->Bind(true, ColliderType::Outline);
 		sur::Instancer::GetObj("Player")->Bind(true, ColliderType::Outline);
-		if (_input.keyboard.Key(Keys::W))
-			sur::Instancer::GetObj("Player")->Move({ 0,3 }, true);
+		sur::Instancer::GetObj("shot")->Bind(true, ColliderType::Outline);
+		left.Bind(true);
+		right.Bind(true);
 		if (_input.keyboard.Key(Keys::A))
 			sur::Instancer::GetObj("Player")->Move({ -3,0 }, true);
-		if (_input.keyboard.Key(Keys::S))
-			sur::Instancer::GetObj("Player")->Move({ 0,-3 }, true);
 		if (_input.keyboard.Key(Keys::D))
 			sur::Instancer::GetObj("Player")->Move({ 3,0 }, true);
+		if (_input.keyboard.Key(Keys::SPACE))
+			sur::Instancer::GetObj("shot")->SetPosition(sur::Instancer::GetObj("Player")->GetPosition());
+
 		renderer.RenderScreenBuffer();
 	}
 }
