@@ -12,4 +12,5 @@ Target FPS / stable FPS <- if second param in render constructor isn't 0 it limi
 Fix only Quad window |DONE|
 Collisions for Triangle
 Triangle out of screen fix
+If window is not Quad, out of bounds not working correctly
 
