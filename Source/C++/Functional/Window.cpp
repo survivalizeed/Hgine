@@ -29,7 +29,7 @@ void win(const char* Name,int params) {
 	wc.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
 	RegisterClassEx(&wc);
 	SetWindowLong(_hwnd, GWL_STYLE, GetWindowLong(_hwnd, GWL_STYLE) & ~WS_MAXIMIZEBOX);
-	_hwnd = CreateWindowEx(WS_EX_CLIENTEDGE, "CLASS", Name ,params, CW_USEDEFAULT, CW_USEDEFAULT, _window_size.x, _window_size.y, NULL, NULL, hInstance, NULL);
+	_hwnd = CreateWindowEx(WS_EX_CLIENTEDGE, "CLASS", Name ,params, CW_USEDEFAULT, CW_USEDEFAULT, _window_size.x + 20, _window_size.y + 43, NULL, NULL, hInstance, NULL);
 	ShowWindow(_hwnd, SW_SHOW);
 	UpdateWindow(_hwnd);
 	while (GetMessage(&Msg, NULL, 0, 0) > 0)

@@ -4,6 +4,8 @@
 
 #include "../Functional/includes.h"
 
+extern sur::Vec2 _window_size;
+
 
 namespace analyses {
 	template <typename T>
@@ -23,22 +25,26 @@ namespace analyses {
 			return arr;
 		}
 
-		inline T operator ()(int x, int y) {
-			if (typeid(T) == typeid(DWORD)) {
-				y = sizeSep.y - (y);
-				x--;
-			}
-			return arr[x + sizeSep.x * y];
-		}
-
 		//Set
 		inline void operator ()(int x, int y, T what) {
 			if (typeid(T) == typeid(DWORD)) {
 				y = sizeSep.y - y;
-				x--;
+				y--;
 			}
+			if (x < 0 || y < 0 || x > _window_size.x - 1|| y > _window_size.y - 1) return;
 			arr[x + sizeSep.x * y] = what;
 		}
+
+		//Get
+		inline T operator ()(int x, int y) {
+			if (typeid(T) == typeid(DWORD)) {
+				y = sizeSep.y - (y);
+			}
+			if (x < 0 || y < 0 || x > _window_size.x - 1|| y > _window_size.y - 1) return 0;
+			return arr[x + sizeSep.x * y];
+		}
+
+
 
 
 		void operator ()(T* arrptr, sur::Vec2 size) {

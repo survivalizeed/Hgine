@@ -96,62 +96,59 @@ void sur::LoadObj::MoveInject(int index, int CurMove)	//Def in Master <- No over
 void sur::LoadObj::Bind(bool Collider, ColliderType collidertype)
 {
 
-	if ((position.x <= 1 && position.x + size.x <= 1) || (position.y <= 1 && position.y + size.y <= 1)
-		|| (position.x >= _window_size.x - 1 && position.x + size.x >= _window_size.x - 1) || (position.y >= _window_size.y - 1
-			&& position.y + size.y >= _window_size.y - 1))
+	if ((position.x < 0 && position.x + size.x < 0) || (position.y < 0 && position.y + size.y < 0)
+		|| (position.x > _window_size.x && position.x + size.x > _window_size.x) || (position.y > _window_size.y
+			&& position.y + size.y > _window_size.y))
 		return;
 	if (collidertype == ColliderType::Static) {
 		for (int i = 0; i < YCoords->size(); i++) {
-			if (XCoords->at(i) + position.x >= 1 && YCoords->at(i) + position.y >= 1 && XCoords->at(i) + position.x <= _window_size.x - 1 && YCoords->at(i) + position.y <= _window_size.y - 1)
 				if (_debug)
 					_Amap.Render(XCoords->at(i) + position.x, YCoords->at(i) + position.y, Color(255, 255, 255));
 				else
 					_Amap.Render(XCoords->at(i) + position.x, YCoords->at(i) + position.y, Colors->at(i).ToCOLORREF());
-			if (XCoords->at(i) + position.x > 1 && YCoords->at(i) + position.y > 1 && XCoords->at(i) + position.x < _window_size.x - 1 && YCoords->at(i) + position.y < _window_size.y - 1)
-				_Amap.Collider(XCoords->at(i) - 1 + position.x, YCoords->at(i) - 1 + position.y, id);
+			if (Collider)
+				_Amap.Collider(XCoords->at(i) - CO + position.x, YCoords->at(i) - CO + position.y, id);
 		}
 		return;
 	}
 	if (collidertype == ColliderType::Outline) {	// Outlined Collider -> Good for Objects form outside.
 		for (int i = 0; i < YCoords->size(); i++)
-			if (XCoords->at(i) + position.x >= 1 && YCoords->at(i) + position.y >= 1 && XCoords->at(i) + position.x <= _window_size.x - 1 && YCoords->at(i) + position.y <= _window_size.y - 1)
 				_Amap.Render(XCoords->at(i) + position.x, YCoords->at(i) + position.y, Colors->at(i).ToCOLORREF());
 		for (int i = position.x; i < size.x + position.x; i++)
-			if (i > 1 && position.y > 1 && i <= _window_size.x - 1 && position.y <= _window_size.y - 1) {
+			if (Collider) {
 				if (_debug)
 					_Amap.Render(i, position.y, Color(255, 255, 255));
-				_Amap.Collider(i - 1, position.y - 1, id);
+				_Amap.Collider(i - CO, position.y - CO, id);
 			}
 		for (int i = position.y; i < size.y + position.y; i++)
-			if (i > 1 && position.x > 1 && i <= _window_size.x - 1 && position.x <= _window_size.y - 1) {
+			if (Collider) {
 				if (_debug)
 					_Amap.Render(position.x, i, Color(255, 255, 255));
-				_Amap.Collider(position.x - 1, i - 1, id);
+				_Amap.Collider(position.x - CO, i - CO, id);
 			}
 		for (int i = position.x; i < size.x + position.x; i++)
-			if (i > 1 && size.y + position.y > 1 && i <= _window_size.x - 1 && size.y + position.y <= _window_size.y - 1) {
+			if (Collider) {
 				if (_debug)
 					_Amap.Render(i, size.y + position.y, Color(255, 255, 255));
-				_Amap.Collider(i - 1, size.y - 1 + position.y, id);
+				_Amap.Collider(i - CO, size.y - CO + position.y, id);
 			}
 		for (int i = position.y; i < size.y + position.y; i++)
-			if (i > 1 && size.x + position.x > 1 && i <= _window_size.x - 1 && size.x + position.x <= _window_size.y - 1) {
+			if (Collider) {
 				if (_debug)
 					_Amap.Render(size.x + position.x, i, Color(255, 255, 255));
-				_Amap.Collider(size.x - 1 + position.x, i - 1, id);
+				_Amap.Collider(size.x - CO + position.x, i - CO, id);
 			}
 		return;
 	}
 	if (collidertype == ColliderType::Filled) {
 		for (int i = 0; i < YCoords->size(); i++)
-			if (XCoords->at(i) + position.x >= 1 && YCoords->at(i) + position.y >= 1 && XCoords->at(i) + position.x <= _window_size.x - 1 && YCoords->at(i) + position.y <= _window_size.y - 1)
 				_Amap.Render(XCoords->at(i) + position.x, YCoords->at(i) + position.y, Colors->at(i).ToCOLORREF());
 		for (int a = position.y; a < position.y + size.y; a++)
 			for (int b = position.x; b < position.x + size.x; b++)
-				if (a > 1 && b > 1 && a < _window_size.x - 1 && b < _window_size.y - 1) {
+				if (Collider) {
 					if (_debug)
 						_Amap.Render(b, a, Color(255, 255, 255));
-					_Amap.Collider(b - 1, a - 1, id);
+					_Amap.Collider(b - CO, a - CO, id);
 				}
 		return;
 	}

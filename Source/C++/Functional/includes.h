@@ -40,7 +40,8 @@ using namespace std::chrono;
 #include "../Classes/Classes.h"
 #include "functional.h"
 
-
+constexpr int RO = 0;
+constexpr int CO = 0;
 
 
 extern sur::Vec2 _window_size;
