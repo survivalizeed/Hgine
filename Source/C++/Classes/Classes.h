@@ -38,7 +38,7 @@ namespace sur {
 		Master(const std::string& name, int id, sur::Vec2 position, sur::Vec2 size)
 			: name(name), id(id), position(position), size(size) {}		//Rectangle
 
-		virtual void MoveInject(int index, int curmove) {};
+		virtual void MoveInject(int index, int CurMove);
 
 	public:
 		int id;
@@ -92,7 +92,7 @@ namespace sur {
 	class Rectangle : public Master {
 	private:	
 		Color color;
-		void MoveInject(int index, int curmove) override;
+		//void MoveInject(int index, int curmove) override;
 	public:
 		Rectangle() {}
 
@@ -115,7 +115,7 @@ namespace sur {
 	private:
 		int x = 0;
 		int y = 0;
-		const char* Path;
+		std::string path;
 
 		std::vector<int>* YCoords = new std::vector<int>;
 		std::vector<int>* XCoords = new std::vector<int>;
@@ -124,16 +124,16 @@ namespace sur {
 
 		void Load();
 
-		void MoveInject(int index, int curmove) override;
+		//void MoveInject(int index, int curmove) override;
 
 	public:
 		LoadObj() {}
 
-		LoadObj(const char* Path, sur::Vec2 position, const std::string& name, int id);
+		LoadObj(const std::string& path, sur::Vec2 position, const std::string& name, int id);
 
-		inline void operator()(const char* Path, sur::Vec2 position, const std::string& name, int id)
+		inline void operator()(const std::string& path, sur::Vec2 position, const std::string& name, int id)
 		{
-			this->Path = Path; this->position = position; this->name = name; this->id = id; Load();
+			this->path = path; this->position = position; this->name = name; this->id = id; Load();
 		}
 
 		void Bind(bool Collider, ColliderType collidertype);

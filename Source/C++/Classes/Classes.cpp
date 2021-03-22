@@ -109,6 +109,25 @@ void sur::Master::Move(sur::Vec2 direction, bool detect)
 			position.x += direction.x;
 	}
 }
+
+void sur::Master::MoveInject(int index, int CurMove)
+{
+	switch (index)
+	{
+	case 1:
+		position.y -= CurMove;
+		break;
+	case 2:
+		position.x += CurMove;
+		break;
+	case 3:
+		position.y += CurMove;
+		break;
+	case 4:
+		position.x -= CurMove;
+		break;
+	}
+}
 //
 //	Render
 //
@@ -185,24 +204,24 @@ sur::Rectangle::Rectangle(sur::Vec2 position, sur::Vec2 size, Color color, const
 	ptrs.push_back(this);
 }
 
-void sur::Rectangle::MoveInject(int index, int CurMove)
-{
-	switch (index)
-	{
-	case 1:
-		position.y -= CurMove;
-		break;
-	case 2:
-		position.x += CurMove;
-		break;
-	case 3:
-		position.y += CurMove;
-		break;
-	case 4:
-		position.x -= CurMove;
-		break;
-	}
-}
+//void sur::Rectangle::MoveInject(int index, int CurMove)
+//{
+//	switch (index)
+//	{
+//	case 1:
+//		position.y -= CurMove;
+//		break;
+//	case 2:
+//		position.x += CurMove;
+//		break;
+//	case 3:
+//		position.y += CurMove;
+//		break;
+//	case 4:
+//		position.x -= CurMove;
+//		break;
+//	}
+//}
 
 void sur::Rectangle::Bind(bool Collider)
 {

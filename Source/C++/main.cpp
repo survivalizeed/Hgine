@@ -1,4 +1,5 @@
 #include "Functional/includes.h"
+#include "Functional/functional.h"
 #include "Lua/SurLua.h"
 
 lua_State* Start();
@@ -15,18 +16,18 @@ int main() {
 	sur::Render renderer(Color(100, 107, 47), 1);
 	renderer.DebugConsole(_debug);
 	renderer.FPS();
-	
-	sur::Instancer::Add(new sur::LoadObj("C:\\Users\\gero\\Desktop\\Hardcore Engine\\Hgineres\\Space.Hgineres",
+
+	sur::Instancer::Add(new sur::LoadObj(lua::GetTableContent(L,"configuration","ressouce_path") + "Space.Hgineres",
 		{ 0,0 }, "Space", 100), Types::Obj);
 
-	sur::Instancer::Add(new sur::LoadObj("C:\\Users\\gero\\Desktop\\Hardcore Engine\\Hgineres\\Player.Hgineres",
+	sur::Instancer::Add(new sur::LoadObj(lua::GetTableContent(L, "configuration", "ressouce_path") + "Player.Hgineres",
 		{ 10,400}, "Player", 1), Types::Obj);
 	
-	sur::Instancer::Add(new sur::LoadObj("C:\\Users\\gero\\Desktop\\Hardcore Engine\\Hgineres\\Enemy.Hgineres",
+	sur::Instancer::Add(new sur::LoadObj(lua::GetTableContent(L, "configuration", "ressouce_path") + "Enemy.Hgineres",
 		{0,10}, "Enemy", 2), Types::Obj);
 
-	sur::Instancer::Add(new sur::LoadObj("C:\\Users\\gero\\Desktop\\Hardcore Engine\\Hgineres\\Shot.Hgineres",
-		{ 0,0 }, "shot", 3),Types::Obj);
+	sur::Instancer::Add(new sur::LoadObj(lua::GetTableContent(L, "configuration", "ressouce_path") + "Shot.Hgineres",
+		{ 0,0 }, "shot", 3), Types::Obj);
 
 	sur::Instancer::Add(new sur::Line({ 0,0 }, { 0,_window_size.y - 1 },
 		Color(0, 0, 0), "LineLeft", 4), Types::Line);
@@ -37,7 +38,7 @@ int main() {
 	for (;;) {
 		renderer.ClearScreenBuffer();				
 		{
-			sur::Instancer::GetObj("Space")->Bind(false, ColliderType::Outline);
+			sur::Instancer::GetObj("Space")->Bind(false, ColliderType::None);
 			sur::Instancer::GetObj("Enemy")->Bind(true, ColliderType::Filled);
 			sur::Instancer::GetObj("Player")->Bind(true, ColliderType::Filled);
 			sur::Instancer::GetObj("shot")->Bind(true, ColliderType::Filled);
@@ -45,14 +46,14 @@ int main() {
 			sur::Instancer::GetLine("LineRight")->Bind(true);
 		}
 		{
+			sur::MoveTowards((sur::Master*)(sur::Instancer::GetObj("Enemy")),
+				(sur::Master*)sur::Instancer::GetObj("Player"), { 1,1 }, true);
+		}
+		{
 			if (_input.keyboard.Key(Keys::A))
 				sur::Instancer::GetObj("Player")->Move({ -3,0 }, true);
 			if (_input.keyboard.Key(Keys::D))
 				sur::Instancer::GetObj("Player")->Move({ 3,0 }, true);
-			if (_input.keyboard.Key(Keys::W))
-				sur::Instancer::GetObj("Player")->Move({ 0,3 }, true);
-			if (_input.keyboard.Key(Keys::S))
-				sur::Instancer::GetObj("Player")->Move({ 0,-3 }, true);
 		}
 		renderer.RenderScreenBuffer();
 	}

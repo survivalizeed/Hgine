@@ -38,7 +38,7 @@ using namespace std::chrono;
 #include "../Classes/Datatypes.h"
 #include "../Classes/Array.h"
 #include "../Classes/Classes.h"
-#include "functional.h"
+//#include "functional.h" <- included in main so I don't get linker errors
 
 constexpr int RO = 0;
 constexpr int CO = 0;

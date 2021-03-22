@@ -58,7 +58,12 @@ namespace sur {
 		inline friend Vec2 operator --(const Vec2& first) {
 			return { first.x - 1, first.y - 1 };
 		}
-
+		inline friend bool operator >(Vec2 first, Vec2 second) {
+			return (first.magnitude() > second.magnitude()) ? true : false;
+		}
+		inline friend bool operator <(Vec2 first, Vec2 second) {
+			return (first.magnitude() < second.magnitude()) ? true : false;
+		}
 		friend std::ostream& operator<<(std::ostream& os, const Vec2& vector2d) {
 			os << "X: " << vector2d.x << " Y: " << vector2d.y;
 			return os;
@@ -85,7 +90,7 @@ enum Keys : unsigned int{	//	<- No enum class because otherwise GetAsyncKeyState
 
 // Colliders
 enum class ColliderType {
-	Static, Filled, Outline
+	Static, Filled, Outline, None
 };
 
 // Template stuff
@@ -96,4 +101,4 @@ template <typename T>
 inline constexpr bool is_Vec2 = std::_Is_any_of_v<std::remove_cv_t<T>, sur::Vec2>;
 
 template <typename T>
-concept VEC = is_Vec2<T>;	// Done with a concept because the variadic functionality is only availabe in templates 
+concept VEC = is_Vec2<T>;	// Made with a concept because the variadic functionality is only availabe in templates 

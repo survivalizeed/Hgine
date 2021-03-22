@@ -35,3 +35,23 @@ int sur::RandomRange(int min, int max)
 {
 	return  rand() % (max - min + 1) + min;
 }
+
+void sur::MoveTowards(sur::Master* current, sur::Master* target, const sur::Vec2& axis, bool detect)	// 1 = true(move), 0 = false(don't move)
+{
+	if (current->GetPosition().x < target->GetPosition().x) {	// positive x
+		if (current->GetPosition().x != target->GetPosition().x)
+			current->Move({ axis.x,0 },detect);
+	}
+	if (current->GetPosition().x > target->GetPosition().x) { // negative x
+		if (current->GetPosition().x != target->GetPosition().x)
+			current->Move({ -axis.x,0 }, detect);
+	}
+	if (current->GetPosition().y < target->GetPosition().y) {	// positive y
+		if (current->GetPosition().y != target->GetPosition().y)
+			current->Move({ 0,-axis.y }, detect);
+	}
+	if (current->GetPosition().y > target->GetPosition().y) { // negative y
+		if (current->GetPosition().y != target->GetPosition().y)
+			current->Move({ 0,axis.y }, detect);
+	}
+}

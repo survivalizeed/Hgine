@@ -13,7 +13,7 @@ void sur::LoadObj::Load()
 	std::string Data = "";
 	std::string Nums = "0123456789";
 	std::string ColorRef = "";
-	std::ifstream file(Path);
+	std::ifstream file(path);
 	if (file) {
 		std::ostringstream ss;
 		ss << file.rdbuf();
@@ -57,41 +57,41 @@ void sur::LoadObj::Load()
 	}
 	else if (_debug) {
 		std::string errstr = "Object path not found!\nPath given: ";
-		errstr += Path;
+		errstr += path;
 		errstr += "\nObject name: ";
 		errstr += typeid(this).name();
 		l(errstr);
 	}
 }
 
-sur::LoadObj::LoadObj(const char* Path, sur::Vec2 position, const std::string& name, int id)
-	: Path(Path), Master(name, id, position)
+sur::LoadObj::LoadObj(const std::string& path, sur::Vec2 position, const std::string& name, int id)
+	: path(path), Master(name, id, position)
 {
 	identitys.push_back(id);
 	ptrs.push_back(this);
 	Load();
 }
 
-void sur::LoadObj::MoveInject(int index, int CurMove)	//Def in Master <- No override needed???
-{
-
-	switch (index)
-	{
-	case 1:
-		position.y -= CurMove;
-		break;
-	case 2:
-		position.x += CurMove;
-		break;
-	case 3:
-		position.y += CurMove;
-		break;
-	case 4:
-		position.x -= CurMove;
-		break;
-	}
-
-}
+//void sur::LoadObj::MoveInject(int index, int CurMove)	//Def in Master <- No override needed???
+//{
+//
+//	switch (index)
+//	{
+//	case 1:
+//		position.y -= CurMove;
+//		break;
+//	case 2:
+//		position.x += CurMove;
+//		break;
+//	case 3:
+//		position.y += CurMove;
+//		break;
+//	case 4:
+//		position.x -= CurMove;
+//		break;
+//	}
+//
+//}
 
 void sur::LoadObj::Bind(bool Collider, ColliderType collidertype)
 {
@@ -100,6 +100,11 @@ void sur::LoadObj::Bind(bool Collider, ColliderType collidertype)
 		|| (position.x > _window_size.x && position.x + size.x > _window_size.x) || (position.y > _window_size.y
 			&& position.y + size.y > _window_size.y))
 		return;
+	if (collidertype == ColliderType::None) {
+		for (int i = 0; i < YCoords->size(); i++) {
+				_Amap.Render(XCoords->at(i) + position.x, YCoords->at(i) + position.y, Colors->at(i).ToCOLORREF());
+		}
+	}
 	if (collidertype == ColliderType::Static) {
 		for (int i = 0; i < YCoords->size(); i++) {
 				if (_debug)
@@ -114,42 +119,40 @@ void sur::LoadObj::Bind(bool Collider, ColliderType collidertype)
 	if (collidertype == ColliderType::Outline) {	// Outlined Collider -> Good for Objects form outside.
 		for (int i = 0; i < YCoords->size(); i++)
 				_Amap.Render(XCoords->at(i) + position.x, YCoords->at(i) + position.y, Colors->at(i).ToCOLORREF());
-		for (int i = position.x; i < size.x + position.x; i++)
-			if (Collider) {
+		if (Collider) {
+			for (int i = position.x; i < size.x + position.x; i++) {
 				if (_debug)
 					_Amap.Render(i, position.y, Color(255, 255, 255));
 				_Amap.Collider(i - CO, position.y - CO, id);
 			}
-		for (int i = position.y; i < size.y + position.y; i++)
-			if (Collider) {
+			for (int i = position.y; i < size.y + position.y; i++) {
 				if (_debug)
 					_Amap.Render(position.x, i, Color(255, 255, 255));
 				_Amap.Collider(position.x - CO, i - CO, id);
 			}
-		for (int i = position.x; i < size.x + position.x; i++)
-			if (Collider) {
+			for (int i = position.x; i < size.x + position.x; i++) {
 				if (_debug)
 					_Amap.Render(i, size.y + position.y, Color(255, 255, 255));
 				_Amap.Collider(i - CO, size.y - CO + position.y, id);
 			}
-		for (int i = position.y; i < size.y + position.y; i++)
-			if (Collider) {
+			for (int i = position.y; i < size.y + position.y; i++) {
 				if (_debug)
 					_Amap.Render(size.x + position.x, i, Color(255, 255, 255));
 				_Amap.Collider(size.x - CO + position.x, i - CO, id);
 			}
+		}
 		return;
 	}
 	if (collidertype == ColliderType::Filled) {
 		for (int i = 0; i < YCoords->size(); i++)
 				_Amap.Render(XCoords->at(i) + position.x, YCoords->at(i) + position.y, Colors->at(i).ToCOLORREF());
-		for (int a = position.y; a < position.y + size.y; a++)
-			for (int b = position.x; b < position.x + size.x; b++)
-				if (Collider) {
+		if(Collider)
+			for (int a = position.y; a < position.y + size.y; a++)
+				for (int b = position.x; b < position.x + size.x; b++)
 					if (_debug)
 						_Amap.Render(b, a, Color(255, 255, 255));
-					_Amap.Collider(b - CO, a - CO, id);
-				}
+					else
+						_Amap.Collider(b - CO, a - CO, id);
 		return;
 	}
 }
