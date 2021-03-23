@@ -64,17 +64,18 @@ void sur::Object::Load()
 	}
 }
 
-sur::Object::Object(const std::string& path, sur::Vec2 position, const std::string& name, int id)
-	: path(path), Master(name, id, position)
+sur::Object::Object(const std::string& path, sur::Vec2 position, const std::string& name, int id, cb_ptr<Master*> callback)
+	: path(path), Master(name, id, position,callback)
 {
 	identitys.push_back(id);
 	ptrs.push_back(this);
 	Load();
 }
 
-sur::Object::Object(const Object* const obj, sur::Vec2 position, const std::string& name, int id)
-	: XCoords(obj->XCoords), YCoords(obj->YCoords), Colors(obj->Colors), Master(name,id,position)
+sur::Object::Object(const Object* const obj, sur::Vec2 position, const std::string& name, int id, cb_ptr<Master*> callback)
+	: XCoords(obj->XCoords), YCoords(obj->YCoords), Colors(obj->Colors), Master(name,id,position, callback)
 {
+	size = obj->size;
 	identitys.push_back(id);
 	ptrs.push_back(this);
 }
@@ -82,8 +83,8 @@ sur::Object::Object(const Object* const obj, sur::Vec2 position, const std::stri
 void sur::Object::Bind(bool Collider, ColliderType collidertype)
 {
 
-	if ((position.x < 0 && position.x + size.x < 0) || (position.y < 0 && position.y + size.y < 0)
-		|| (position.x > _window_size.x && position.x + size.x > _window_size.x) || (position.y > _window_size.y
+	if ((position.x < 0 && position.x + size.x < 0) && (position.y < 0 && position.y + size.y < 0)
+		|| (position.x > _window_size.x && position.x + size.x > _window_size.x) && (position.y > _window_size.y
 			&& position.y + size.y > _window_size.y))
 		return;
 	if (collidertype == ColliderType::None) {

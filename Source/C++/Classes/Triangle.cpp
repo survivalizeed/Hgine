@@ -197,8 +197,8 @@ void sur::Triangle::Fill(LineVector& linevector)
 	}
 }
 
-sur::Triangle::Triangle(sur::Vec2 p1, sur::Vec2 p2, sur::Vec2 p3, Color color, const std::string& name, int id)
-	: p1(p1), p2(p2), p3(p3), color(color), Master(name, id) 
+sur::Triangle::Triangle(sur::Vec2 p1, sur::Vec2 p2, sur::Vec2 p3, Color color, const std::string& name, int id, cb_ptr<Master*> callback)
+	: p1(p1), p2(p2), p3(p3), color(color), Master(name, id, callback) 
 {
 	identitys.push_back(id);
 	ptrs.push_back(this);

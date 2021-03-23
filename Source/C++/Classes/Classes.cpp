@@ -197,8 +197,8 @@ void sur::Camera::Move(sur::Vec2 direction)
 //
 //	Rectangle
 //
-sur::Rectangle::Rectangle(sur::Vec2 position, sur::Vec2 size, Color color, const std::string& name, int id)
-	:color(color), Master(name,id, position, size)
+sur::Rectangle::Rectangle(sur::Vec2 position, sur::Vec2 size, Color color, const std::string& name, int id, cb_ptr<Master*> callback)
+	:color(color), Master(name,id, position, size, callback)
 {
 	identitys.push_back(id);
 	ptrs.push_back(this);
@@ -217,8 +217,8 @@ void sur::Rectangle::Bind(bool Collider)
 //
 //	Line
 //
-sur::Line::Line(sur::Vec2 start, sur::Vec2 end, Color color, const std::string& name, int id)
-	: start(start), end(end), color(color), Master(name, id)
+sur::Line::Line(sur::Vec2 start, sur::Vec2 end, Color color, const std::string& name, int id, cb_ptr<Master*> callback)
+	: start(start), end(end), color(color), Master(name, id, callback)
 {
 	identitys.push_back(id);
 	ptrs.push_back(this);

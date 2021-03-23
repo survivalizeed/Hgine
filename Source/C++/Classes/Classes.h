@@ -30,14 +30,14 @@ namespace sur {
 		sur::Vec2 position;
 		sur::Vec2 size;
 
-		Master(const std::string& name, int id)	
-			: name(name), id(id) {}		//Line, Triangle
+		Master(const std::string& name, int id, cb_ptr<Master*> callback = nullptr)
+			: name(name), id(id),callback(callback) {}		//Line, Triangle
 
-		Master(const std::string& name, int id, sur::Vec2 position)
-			: name(name), id(id), position(position) {}		//OBJ
+		Master(const std::string& name, int id, sur::Vec2 position, cb_ptr<Master*> callback = nullptr)
+			: name(name), id(id), position(position), callback(callback) {}		//OBJ
 
-		Master(const std::string& name, int id, sur::Vec2 position, sur::Vec2 size)
-			: name(name), id(id), position(position), size(size) {}		//Rectangle
+		Master(const std::string& name, int id, sur::Vec2 position, sur::Vec2 size, cb_ptr<Master*> callback = nullptr)
+			: name(name), id(id), position(position), size(size), callback(callback) {}		//Rectangle
 
 		virtual void MoveInject(int index, int CurMove);
 
@@ -102,7 +102,7 @@ namespace sur {
 	public:
 		Rectangle() {}
 
-		Rectangle(sur::Vec2 position, sur::Vec2 size, Color color, const std::string& name,int id);
+		Rectangle(sur::Vec2 position, sur::Vec2 size, Color color, const std::string& name,int id, cb_ptr<Master*> callback = nullptr);
 
 		void Bind(bool Collider);
 
@@ -127,24 +127,15 @@ namespace sur {
 
 		//void MoveInject(int index, int curmove) override;
 
-		static struct InfoPackage {
-			std::vector<int>* XCoords = nullptr;
-			std::vector<int>* YCoords = nullptr;
-			std::vector<Gdiplus::Color>* Colors = nullptr;
-			sur::Vec2 size = { 0,0 };
-		};
-
 	public:
 		Object() {}
 
-		Object(const std::string& path, sur::Vec2 position, const std::string& name, int id);
+		Object(const std::string& path, sur::Vec2 position, const std::string& name, int id, cb_ptr<Master*> callback = nullptr);
 
 		// Don't delete those objects, just unactivate them
-		Object(const Object* const obj, sur::Vec2 position, const std::string& name, int id);
+		Object(const Object* const obj, sur::Vec2 position, const std::string& name, int id, cb_ptr<Master*> callback = nullptr);
 
 		void Bind(bool Collider, ColliderType collidertype);
-
-		inline InfoPackage GetPtrs() const { return { XCoords,YCoords,Colors,size}; }
 
 		~Object() {
 			delete YCoords, XCoords, Colors;
@@ -163,7 +154,7 @@ namespace sur {
 
 		Line() {}
 
-		Line(sur::Vec2 start, sur::Vec2 end, Color color, const std::string& name, int id);
+		Line(sur::Vec2 start, sur::Vec2 end, Color color, const std::string& name, int id, cb_ptr<Master*> callback = nullptr);
 		
 
 		inline void End(sur::Vec2 end) { this->end = end; }
@@ -205,7 +196,7 @@ namespace sur {
 	public:
 		Triangle() {}
 
-		Triangle(sur::Vec2 p1, sur::Vec2 p2, sur::Vec2 p3, Color color, const std::string& name, int id);
+		Triangle(sur::Vec2 p1, sur::Vec2 p2, sur::Vec2 p3, Color color, const std::string& name, int id, cb_ptr<Master*> callback = nullptr);
 
 		inline void SetPosition(int which, sur::Vec2 pos){
 			switch (which) {
@@ -236,7 +227,7 @@ namespace sur {
 		}
 
 	public:
-		Shape(Color color, int id) 
+		Shape(Color color, int id, cb_ptr<Master*> callback = nullptr)
 			: color(color)
 		{
 			this->id = id;
