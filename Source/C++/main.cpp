@@ -17,50 +17,18 @@ int main() {
 	renderer.DebugConsole(_debug);
 	renderer.FPS();
 
-	sur::Instancer::Add(new sur::LoadObj(lua::GetTableContent(L,"configuration","ressouce_path") + "Space.Hgineres",
-		{ 0,0 }, "Space", 100), Types::Obj);
+	sur::Instancer::Add(new sur::Object(lua::GetTableContent(L, "configuration", "ressource_path") + "Space.Hgineres",
+		{ 0,0 },"Shot",1),Types::Obj);
 
-	sur::Instancer::Add(new sur::LoadObj(lua::GetTableContent(L, "configuration", "ressouce_path") + "Player.Hgineres",
-		{ 10,400}, "Player", 1), Types::Obj);
-	
-	sur::Instancer::Add(new sur::LoadObj(lua::GetTableContent(L, "configuration", "ressouce_path") + "Enemy.Hgineres",
-		{0,10}, "Enemy", 2), Types::Obj);
+	sur::Instancer::Add(new sur::Object(sur::Instancer::GetObj("Shot"), { 30,30 },"Shot2",1), Types::Obj);
+	sur::Instancer::Add(new sur::Object(sur::Instancer::GetObj("Shot"), { 40,30 }, "Shot3", 1), Types::Obj);
 
-	sur::Instancer::Add(new sur::LoadObj(lua::GetTableContent(L, "configuration", "ressouce_path") + "Shot.Hgineres",
-		{ 0,0 }, "shot", 3), Types::Obj);
-
-	sur::Instancer::Add(new sur::Line({ 0,0 }, { 0,_window_size.y - 1 },
-		Color(0, 0, 0), "LineLeft", 4), Types::Line);
-	
-	sur::Instancer::Add(new sur::Line({ _window_size.x - 1,0 }, { _window_size.x - 1,_window_size.y - 1 },
-		Color(0, 0, 0), "LineRight", 4), Types::Line);
-	
 	for (;;) {
-		renderer.ClearScreenBuffer();				
-		{
-			sur::Instancer::GetObj("Space")->Bind(false, ColliderType::None);
-			sur::Instancer::GetObj("Enemy")->Bind(true, ColliderType::Filled);
-			sur::Instancer::GetObj("Player")->Bind(true, ColliderType::Filled);
-			sur::Instancer::GetObj("shot")->Bind(true, ColliderType::Filled);
-			sur::Instancer::GetLine("LineLeft")->Bind(true);
-			sur::Instancer::GetLine("LineRight")->Bind(true);
-		}
-		{
-			sur::MoveTowards((sur::Master*)(sur::Instancer::GetObj("Enemy")),
-				(sur::Master*)sur::Instancer::GetObj("Player"), { 1,0 }, true);
-		}
-		{
-			if (_input.keyboard.Key(Keys::A))
-				sur::Instancer::GetObj("Player")->Move({ -3,0 }, true);
-			if (_input.keyboard.Key(Keys::D))
-				sur::Instancer::GetObj("Player")->Move({ 3,0 }, true);
-			if (_input.keyboard.Key(Keys::F)) {
-				sur::Instancer::State(Types::Obj,false,"Player");
-			}
-			if (_input.keyboard.Key(Keys::G)) {
-				sur::Instancer::State(Types::Obj, true, "Player");
-			}
-		}
+		renderer.ClearScreenBuffer();
+		sur::Instancer::GetObj("Shot")->Bind(false, ColliderType::None);
+		sur::Instancer::GetObj("Shot2")->Bind(false, ColliderType::None);
+		sur::Instancer::GetObj("Shot3")->Bind(false, ColliderType::None);
+
 		renderer.RenderScreenBuffer();
 	}
 }

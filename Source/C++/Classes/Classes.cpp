@@ -325,7 +325,7 @@ void sur::Instancer::Add(void* object, Types type)
 		restricted::lines->push_back(static_cast<Line*>(object));
 		break;
 	case Types::Obj:
-		restricted::objects->push_back(static_cast<LoadObj*>(object));
+		restricted::objects->push_back(static_cast<Object*>(object));
 		break;
 	case Types::Triangle:
 		restricted::triangles->push_back(static_cast<Triangle*>(object));
@@ -355,7 +355,7 @@ sur::Line* sur::Instancer::GetLine(const std::string& name, int index)
 	return restricted::Ldefault;
 }
 
-sur::LoadObj* sur::Instancer::GetObj(const std::string& name, int index)
+sur::Object* sur::Instancer::GetObj(const std::string& name, int index)
 {
 	if (name != "") {
 		for (auto&& it : *restricted::objects)

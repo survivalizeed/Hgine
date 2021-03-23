@@ -103,11 +103,6 @@ namespace sur {
 		Rectangle() {}
 
 		Rectangle(sur::Vec2 position, sur::Vec2 size, Color color, const std::string& name,int id);
-		
-		inline void operator()(sur::Vec2 position, sur::Vec2 size, Color color, const std::string& name, int id)
-		{
-			this->position = position; this->size = size; this->color = color; this->name = name; this->id = id;
-		}
 
 		void Bind(bool Collider);
 
@@ -116,15 +111,15 @@ namespace sur {
 	//
 	//	Load objects that were created with the Hgineres editor
 	//
-	class LoadObj : public Master
+	class Object : public Master
 	{
-	private:
+	protected:
 		int x = 0;
 		int y = 0;
 		std::string path;
 
-		std::vector<int>* YCoords = new std::vector<int>;
 		std::vector<int>* XCoords = new std::vector<int>;
+		std::vector<int>* YCoords = new std::vector<int>;
 		std::vector<Gdiplus::Color>* Colors = new std::vector<Gdiplus::Color>;
 		std::vector<int>* MaxX = new std::vector<int>;
 
@@ -132,19 +127,26 @@ namespace sur {
 
 		//void MoveInject(int index, int curmove) override;
 
+		static struct InfoPackage {
+			std::vector<int>* XCoords = nullptr;
+			std::vector<int>* YCoords = nullptr;
+			std::vector<Gdiplus::Color>* Colors = nullptr;
+			sur::Vec2 size = { 0,0 };
+		};
+
 	public:
-		LoadObj() {}
+		Object() {}
 
-		LoadObj(const std::string& path, sur::Vec2 position, const std::string& name, int id);
+		Object(const std::string& path, sur::Vec2 position, const std::string& name, int id);
 
-		inline void operator()(const std::string& path, sur::Vec2 position, const std::string& name, int id)
-		{
-			this->path = path; this->position = position; this->name = name; this->id = id; Load();
-		}
+		// Don't delete those objects, just unactivate them
+		Object(const Object* const obj, sur::Vec2 position, const std::string& name, int id);
 
 		void Bind(bool Collider, ColliderType collidertype);
 
-		~LoadObj() {
+		inline InfoPackage GetPtrs() const { return { XCoords,YCoords,Colors,size}; }
+
+		~Object() {
 			delete YCoords, XCoords, Colors;
 		}
 	};
@@ -163,10 +165,6 @@ namespace sur {
 
 		Line(sur::Vec2 start, sur::Vec2 end, Color color, const std::string& name, int id);
 		
-		inline void operator()(sur::Vec2 start, sur::Vec2 end, Color color, const std::string& name, int id)
-		{
-			this->start = start; this->end = end; this->color = color; this->name = name; this->id = id;
-		}
 
 		inline void End(sur::Vec2 end) { this->end = end; }
 
@@ -208,11 +206,6 @@ namespace sur {
 		Triangle() {}
 
 		Triangle(sur::Vec2 p1, sur::Vec2 p2, sur::Vec2 p3, Color color, const std::string& name, int id);
-
-		inline void operator ()(sur::Vec2 p1, sur::Vec2 p2, sur::Vec2 p3, Color color, const std::string& name, int id)
-		{
-			this->p1 = p1; this->p2 = p2; this->p3 = p3; this->color = color; this->name = name; this->id = id;
-		}
 
 		inline void SetPosition(int which, sur::Vec2 pos){
 			switch (which) {
@@ -264,13 +257,13 @@ namespace sur {
 		namespace restricted {
 			static std::vector<Rectangle*>* rectangles = new std::vector<Rectangle*>;
 			static std::vector<Line*>* lines = new std::vector<Line*>;
-			static std::vector<LoadObj*>* objects = new std::vector<LoadObj*>;
+			static std::vector<Object*>* objects = new std::vector<Object*>;
 			static std::vector<Triangle*>* triangles = new std::vector<Triangle*>;
 
 			// To return if nothing was found -> prevent error of nullpointer
 			static Rectangle* Rdefault = new Rectangle({ 0,0 }, { 0,0 }, Color(0, 0, 0), "invalid", -1);
 			static Line* Ldefault = new Line({ 0,0 }, { 0,0 }, Color(0, 0, 0), "invalid", -1);
-			static LoadObj* Odefault = new LoadObj("invalid", { 0,0 }, "invalid", -1);
+			static Object* Odefault = new Object("invalid", { 0,0 }, "invalid", -1);
 			static Triangle* Tdefault = new Triangle({ 0,0 }, { 0,0 }, { 0,0 }, Color(0, 0, 0), "invalid", -1);
 		}
 
@@ -284,7 +277,7 @@ namespace sur {
 
 		sur::Line* GetLine(const std::string& name = "", int index = -1);
 
-		sur::LoadObj* GetObj(const std::string& name = "", int index = -1);
+		sur::Object* GetObj(const std::string& name = "", int index = -1);
 
 		sur::Triangle* GetTri(const std::string& name = "", int index = -1);
 

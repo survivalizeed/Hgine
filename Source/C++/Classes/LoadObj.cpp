@@ -7,7 +7,7 @@ extern std::vector<int> identitys;
 extern std::vector<void*> ptrs;
 
 
-void sur::LoadObj::Load()
+void sur::Object::Load()
 {
 
 	std::string Data = "";
@@ -64,7 +64,7 @@ void sur::LoadObj::Load()
 	}
 }
 
-sur::LoadObj::LoadObj(const std::string& path, sur::Vec2 position, const std::string& name, int id)
+sur::Object::Object(const std::string& path, sur::Vec2 position, const std::string& name, int id)
 	: path(path), Master(name, id, position)
 {
 	identitys.push_back(id);
@@ -72,28 +72,14 @@ sur::LoadObj::LoadObj(const std::string& path, sur::Vec2 position, const std::st
 	Load();
 }
 
-//void sur::LoadObj::MoveInject(int index, int CurMove)	//Def in Master <- No override needed???
-//{
-//
-//	switch (index)
-//	{
-//	case 1:
-//		position.y -= CurMove;
-//		break;
-//	case 2:
-//		position.x += CurMove;
-//		break;
-//	case 3:
-//		position.y += CurMove;
-//		break;
-//	case 4:
-//		position.x -= CurMove;
-//		break;
-//	}
-//
-//}
+sur::Object::Object(const Object* const obj, sur::Vec2 position, const std::string& name, int id)
+	: XCoords(obj->XCoords), YCoords(obj->YCoords), Colors(obj->Colors), Master(name,id,position)
+{
+	identitys.push_back(id);
+	ptrs.push_back(this);
+}
 
-void sur::LoadObj::Bind(bool Collider, ColliderType collidertype)
+void sur::Object::Bind(bool Collider, ColliderType collidertype)
 {
 
 	if ((position.x < 0 && position.x + size.x < 0) || (position.y < 0 && position.y + size.y < 0)
