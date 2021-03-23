@@ -204,24 +204,6 @@ sur::Rectangle::Rectangle(sur::Vec2 position, sur::Vec2 size, Color color, const
 	ptrs.push_back(this);
 }
 
-//void sur::Rectangle::MoveInject(int index, int CurMove)
-//{
-//	switch (index)
-//	{
-//	case 1:
-//		position.y -= CurMove;
-//		break;
-//	case 2:
-//		position.x += CurMove;
-//		break;
-//	case 3:
-//		position.y += CurMove;
-//		break;
-//	case 4:
-//		position.x -= CurMove;
-//		break;
-//	}
-//}
 
 void sur::Rectangle::Bind(bool Collider)
 {
@@ -355,9 +337,10 @@ sur::Rectangle* sur::Instancer::GetRect(const std::string& name, int index)
 {
 	if (name != "") {
 		for (auto&& it : *restricted::rectangles)
-			if (it->GetName() == name) return it;
+			if (it->GetName() == name && it->State()) return it;
 	}
-	else if (index >= 0 && index < restricted::rectangles->size()) return restricted::rectangles->at(index);
+	else if (index >= 0 && index < restricted::rectangles->size() && restricted::rectangles->at(index)->State()) 
+		return restricted::rectangles->at(index);
 	return restricted::Rdefault;
 }
 
@@ -365,9 +348,10 @@ sur::Line* sur::Instancer::GetLine(const std::string& name, int index)
 {
 	if (name != "") {
 		for (auto&& it : *restricted::lines)
-			if (it->GetName() == name) return it;
+			if (it->GetName() == name && it->State()) return it;
 	}
-	else if (index >= 0 && index < restricted::lines->size()) return restricted::lines->at(index);
+	else if (index >= 0 && index < restricted::lines->size() && restricted::lines->at(index)->State()) 
+		return restricted::lines->at(index);
 	return restricted::Ldefault;
 }
 
@@ -375,9 +359,10 @@ sur::LoadObj* sur::Instancer::GetObj(const std::string& name, int index)
 {
 	if (name != "") {
 		for (auto&& it : *restricted::objects)
-			if (it->GetName() == name) return it;
+			if (it->GetName() == name && it->State()) return it;
 	}
-	else if (index >= 0 && index < restricted::objects->size()) return restricted::objects->at(index);
+	else if (index >= 0 && index < restricted::objects->size() && restricted::objects->at(index)->State())
+		return restricted::objects->at(index);
 	return restricted::Odefault;
 }
 
@@ -385,9 +370,10 @@ sur::Triangle* sur::Instancer::GetTri(const std::string& name, int index)
 {
 	if (name != "") {
 		for (auto&& it : *restricted::triangles)
-			if (it->GetName() == name) return it;
+			if (it->GetName() == name && it->State()) return it;
 	}
-	else if (index >= 0 && index < restricted::triangles->size()) return restricted::triangles->at(index);
+	else if (index >= 0 && index < restricted::triangles->size() && restricted::triangles->at(index)->State()) 
+		return restricted::triangles->at(index);
 	return restricted::Tdefault;
 }
 
@@ -404,29 +390,77 @@ int sur::Instancer::GetCount(Types type) {
 	}
 }
 
+void sur::Instancer::State(Types type,bool active, const std::string& name, int index)
+{
+	if (type == Types::Rectangle)
+		if (name != "") {
+			for (int j = 0; j < restricted::rectangles->size(); ++j)
+				if (restricted::rectangles->at(j)->GetName() == name)
+					restricted::rectangles->at(j)->active = active;
+		}
+		else if (index >= 0)
+			restricted::rectangles->at(index)->active = active;
+	if (type == Types::Line)
+		if (name != "") {
+			for (int j = 0; j < restricted::lines->size(); ++j)
+				if (restricted::lines->at(j)->GetName() == name)
+					restricted::lines->at(j)->active = active;
+		}
+		else if (index >= 0)
+			restricted::lines->at(index)->active = active;
+	if (type == Types::Obj)
+		if (name != "") {
+			for (int j = 0; j < restricted::objects->size(); ++j)
+				if (restricted::objects->at(j)->GetName() == name)
+					restricted::objects->at(j)->active = active;
+		}
+		else if (index >= 0)
+			restricted::objects->at(index)->active = active;
+	if (type == Types::Triangle)
+		if (name != "") {
+			for (int j = 0; j < restricted::triangles->size(); ++j)
+				if (restricted::triangles->at(j)->GetName() == name)
+					restricted::triangles->at(j)->active = active;
+		}
+		else if (index >= 0)
+			restricted::triangles->at(index)->active = active;
+}
+
+
 void sur::Instancer::Delete(Types type, const std::string& name, int index)
 {
 	if (type == Types::Rectangle)
-		if (name != "")
+		if (name != "") {
 			for (int j = 0; j < restricted::rectangles->size(); ++j)
 				if (restricted::rectangles->at(j)->GetName() == name)
 					restricted::rectangles->erase(restricted::rectangles->begin() + j);
-				else if (index >= 0)
-					restricted::rectangles->erase(restricted::rectangles->begin() + index);
+		}
+		else if (index >= 0)
+			restricted::rectangles->erase(restricted::rectangles->begin() + index);
 	if (type == Types::Line)
-		if (name != "")
+		if (name != "") {
 			for (int j = 0; j < restricted::lines->size(); ++j)
 				if (restricted::lines->at(j)->GetName() == name)
 					restricted::lines->erase(restricted::lines->begin() + j);
-				else if (index >= 0)
-					restricted::lines->erase(restricted::lines->begin() + index);
+		}
+		else if (index >= 0)
+			restricted::lines->erase(restricted::lines->begin() + index);
 	if (type == Types::Obj)
-		if (name != "")
+		if (name != "") {
 			for (int j = 0; j < restricted::objects->size(); ++j)
 				if (restricted::objects->at(j)->GetName() == name)
 					restricted::objects->erase(restricted::objects->begin() + j);
-				else if (index >= 0)
-					restricted::objects->erase(restricted::objects->begin() + index);
+		}
+		else if (index >= 0)
+			restricted::objects->erase(restricted::objects->begin() + index);
+	if (type == Types::Triangle)
+		if (name != "") {
+			for (int j = 0; j < restricted::triangles->size(); ++j)
+				if (restricted::triangles->at(j)->GetName() == name)
+					restricted::triangles->erase(restricted::triangles->begin() + j);
+		}
+		else if (index >= 0)
+			restricted::triangles->erase(restricted::triangles->begin() + index);
 }
 //
 //	Input

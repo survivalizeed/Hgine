@@ -24,6 +24,7 @@ namespace sur {
 	//
 	class Master {
 	protected:
+		
 		sur::Vec2 moveiter;
 		std::string name;
 		sur::Vec2 position;
@@ -41,7 +42,11 @@ namespace sur {
 		virtual void MoveInject(int index, int CurMove);
 
 	public:
+		//Don't use this variable
+		bool active = true;
+
 		int id;
+
 		cb_ptr<Master*> callback = nullptr;	
 
 		Master() = default;
@@ -54,8 +59,9 @@ namespace sur {
 		
 		virtual inline void SetPosition(sur::Vec2 position) { this->position = position; }
 
-		void Move(sur::Vec2 direction, bool detect);
+		inline bool State() { return active; }
 
+		void Move(sur::Vec2 direction, bool detect);
 	};
 	//
 	//	Render class
@@ -260,6 +266,7 @@ namespace sur {
 			static std::vector<Line*>* lines = new std::vector<Line*>;
 			static std::vector<LoadObj*>* objects = new std::vector<LoadObj*>;
 			static std::vector<Triangle*>* triangles = new std::vector<Triangle*>;
+
 			// To return if nothing was found -> prevent error of nullpointer
 			static Rectangle* Rdefault = new Rectangle({ 0,0 }, { 0,0 }, Color(0, 0, 0), "invalid", -1);
 			static Line* Ldefault = new Line({ 0,0 }, { 0,0 }, Color(0, 0, 0), "invalid", -1);
@@ -282,6 +289,8 @@ namespace sur {
 		sur::Triangle* GetTri(const std::string& name = "", int index = -1);
 
 		int GetCount(Types type);
+
+		void State(Types type, bool active, const std::string& name = "", int index = -1);
 
 		void Delete(Types type, const std::string& name = "", int index = -1);
 	}

@@ -38,6 +38,7 @@ int sur::RandomRange(int min, int max)
 
 void sur::MoveTowards(sur::Master* current, sur::Master* target, const sur::Vec2& axis, bool detect)	// 1 = true(move), 0 = false(don't move)
 {
+	assert(target->GetName() == "invalid");
 	if (current->GetPosition().x < target->GetPosition().x) {	// positive x
 		if (current->GetPosition().x != target->GetPosition().x)
 			current->Move({ axis.x,0 },detect);

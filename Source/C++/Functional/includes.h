@@ -29,6 +29,8 @@
 #define Error(x) MessageBoxA(NULL,x,"Error", MB_ICONERROR);\
 exit(-1)
 #define Color(r,g,b) RGB(r,g,b)
+#define assert(con,rt) if(con)\
+return rt
 
 
 using namespace std::this_thread;

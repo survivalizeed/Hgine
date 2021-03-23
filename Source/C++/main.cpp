@@ -47,13 +47,19 @@ int main() {
 		}
 		{
 			sur::MoveTowards((sur::Master*)(sur::Instancer::GetObj("Enemy")),
-				(sur::Master*)sur::Instancer::GetObj("Player"), { 1,1 }, true);
+				(sur::Master*)sur::Instancer::GetObj("Player"), { 1,0 }, true);
 		}
 		{
 			if (_input.keyboard.Key(Keys::A))
 				sur::Instancer::GetObj("Player")->Move({ -3,0 }, true);
 			if (_input.keyboard.Key(Keys::D))
 				sur::Instancer::GetObj("Player")->Move({ 3,0 }, true);
+			if (_input.keyboard.Key(Keys::F)) {
+				sur::Instancer::State(Types::Obj,false,"Player");
+			}
+			if (_input.keyboard.Key(Keys::G)) {
+				sur::Instancer::State(Types::Obj, true, "Player");
+			}
 		}
 		renderer.RenderScreenBuffer();
 	}
@@ -78,14 +84,3 @@ lua_State* Start() {
 
 	return L;
 }
-
-
-
-
-
-//if (_input.keyboard.Key(Keys::A))
-//	sur::Instancer::GetObj("Player")->Move({ -3,0 }, true);
-//if (_input.keyboard.Key(Keys::D))
-//	sur::Instancer::GetObj("Player")->Move({ 3,0 }, true);
-//if (_input.keyboard.Key(Keys::SPACE))
-//	sur::Instancer::GetObj("shot")->SetPosition(sur::Instancer::GetObj("Player")->GetPosition());

@@ -10,6 +10,7 @@ namespace sur {
 
 	int CharCounter(char Char, const std::string& Data);
 
+	//Play a sound. Currently there are only .wav files supported
 	void Sound(const char* path, unsigned int params);
 
 	int RandomRange(int min, int max);
