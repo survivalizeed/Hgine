@@ -4,5 +4,5 @@ Make sure you are using C++ 20. For the best results compile it in x64 release! 
 I am thinking about calling it Hardcore Engine or Hgine:)
 
 Note:
-Im 15 years old and still learning C++ so understand if this is not the best code you will ever see ;)
+Im 15 years old and still learning C++ so please understand if this is not the best code you will ever see ;)
 Discord: survivalizeed#7659
