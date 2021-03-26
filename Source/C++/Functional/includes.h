@@ -42,8 +42,8 @@ using namespace std::chrono;
 #include "../Classes/Classes.h"
 //#include "functional.h" <- included in main so I don't get linker errors
 
-constexpr int RO = 0;
-constexpr int CO = 0;
+constexpr i32 RO = 0;
+constexpr i32 CO = 0;
 
 
 extern sur::Vec2 _window_size;
@@ -51,3 +51,5 @@ extern HWND _hwnd;
 extern HWND _consolehwnd;
 extern sur::Maps _map;
 extern bool _debug;
+extern std::string _resource_path;
+extern std::string _sound_path;

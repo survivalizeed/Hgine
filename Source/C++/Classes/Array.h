@@ -26,7 +26,7 @@ namespace analyses {
 		}
 
 		//Set
-		inline void operator ()(int x, int y, T what) {
+		inline void operator ()(i32 x, i32 y, T what) {
 			if (typeid(T) == typeid(DWORD)) {
 				y = sizeSep.y - y;
 				y--;
@@ -36,7 +36,7 @@ namespace analyses {
 		}
 
 		//Get
-		inline T operator ()(int x, int y) {
+		inline T operator ()(i32 x, i32 y) {
 			if (typeid(T) == typeid(DWORD)) {
 				y = sizeSep.y - (y);
 			}
@@ -60,11 +60,11 @@ namespace analyses {
 			}
 		}
 
-		void Set(int index, T what) {
+		void Set(i32 index, T what) {
 			arr[index] = what;
 		}
 
-		inline void ST(int x, int y, T what){
+		inline void ST(i32 x, i32 y, T what){
 			if (typeid(T) == typeid(DWORD)) {
 				y = sizeSep.y - (y);
 				x--;
@@ -72,11 +72,11 @@ namespace analyses {
 			arr[x + sizeSep.x * y] = what;
 		}
 
-		T Get(int index) const {
+		T Get(i32 index) const {
 			return arr[index];
 		}
 
-		T Get2d(int x, int y) const{
+		T Get2d(i32 x, i32 y) const{
 			return arr[x + sizeSep.x * y];
 		}
 

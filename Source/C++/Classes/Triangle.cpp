@@ -3,7 +3,7 @@
 #include "Classes.h"
 
 extern sur::Map_Analyses _Amap;
-extern std::vector<int> identitys;
+extern std::vector<i32> identitys;
 extern std::vector<void*> ptrs;
 
 void sur::Triangle::LineVector::clear()
@@ -14,7 +14,7 @@ void sur::Triangle::LineVector::clear()
 	Line3->clear();
 }
 
-std::vector<sur::Vec2>* sur::Triangle::LineVector::get(int i)
+std::vector<sur::Vec2>* sur::Triangle::LineVector::get(i32 i)
 {
 	switch (i)
 	{
@@ -52,22 +52,22 @@ std::vector<sur::Vec2>* sur::Triangle::LineVector::getother()
 void sur::Triangle::Line(sur::Vec2 start, sur::Vec2 end, std::vector<sur::Vec2>* line, bool Collider)
 {
 	if (start.x == end.x) start.x--;
-	int lcounter = 0;
+	i32 lcounter = 0;
 	if (start.y > end.y && start.x > end.x) {
 		std::swap(start.y, end.y);
 		std::swap(start.x, end.x);
 	}
-	int Dx, Dy;
+	i32 Dx, Dy;
 	float RunsThrough;
 	Dx = end.x - start.x;
 	Dy = end.y - start.y;
 	RunsThrough = (float)Dy / (float)Dx;
 	line->push_back(start);
 	if (RunsThrough >= 0) {
-		int tempy = start.y;
+		i32 tempy = start.y;
 		float counter = 0.0f;
-		int countcounter = 1;
-		for (int i = start.x; i <= end.x; i++) {
+		i32 countcounter = 1;
+		for (i32 i = start.x; i <= end.x; i++) {
 			if (Collider)
 				_Amap.Collider(i, tempy, id);
 			_Amap.Render(i, tempy, color.ToCOLORREF());
@@ -84,11 +84,11 @@ void sur::Triangle::Line(sur::Vec2 start, sur::Vec2 end, std::vector<sur::Vec2>*
 	}
 	else {
 		RunsThrough *= -1;
-		int tempy = start.y;
+		i32 tempy = start.y;
 		float counter = 0.0f;
-		int countcounter = 1;
+		i32 countcounter = 1;
 		bool runned = false;
-		for (int i = start.x; i <= end.x; i++) {
+		for (i32 i = start.x; i <= end.x; i++) {
 			if (Collider)
 				_Amap.Collider(i, tempy, id);
 			_Amap.Render(i, tempy, color.ToCOLORREF());
@@ -106,8 +106,8 @@ void sur::Triangle::Line(sur::Vec2 start, sur::Vec2 end, std::vector<sur::Vec2>*
 		if (!runned) {
 			RunsThrough = (float)Dx / (float)Dy;
 			RunsThrough *= -1;
-			int tempx = start.x;
-			for (int i = start.y; i <= end.y; i++) {
+			i32 tempx = start.x;
+			for (i32 i = start.y; i <= end.y; i++) {
 				line->push_back({ tempx,i });
 				if (Collider)
 					_Amap.Collider(tempx, i, id);
@@ -125,7 +125,7 @@ void sur::Triangle::Line(sur::Vec2 start, sur::Vec2 end, std::vector<sur::Vec2>*
 	}
 }
 
-auto max_val = [](int a, int b, int c) {
+auto max_val = [](i32 a, i32 b, i32 c) {
 	if (a >= b && a >= c)
 		return 1;
 	if (b >= a && b >= c)
@@ -135,14 +135,14 @@ auto max_val = [](int a, int b, int c) {
 	return 0;
 };
 
-auto min_val = [](int a, int b) { return a <= b ? 1 : 2; };
+auto min_val = [](i32 a, i32 b) { return a <= b ? 1 : 2; };
 
-auto near_comp = [](int target, int a, int b) { return (abs(target - a) < abs(target - b)) ? 1 : 2; };
+auto near_comp = [](i32 target, i32 a, i32 b) { return (abs(target - a) < abs(target - b)) ? 1 : 2; };
 
 void sur::Triangle::Fill(LineVector& linevector)
 {
 
-	int maxv = max_val((int)linevector.Line1->size(), (int)linevector.Line2->size(), (int)linevector.Line3->size());
+	i32 maxv = max_val((i32)linevector.Line1->size(), (i32)linevector.Line2->size(), (i32)linevector.Line3->size());
 	std::vector<sur::Vec2>* hypo = nullptr;
 	std::vector<sur::Vec2>* other = nullptr;
 	std::vector<sur::Vec2>* temp = nullptr;
@@ -158,20 +158,20 @@ void sur::Triangle::Fill(LineVector& linevector)
 	if (temp->at(0).y > temp->at(temp->size() - 1).y)
 		std::reverse(temp->begin(), temp->end());
 
-	int dir = 0;
+	i32 dir = 0;
 	if (near_comp(hypo->at(0).y, other->at(0).y, temp->at(0).y) == 1) {
 		other->insert(other->end(), temp->begin(), temp->end());	//Ersetzen mit else unten
 		dir = min_val(hypo->at(hypo->size() / 2).x, other->at(other->size() / 2).x);
-		int counter = 0;
-		for (int i = hypo->at(0).y; i < hypo->at(hypo->size() - 1).y; i++) {
+		i32 counter = 0;
+		for (i32 i = hypo->at(0).y; i < hypo->at(hypo->size() - 1).y; i++) {
 			if (dir == 1) {
 				if (counter < hypo->size() && counter < other->size())
-					for (int j = hypo->at(counter).x; j <= other->at(counter).x; j++)
+					for (i32 j = hypo->at(counter).x; j <= other->at(counter).x; j++)
 						_Amap.Render(j, i, color.ToCOLORREF());
 			}
 			else {
 				if (counter < hypo->size() && counter < other->size())
-					for (int j = other->at(counter).x; j <= hypo->at(counter).x; j++)
+					for (i32 j = other->at(counter).x; j <= hypo->at(counter).x; j++)
 						_Amap.Render(j, i, color.ToCOLORREF());
 			}
 			counter++;
@@ -180,16 +180,16 @@ void sur::Triangle::Fill(LineVector& linevector)
 	else {
 		temp->insert(temp->end(), other->begin(), other->end());
 		dir = min_val(hypo->at(hypo->size() / 2).x, temp->at(temp->size() / 2).x);
-		int counter = 0;
-		for (int i = hypo->at(0).y; i < hypo->at(hypo->size() - 1).y; i++) {
+		i32 counter = 0;
+		for (i32 i = hypo->at(0).y; i < hypo->at(hypo->size() - 1).y; i++) {
 			if (dir == 1) {
 				if (counter < hypo->size() && counter < temp->size())
-					for (int j = hypo->at(counter).x; j <= temp->at(counter).x; j++)
+					for (i32 j = hypo->at(counter).x; j <= temp->at(counter).x; j++)
 						_Amap.Render(j, i, color.ToCOLORREF());
 			}
 			else {
 				if (counter < hypo->size() && counter < temp->size())
-					for (int j = temp->at(counter).x; j <= hypo->at(counter).x; j++)
+					for (i32 j = temp->at(counter).x; j <= hypo->at(counter).x; j++)
 						_Amap.Render(j, i, color.ToCOLORREF());
 			}
 			counter++;
@@ -197,7 +197,7 @@ void sur::Triangle::Fill(LineVector& linevector)
 	}
 }
 
-sur::Triangle::Triangle(sur::Vec2 p1, sur::Vec2 p2, sur::Vec2 p3, Color color, const std::string& name, int id, cb_ptr<Master*> callback)
+sur::Triangle::Triangle(sur::Vec2 p1, sur::Vec2 p2, sur::Vec2 p3, Color color, const std::string& name, i32 id, cb_ptr<Master*> callback)
 	: p1(p1), p2(p2), p3(p3), color(color), Master(name, id, callback) 
 {
 	identitys.push_back(id);

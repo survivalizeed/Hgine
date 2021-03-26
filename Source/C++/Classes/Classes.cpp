@@ -4,7 +4,7 @@
 
 
 
-std::vector<int> identitys;
+std::vector<i32> identitys;
 std::vector<void*> ptrs;
 
 extern sur::Map_Analyses _Amap;
@@ -14,11 +14,11 @@ extern sur::Map_Analyses _Amap;
 void sur::Master::Move(sur::Vec2 direction, bool detect)
 {
 	if (detect) {
-		int CurMove = 0;
+		i32 CurMove = 0;
 		if (direction.y > 0) {	//Up
-			for (int a = 1; a <= direction.y; a++) {
-				for (int i = position.x; i < position.x + size.x; i++) {
-					for (int j = 0; j < identitys.size(); j++) {				
+			for (i32 a = 1; a <= direction.y; a++) {
+				for (i32 i = position.x; i < position.x + size.x; i++) {
+					for (i32 j = 0; j < identitys.size(); j++) {				
 						if (_debug)
 							_Amap.Render(i, position.y - a - 1, Color(0, 255, 0));
 						if (_Amap.Collider(i, position.y - a - 1) == identitys[j] && this->id != identitys[j]) {
@@ -36,9 +36,9 @@ void sur::Master::Move(sur::Vec2 direction, bool detect)
 			MoveInject(1, CurMove);
 		}
 		if (direction.x > 0) {	//Right
-			for (int a = 1; a <= direction.x; a++) {
-				for (int i = position.y; i < position.y + size.y; i++) {
-					for (int j = 0; j < identitys.size(); j++) {
+			for (i32 a = 1; a <= direction.x; a++) {
+				for (i32 i = position.y; i < position.y + size.y; i++) {
+					for (i32 j = 0; j < identitys.size(); j++) {
 						if (_debug)
 							_Amap.Render(position.x + size.x + a - 1, i, Color(0, 255, 0));
 						if (_Amap.Collider(position.x + size.x + a - 1, i) == identitys[j] && this->id != identitys[j]) {
@@ -57,9 +57,9 @@ void sur::Master::Move(sur::Vec2 direction, bool detect)
 		}
 		if (direction.y < 0) {	//Down
 			direction.y *= -1;
-			for (int a = 0; a <= direction.y; a++) {
-				for (int i = position.x; i < position.x + size.x; i++) {
-					for (int j = 0; j < identitys.size(); j++) {			
+			for (i32 a = 0; a <= direction.y; a++) {
+				for (i32 i = position.x; i < position.x + size.x; i++) {
+					for (i32 j = 0; j < identitys.size(); j++) {			
 						if (_debug)
 							_Amap.Render(i, position.y + size.y + a, Color(0, 255, 0));
 						if (_Amap.Collider(i, position.y + size.y + a) == identitys[j] && this->id != identitys[j]) {
@@ -78,9 +78,9 @@ void sur::Master::Move(sur::Vec2 direction, bool detect)
 		}
 		if (direction.x < 0) {	//Left
 			direction.x *= -1;
-			for (int a = 1; a <= direction.x; a++) {
-				for (int i = position.y; i < position.y + size.y; i++) {
-					for (int j = 0; j < identitys.size(); j++) {
+			for (i32 a = 1; a <= direction.x; a++) {
+				for (i32 i = position.y; i < position.y + size.y; i++) {
+					for (i32 j = 0; j < identitys.size(); j++) {
 						if (_debug)
 							_Amap.Render(position.x - a - 1, i, Color(0, 255, 0));
 						if (_Amap.Collider(position.x - a - 1, i) == identitys[j] && this->id != identitys[j]) {
@@ -110,7 +110,7 @@ void sur::Master::Move(sur::Vec2 direction, bool detect)
 	}
 }
 
-void sur::Master::MoveInject(int index, int CurMove)
+void sur::Master::MoveInject(i32 index, i32 CurMove)
 {
 	switch (index)
 	{
@@ -184,20 +184,20 @@ void sur::Render::DebugConsole(bool Show)
 //
 void sur::Camera::Move(sur::Vec2 direction)
 {
-	for (int i = 0; i < sur::Instancer::GetCount(sur::Instancer::Types::Rectangle); i++) {
+	for (i32 i = 0; i < sur::Instancer::GetCount(sur::Instancer::Types::Rectangle); i++) {
 		sur::Instancer::GetRect("", i)->Move(direction.invert(), false);
 	}
-	for (int i = 0; i < sur::Instancer::GetCount(sur::Instancer::Types::Line); i++) {
+	for (i32 i = 0; i < sur::Instancer::GetCount(sur::Instancer::Types::Line); i++) {
 		sur::Instancer::GetLine("", i)->Move(direction.invert(), false);
 	}
-	for (int i = 0; i < sur::Instancer::GetCount(sur::Instancer::Types::Obj); i++) {
+	for (i32 i = 0; i < sur::Instancer::GetCount(sur::Instancer::Types::Obj); i++) {
 		sur::Instancer::GetObj("", i)->Move(direction.invert(), false);
 	}
 }
 //
 //	Rectangle
 //
-sur::Rectangle::Rectangle(sur::Vec2 position, sur::Vec2 size, Color color, const std::string& name, int id, cb_ptr<Master*> callback)
+sur::Rectangle::Rectangle(sur::Vec2 position, sur::Vec2 size, Color color, const std::string& name, i32 id, cb_ptr<Master*> callback)
 	:color(color), Master(name,id, position, size, callback)
 {
 	identitys.push_back(id);
@@ -207,8 +207,8 @@ sur::Rectangle::Rectangle(sur::Vec2 position, sur::Vec2 size, Color color, const
 
 void sur::Rectangle::Bind(bool Collider)
 {
-	for (int i = position.y; i < position.y + size.y; i++)
-		for (int j = position.x; j < position.x + size.x; j++) {
+	for (i32 i = position.y; i < position.y + size.y; i++)
+		for (i32 j = position.x; j < position.x + size.x; j++) {
 			_Amap.Render(j, i, color.ToCOLORREF());
 			if (Collider)
 				_Amap.Collider(j - CO, i - CO, id);
@@ -217,7 +217,7 @@ void sur::Rectangle::Bind(bool Collider)
 //
 //	Line
 //
-sur::Line::Line(sur::Vec2 start, sur::Vec2 end, Color color, const std::string& name, int id, cb_ptr<Master*> callback)
+sur::Line::Line(sur::Vec2 start, sur::Vec2 end, Color color, const std::string& name, i32 id, cb_ptr<Master*> callback)
 	: start(start), end(end), color(color), Master(name, id, callback)
 {
 	identitys.push_back(id);
@@ -226,7 +226,7 @@ sur::Line::Line(sur::Vec2 start, sur::Vec2 end, Color color, const std::string& 
 
 void sur::Line::Bind(bool Collider)
 {
-	int lcounter = 0;
+	i32 lcounter = 0;
 	sur::Vec2 end = this->end;
 	sur::Vec2 start = this-> start;
 	if (start.x == end.x) start.x--;
@@ -234,16 +234,16 @@ void sur::Line::Bind(bool Collider)
 		std::swap(start.y, end.y);
 		std::swap(start.x, end.x);
 	}
-	int Dx, Dy;
+	i32 Dx, Dy;
 	float RunsThrough;
 	Dx = end.x - start.x;
 	Dy = end.y - start.y;
 	RunsThrough = (float)Dy / (float)Dx;
 	if (RunsThrough >= 0) {
-		int tempy = start.y;
+		i32 tempy = start.y;
 		float counter = 0.0f;
-		int countcounter = 1;
-		for (int i = start.x; i <= end.x; i++) {
+		i32 countcounter = 1;
+		for (i32 i = start.x; i <= end.x; i++) {
 			_Amap.Render(i, tempy, color.ToCOLORREF());
 			if(Collider)
 				_Amap.Collider(i - CO, tempy - CO, id);	
@@ -259,11 +259,11 @@ void sur::Line::Bind(bool Collider)
 	}
 	else {
 		RunsThrough *= -1;
-		int tempy = start.y;
+		i32 tempy = start.y;
 		float counter = 0.0f;
-		int countcounter = 1;
+		i32 countcounter = 1;
 		bool runned = false;
-		for (int i = start.x; i <= end.x; i++) {
+		for (i32 i = start.x; i <= end.x; i++) {
 			_Amap.Render(i, tempy, color.ToCOLORREF());
 			if (Collider)
 				_Amap.Collider(i - CO, tempy - CO, id);
@@ -280,8 +280,8 @@ void sur::Line::Bind(bool Collider)
 		if (!runned) {
 			RunsThrough = (float)Dx / (float)Dy;
 			RunsThrough *= -1;
-			int tempx = start.x;
-			for (int i = start.y; i <= end.y; i++) {
+			i32 tempx = start.x;
+			for (i32 i = start.y; i <= end.y; i++) {
 				_Amap.Render(tempx, i, color.ToCOLORREF());
 				if(Collider)
 					_Amap.Collider(tempx - CO, i - CO, id);
@@ -302,7 +302,7 @@ void sur::Line::Bind(bool Collider)
 //
 void sur::Shape::Gen()
 {
-	for (int i = 0; i < vec->size() - 1; ++i) {
+	for (i32 i = 0; i < vec->size() - 1; ++i) {
 		lines->push_back(new Line(vec->at(i), vec->at(i + 1), color, "ShapeLine" + std::to_string(i), id));
 	}
 }
@@ -333,7 +333,7 @@ void sur::Instancer::Add(void* object, Types type)
 	}
 }
 
-sur::Rectangle* sur::Instancer::GetRect(const std::string& name, int index)
+sur::Rectangle* sur::Instancer::GetRect(const std::string& name, i32 index)
 {
 	if (name != "") {
 		for (auto&& it : *restricted::rectangles)
@@ -344,7 +344,7 @@ sur::Rectangle* sur::Instancer::GetRect(const std::string& name, int index)
 	return restricted::Rdefault;
 }
 
-sur::Line* sur::Instancer::GetLine(const std::string& name, int index)
+sur::Line* sur::Instancer::GetLine(const std::string& name, i32 index)
 {
 	if (name != "") {
 		for (auto&& it : *restricted::lines)
@@ -355,7 +355,7 @@ sur::Line* sur::Instancer::GetLine(const std::string& name, int index)
 	return restricted::Ldefault;
 }
 
-sur::Object* sur::Instancer::GetObj(const std::string& name, int index)
+sur::Object* sur::Instancer::GetObj(const std::string& name, i32 index)
 {
 	if (name != "") {
 		for (auto&& it : *restricted::objects)
@@ -366,7 +366,7 @@ sur::Object* sur::Instancer::GetObj(const std::string& name, int index)
 	return restricted::Odefault;
 }
 
-sur::Triangle* sur::Instancer::GetTri(const std::string& name, int index)
+sur::Triangle* sur::Instancer::GetTri(const std::string& name, i32 index)
 {
 	if (name != "") {
 		for (auto&& it : *restricted::triangles)
@@ -377,24 +377,24 @@ sur::Triangle* sur::Instancer::GetTri(const std::string& name, int index)
 	return restricted::Tdefault;
 }
 
-int sur::Instancer::GetCount(Types type) {
+i32 sur::Instancer::GetCount(Types type) {
 	switch (type) {
 	case Types::Rectangle:
-		return (int)restricted::rectangles->size();
+		return (i32)restricted::rectangles->size();
 	case Types::Line:
-		return (int)restricted::lines->size();
+		return (i32)restricted::lines->size();
 	case Types::Obj:
-		return (int)restricted::objects->size();
+		return (i32)restricted::objects->size();
 	default:
 		return -1;
 	}
 }
 
-void sur::Instancer::State(Types type,bool active, const std::string& name, int index)
+void sur::Instancer::State(Types type,bool active, const std::string& name, i32 index)
 {
 	if (type == Types::Rectangle)
 		if (name != "") {
-			for (int j = 0; j < restricted::rectangles->size(); ++j)
+			for (i32 j = 0; j < restricted::rectangles->size(); ++j)
 				if (restricted::rectangles->at(j)->GetName() == name)
 					restricted::rectangles->at(j)->active = active;
 		}
@@ -402,7 +402,7 @@ void sur::Instancer::State(Types type,bool active, const std::string& name, int 
 			restricted::rectangles->at(index)->active = active;
 	if (type == Types::Line)
 		if (name != "") {
-			for (int j = 0; j < restricted::lines->size(); ++j)
+			for (i32 j = 0; j < restricted::lines->size(); ++j)
 				if (restricted::lines->at(j)->GetName() == name)
 					restricted::lines->at(j)->active = active;
 		}
@@ -410,7 +410,7 @@ void sur::Instancer::State(Types type,bool active, const std::string& name, int 
 			restricted::lines->at(index)->active = active;
 	if (type == Types::Obj)
 		if (name != "") {
-			for (int j = 0; j < restricted::objects->size(); ++j)
+			for (i32 j = 0; j < restricted::objects->size(); ++j)
 				if (restricted::objects->at(j)->GetName() == name)
 					restricted::objects->at(j)->active = active;
 		}
@@ -418,7 +418,7 @@ void sur::Instancer::State(Types type,bool active, const std::string& name, int 
 			restricted::objects->at(index)->active = active;
 	if (type == Types::Triangle)
 		if (name != "") {
-			for (int j = 0; j < restricted::triangles->size(); ++j)
+			for (i32 j = 0; j < restricted::triangles->size(); ++j)
 				if (restricted::triangles->at(j)->GetName() == name)
 					restricted::triangles->at(j)->active = active;
 		}
@@ -427,11 +427,11 @@ void sur::Instancer::State(Types type,bool active, const std::string& name, int 
 }
 
 
-void sur::Instancer::Delete(Types type, const std::string& name, int index)
+void sur::Instancer::Delete(Types type, const std::string& name, i32 index)
 {
 	if (type == Types::Rectangle)
 		if (name != "") {
-			for (int j = 0; j < restricted::rectangles->size(); ++j)
+			for (i32 j = 0; j < restricted::rectangles->size(); ++j)
 				if (restricted::rectangles->at(j)->GetName() == name)
 					restricted::rectangles->erase(restricted::rectangles->begin() + j);
 		}
@@ -439,7 +439,7 @@ void sur::Instancer::Delete(Types type, const std::string& name, int index)
 			restricted::rectangles->erase(restricted::rectangles->begin() + index);
 	if (type == Types::Line)
 		if (name != "") {
-			for (int j = 0; j < restricted::lines->size(); ++j)
+			for (i32 j = 0; j < restricted::lines->size(); ++j)
 				if (restricted::lines->at(j)->GetName() == name)
 					restricted::lines->erase(restricted::lines->begin() + j);
 		}
@@ -447,7 +447,7 @@ void sur::Instancer::Delete(Types type, const std::string& name, int index)
 			restricted::lines->erase(restricted::lines->begin() + index);
 	if (type == Types::Obj)
 		if (name != "") {
-			for (int j = 0; j < restricted::objects->size(); ++j)
+			for (i32 j = 0; j < restricted::objects->size(); ++j)
 				if (restricted::objects->at(j)->GetName() == name)
 					restricted::objects->erase(restricted::objects->begin() + j);
 		}
@@ -455,7 +455,7 @@ void sur::Instancer::Delete(Types type, const std::string& name, int index)
 			restricted::objects->erase(restricted::objects->begin() + index);
 	if (type == Types::Triangle)
 		if (name != "") {
-			for (int j = 0; j < restricted::triangles->size(); ++j)
+			for (i32 j = 0; j < restricted::triangles->size(); ++j)
 				if (restricted::triangles->at(j)->GetName() == name)
 					restricted::triangles->erase(restricted::triangles->begin() + j);
 		}
@@ -510,7 +510,7 @@ void sur::Map_Analyses::operator()(sur::Maps map, sur::Vec2 size)
 	Render(map.RenderMap, size);
 }
 
-void sur::Map_Analyses::operator()(int* cptr, int* tptr, DWORD* rptr, sur::Vec2 size)
+void sur::Map_Analyses::operator()(i32* cptr, i32* tptr, DWORD* rptr, sur::Vec2 size)
 {
 	Collider(cptr, size);
 	Trigger(tptr, size);

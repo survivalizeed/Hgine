@@ -16,3 +16,7 @@ sur::Map_Analyses _Amap;
 sur::Input _input;
 
 bool _debug = false;
+
+std::string _resource_path;
+
+std::string _sound_path;

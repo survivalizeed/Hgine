@@ -54,7 +54,7 @@ void win(const char* Name,int params) {
 }
 
 
-void Window(const char* Name,int params) {
+void Window(const char* Name, int params) {
 	std::thread wins(win,Name,params);
 	wins.detach();
 	Sleep(100);

@@ -1,18 +1,18 @@
-// SpaceShooter demo -> paste this into the main
+// SpaceShooter demo -> paste this i32o the main
 
 #include "Functional/includes.h"
 #include "Functional/functional.h"
 #include "Lua/SurLua.h"
 
 lua_State* Start();
-extern void Window(const char* name, int params);
+extern void Window(const char* name, i32 params);
 extern sur::Map_Analyses _Amap;
 extern sur::Input _input;
 
 using sur::Instancer::Types;
 
 
-int main() {
+i32 main() {
 	lua_State* L = Start();
 
 	sur::Render renderer(Color(100, 107, 47), 1);
@@ -37,8 +37,8 @@ int main() {
 	sur::Instancer::Add(new sur::Line({ _window_size.x - 1,0 }, { _window_size.x - 1,_window_size.y - 1 },
 		Color(0, 0, 0), "LineRight", 4), Types::Line);
 
-	int shotvar = 0;
-	int DelayFromFps = 0;
+	i32 shotvar = 0;
+	i32 DelayFromFps = 0;
 	for (;;) {
 		renderer.ClearScreenBuffer();
 		{
@@ -47,7 +47,7 @@ int main() {
 			sur::Instancer::GetObj("Player")->Bind(true, ColliderType::Filled);
 			sur::Instancer::GetLine("LineLeft")->Bind(true);
 			sur::Instancer::GetLine("LineRight")->Bind(true);
-			for (int i = 0; i < shotvar; ++i) {
+			for (i32 i = 0; i < shotvar; ++i) {
 				sur::Instancer::GetObj("CloneShot" + std::to_string(i))->Bind(true, ColliderType::Filled);
 				sur::Instancer::GetObj("CloneShot" + std::to_string(i))->Move({ 0,4 }, true);
 			}

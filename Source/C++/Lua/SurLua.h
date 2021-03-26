@@ -34,7 +34,7 @@ exit(-1)
 #define _LUA_END_(ret) return ret;}
 
 namespace lua {
-	lua_State* LoadFile(const std::string Data) {
+	lua_State* LoadFile(const std::string& Data) {
 		lua_State* L = luaL_newstate();
 		luaL_openlibs(L);
 		if (luaL_dofile(L, Data.c_str()) != LUA_OK) {

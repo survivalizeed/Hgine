@@ -1,11 +1,11 @@
-	int var = 0;
-	for (int i = 0; i < 4; i++, var += 50) {
+	i32 var = 0;
+	for (i32 i = 0; i < 4; i++, var += 50) {
 		sur::Instancer::Add(new sur::Object("C:\\Users\\gero\\Desktop\\Hardcore Engine\\Hgineres\\survivalizeed.Hgineres", { var, 0 }, "shot" + std::to_string(i), 50), Types::Obj);
 	}
 		
 		
 		
-		for (int i = 0; i < 4; i++) {
+		for (i32 i = 0; i < 4; i++) {
 			sur::Instancer::GetObj("shot" + std::to_string(i))->Bind(true, ColliderType::Outline);
 		}
 		if (_input.keyboard.Key(Keys::W))
