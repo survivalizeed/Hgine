@@ -117,7 +117,7 @@ enum class ColliderType {
 
 // Template stuff
 template <typename CallBackType>
-using cb_ptr = void(*)(CallBackType);
+using cb_ptr = void(*)(CallBackType,CallBackType);
 
 template <typename T>
 inline constexpr bool is_Vec2 = std::_Is_any_of_v<std::remove_cv_t<T>, sur::Vec2>;

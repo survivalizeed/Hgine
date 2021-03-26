@@ -30,22 +30,22 @@ namespace sur {
 		sur::Vec2 position;
 		sur::Vec2 size;
 
-		Master(const std::string& name, i32 id, cb_ptr<Master*> callback = nullptr)
+		Master(const std::string& name, int id, cb_ptr<Master*> callback = nullptr)
 			: name(name), id(id),callback(callback) {}		//Line, Triangle
 
-		Master(const std::string& name, i32 id, sur::Vec2 position, cb_ptr<Master*> callback = nullptr)
+		Master(const std::string& name, int id, sur::Vec2 position, cb_ptr<Master*> callback = nullptr)
 			: name(name), id(id), position(position), callback(callback) {}		//OBJ
 
-		Master(const std::string& name, i32 id, sur::Vec2 position, sur::Vec2 size, cb_ptr<Master*> callback = nullptr)
+		Master(const std::string& name, int id, sur::Vec2 position, sur::Vec2 size, cb_ptr<Master*> callback = nullptr)
 			: name(name), id(id), position(position), size(size), callback(callback) {}		//Rectangle
 
-		virtual void MoveInject(i32 index, i32 CurMove);
+		virtual void MoveInject(int index, int CurMove);
 
 	public:
 		//Don't use this variable
 		bool active = true;
 
-		i32 id;
+		int id;
 
 		cb_ptr<Master*> callback = nullptr;	
 
@@ -70,13 +70,13 @@ namespace sur {
 	{
 	private:
 		bool thread = false;
-		i32 frameCounter = 0;
-		i32 Wait;
+		int frameCounter = 0;
+		int Wait;
 		HDC dc;
 		Color bg;
 	public:
 
-		Render(Color bg, i32 Wait = 0) : bg(bg), Wait(Wait) { dc = GetDC(_hwnd);}
+		Render(Color bg, int Wait = 0) : bg(bg), Wait(Wait) { dc = GetDC(_hwnd);}
 
 		void ClearScreenBuffer();
 
@@ -98,11 +98,11 @@ namespace sur {
 	class Rectangle : public Master {
 	private:	
 		Color color;
-		//void MoveInject(i32 index, i32 curmove) override;
+		//void MoveInject(int index, int curmove) override;
 	public:
 		Rectangle() {}
 
-		Rectangle(sur::Vec2 position, sur::Vec2 size, Color color, const std::string& name,i32 id, cb_ptr<Master*> callback = nullptr);
+		Rectangle(sur::Vec2 position, sur::Vec2 size, Color color, const std::string& name,int id, cb_ptr<Master*> callback = nullptr);
 
 		void Bind(bool Collider);
 
@@ -114,26 +114,26 @@ namespace sur {
 	class Object : public Master
 	{
 	protected:
-		i32 x = 0;
-		i32 y = 0;
+		int x = 0;
+		int y = 0;
 		std::string path;
 
-		std::vector<i32>* XCoords = new std::vector<i32>;
-		std::vector<i32>* YCoords = new std::vector<i32>;
+		std::vector<int>* XCoords = new std::vector<int>;
+		std::vector<int>* YCoords = new std::vector<int>;
 		std::vector<Gdiplus::Color>* Colors = new std::vector<Gdiplus::Color>;
-		std::vector<i32>* MaxX = new std::vector<i32>;
+		std::vector<int>* MaxX = new std::vector<int>;
 
 		void Load();
 
-		//void MoveInject(i32 index, i32 curmove) override;
+		//void MoveInject(int index, int curmove) override;
 
 	public:
 		Object() {}
 
-		Object(const std::string& path, sur::Vec2 position, const std::string& name, i32 id, cb_ptr<Master*> callback = nullptr);
+		Object(const std::string& path, sur::Vec2 position, const std::string& name, int id, cb_ptr<Master*> callback = nullptr);
 
 		// Don't delete those objects, just unactivate them
-		Object(const Object* const obj, sur::Vec2 position, const std::string& name, i32 id, cb_ptr<Master*> callback = nullptr);
+		Object(const Object* const obj, sur::Vec2 position, const std::string& name, int id, cb_ptr<Master*> callback = nullptr);
 
 		void Bind(bool Collider, ColliderType collidertype);
 
@@ -154,7 +154,7 @@ namespace sur {
 
 		Line() {}
 
-		Line(sur::Vec2 start, sur::Vec2 end, Color color, const std::string& name, i32 id, cb_ptr<Master*> callback = nullptr);
+		Line(sur::Vec2 start, sur::Vec2 end, Color color, const std::string& name, int id, cb_ptr<Master*> callback = nullptr);
 		
 		inline void End(sur::Vec2 end) { this->end = end; }
 
@@ -183,7 +183,7 @@ namespace sur {
 			
 			void clear();
 			
-			std::vector<Vec2>* get(i32 i);
+			std::vector<Vec2>* get(int i);
 			
 			std::vector<Vec2>* getother();
 		} linevector;
@@ -195,9 +195,9 @@ namespace sur {
 	public:
 		Triangle() {}
 
-		Triangle(sur::Vec2 p1, sur::Vec2 p2, sur::Vec2 p3, Color color, const std::string& name, i32 id, cb_ptr<Master*> callback = nullptr);
+		Triangle(sur::Vec2 p1, sur::Vec2 p2, sur::Vec2 p3, Color color, const std::string& name, int id, cb_ptr<Master*> callback = nullptr);
 
-		inline void SetPosition(i32 which, sur::Vec2 pos){
+		inline void SetPosition(int which, sur::Vec2 pos){
 			switch (which) {
 			case 1: p1 = pos; return;
 			case 2: p2 = pos; return;
@@ -226,7 +226,7 @@ namespace sur {
 		}
 
 	public:
-		Shape(Color color, i32 id, cb_ptr<Master*> callback = nullptr)
+		Shape(Color color, int id, cb_ptr<Master*> callback = nullptr)
 			: color(color)
 		{
 			this->id = id;
@@ -250,7 +250,7 @@ namespace sur {
 			static std::vector<Object*>* objects = new std::vector<Object*>;
 			static std::vector<Triangle*>* triangles = new std::vector<Triangle*>;
 
-			// To return if nothing was found -> prevent error of nullpoi32er
+			// To return if nothing was found -> prevent error of nullpointer
 			static Rectangle* Rdefault = new Rectangle({ 0,0 }, { 0,0 }, Color(0, 0, 0), "invalid", -1);
 			static Line* Ldefault = new Line({ 0,0 }, { 0,0 }, Color(0, 0, 0), "invalid", -1);
 			static Object* Odefault = new Object("invalid", { 0,0 }, "invalid", -1);
@@ -263,19 +263,19 @@ namespace sur {
 
 		void Add(void* object, Types type);
 
-		sur::Rectangle* GetRect(const std::string& name = "", i32 index = -1);
+		sur::Rectangle* GetRect(const std::string& name = "", int index = -1);
 
-		sur::Line* GetLine(const std::string& name = "", i32 index = -1);
+		sur::Line* GetLine(const std::string& name = "", int index = -1);
 
-		sur::Object* GetObj(const std::string& name = "", i32 index = -1);
+		sur::Object* GetObj(const std::string& name = "", int index = -1);
 
-		sur::Triangle* GetTri(const std::string& name = "", i32 index = -1);
+		sur::Triangle* GetTri(const std::string& name = "", int index = -1);
 
-		i32 GetCount(Types type);
+		int GetCount(Types type);
 
-		void State(Types type, bool active, const std::string& name = "", i32 index = -1);
+		void State(Types type, bool active, const std::string& name = "", int index = -1);
 
-		void Delete(Types type, const std::string& name = "", i32 index = -1);
+		void Delete(Types type, const std::string& name = "", int index = -1);
 	}
 	//
 	// Input
@@ -296,10 +296,10 @@ namespace sur {
 	// struct
 	//
 	struct Map_Analyses {
-		analyses::Array<i32> Collider, Trigger;
+		analyses::Array<int> Collider, Trigger;
 		analyses::Array<DWORD> Render;
 		void operator ()(sur::Maps map, sur::Vec2 size);		
-		void operator ()(i32* cptr, i32* tptr, DWORD* rptr, sur::Vec2 size);
+		void operator ()(int* cptr, int* tptr, DWORD* rptr, sur::Vec2 size);
 	};
 
 }

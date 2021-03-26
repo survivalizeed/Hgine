@@ -67,11 +67,12 @@ int main() {
 			using namespace sur::Instancer;
 			if (sur::Distance(GetObj("Player")->GetPosition().x, GetObj("Enemy")->GetPosition().x) <= 50
 				&& enemydelay - enemysnapshot >= 250) {
+				sur::Sound((_sound_path + "EnemyShot.wav").c_str(), SND_ASYNC, 0x22222222);
 				Add(new sur::Object(GetObj("ShotE"), { GetObj("Enemy")->GetPosition().x + 37, 
 					GetObj("Enemy")->GetPosition().y + 78 },
 					"CloneShotE" + std::to_string(shotenemyvar), shotenemyvar + 1000,
-					[](sur::Master* obj) {
-						if (obj->GetName() == "Player")
+					[](sur::Master* current,sur::Master* other) {
+						if (other->GetName() == "Player")
 							exit(0);
 					}), Types::Obj);
 				shotenemyvar++;
@@ -85,14 +86,18 @@ int main() {
 			if (_input.keyboard.Key(Keys::D))
 				GetObj("Player")->Move({ 3,0 }, true);
 			if (_input.keyboard.Key(Keys::SPACE) && delay - snapshot >= 150) {
+				static int hit = 0;
 				sur::Sound((_sound_path + "PlayerShot.wav").c_str(), SND_ASYNC, 0x22222222);
 				Add(new sur::Object(GetObj("Shot"),{ GetObj("Player")->GetPosition().x + 40, 
 					GetObj("Player")->GetPosition().y - 35 }, "CloneShot" + std::to_string(shotvar), 
 					-shotvar - 1000,	
 					// OnCollision for the shot. obj will be the other object
-					[](sur::Master* obj) {
-						if (obj->GetName() == "Enemy")
-							GetObj("Enemy")->SetPosition({ obj->GetPosition().x + 20,obj->GetPosition().y});
+					[](sur::Master* current, sur::Master* other) {
+						if (other->GetName() == "Enemy")
+							hit++;
+						if (hit >= 10)
+							exit(0);
+						current->active = false;
 					}
 				), Types::Obj);
 				shotvar++;

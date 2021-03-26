@@ -23,9 +23,9 @@ void sur::Master::Move(sur::Vec2 direction, bool detect)
 							_Amap.Render(i, position.y - a - 1, Color(0, 255, 0));
 						if (_Amap.Collider(i, position.y - a - 1) == identitys[j] && this->id != identitys[j]) {
 							if (callback != nullptr)
-								callback(static_cast<Master*>(ptrs[j]));
+								callback(static_cast<Master*>(this),static_cast<Master*>(ptrs[j]));
 							if (static_cast<Master*>(ptrs[j])->callback != nullptr)
-								static_cast<Master*>(ptrs[j])->callback(this);
+								static_cast<Master*>(ptrs[j])->callback(static_cast<Master*>(ptrs[j]),this);
 							goto dir1;
 						}	
 					}
@@ -43,9 +43,9 @@ void sur::Master::Move(sur::Vec2 direction, bool detect)
 							_Amap.Render(position.x + size.x + a - 1, i, Color(0, 255, 0));
 						if (_Amap.Collider(position.x + size.x + a - 1, i) == identitys[j] && this->id != identitys[j]) {
 							if (callback != nullptr)
-								callback(static_cast<Master*>(ptrs[j]));
+								callback(static_cast<Master*>(this),static_cast<Master*>(ptrs[j]));
 							if (static_cast<Master*>(ptrs[j])->callback != nullptr)
-								static_cast<Master*>(ptrs[j])->callback(this);
+								static_cast<Master*>(ptrs[j])->callback(static_cast<Master*>(ptrs[j]),this);
 							goto dir2;
 						}			
 					}
@@ -64,9 +64,9 @@ void sur::Master::Move(sur::Vec2 direction, bool detect)
 							_Amap.Render(i, position.y + size.y + a, Color(0, 255, 0));
 						if (_Amap.Collider(i, position.y + size.y + a) == identitys[j] && this->id != identitys[j]) {
 							if (callback != nullptr)
-								callback(static_cast<Master*>(ptrs[j]));
+								callback(static_cast<Master*>(this),static_cast<Master*>(ptrs[j]));
 							if (static_cast<Master*>(ptrs[j])->callback != nullptr)
-								static_cast<Master*>(ptrs[j])->callback(this);
+								static_cast<Master*>(ptrs[j])->callback(static_cast<Master*>(ptrs[j]), this);
 							goto dir3;
 						}
 					}
@@ -85,9 +85,9 @@ void sur::Master::Move(sur::Vec2 direction, bool detect)
 							_Amap.Render(position.x - a - 1, i, Color(0, 255, 0));
 						if (_Amap.Collider(position.x - a - 1, i) == identitys[j] && this->id != identitys[j]) {
 							if (callback != nullptr)
-								callback(static_cast<Master*>(ptrs[j]));
+								callback(static_cast<Master*>(this),static_cast<Master*>(ptrs[j]));
 							if (static_cast<Master*>(ptrs[j])->callback != nullptr)
-								static_cast<Master*>(ptrs[j])->callback(this);
+								static_cast<Master*>(ptrs[j])->callback(static_cast<Master*>(ptrs[j]),this);
 							goto dir4;
 						}
 					}
