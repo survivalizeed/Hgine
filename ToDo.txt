@@ -17,5 +17,5 @@ Activate and unactivate Objects through the Instancer |DONE|
 Calculate Collisions / Rebind after Movement
 Use Asio as P2P
 Animations using preloaded images and change them
-Memshare for Objects
+Memshare for Objects |DONE|
 Wire colliders for Rectangles
