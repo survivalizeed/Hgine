@@ -39,7 +39,7 @@ i32 sur::RandomRange(i32 min, i32 max)
 
 void sur::MoveTowards(sur::Master* current, sur::Master* target, const sur::Vec2& speed, bool detect)	// 1 = true(move), 0 = false(don't move)
 {
-	assert(target->GetName() == "invalid");
+	assert(target->GetName() == "invalid" || current->GetName() == "invalid");
 	if (current->GetPosition().x < target->GetPosition().x) {	// positive x
 		if (current->GetPosition().x != target->GetPosition().x)
 			current->Move({ speed.x,0 },detect);
@@ -64,7 +64,10 @@ i64 sur::GetMilliseconds()
 	return (i64)duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
 }
 
-i32 sur::Distance(i32 a, i32 b)
+u32 sur::Distance(sur::Master* a, sur::Master* b, bool xAxis)
 {
-	return abs(a - b);
+	assert(a->GetName() == "invalid" || b->GetName() == "invalid",999999999);
+	if(xAxis)
+		return abs(a->GetPosition().x - b->GetPosition().x);
+	return abs(a->GetPosition().y - b->GetPosition().y);
 }

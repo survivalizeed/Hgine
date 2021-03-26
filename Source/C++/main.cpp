@@ -13,8 +13,9 @@ using sur::Instancer::Types;
 // callback of the first object it finds -> include hash algorithm ?
 
 int main() {
-	lua_State* L = Start();
-
+	lua_State* LC = Start(); 
+	static lua_State* LG = lua::LoadFile(".\\game.lua"); //static, so the lambda won't cry
+	
 	sur::Render renderer(Color(100, 107, 47), 1);
 	renderer.DebugConsole(_debug);
 	renderer.FPS();
@@ -65,7 +66,7 @@ int main() {
 		}
 		{	//=====Enemy=====
 			using namespace sur::Instancer;
-			if (sur::Distance(GetObj("Player")->GetPosition().x, GetObj("Enemy")->GetPosition().x) <= 50
+			if (sur::Distance(GetObj("Player"), GetObj("Enemy"),true) <= 50
 				&& enemydelay - enemysnapshot >= 250) {
 				sur::Sound((_sound_path + "EnemyShot.wav").c_str(), SND_ASYNC, 0x22222222);
 				Add(new sur::Object(GetObj("ShotE"), { GetObj("Enemy")->GetPosition().x + 37, 
@@ -93,11 +94,15 @@ int main() {
 					-shotvar - 1000,	
 					// OnCollision for the shot. obj will be the other object
 					[](sur::Master* current, sur::Master* other) {
-						if (other->GetName() == "Enemy")
+						if (other->GetName() == "Enemy") {
 							hit++;
-						if (hit >= 10)
-							exit(0);
-						current->active = false;
+							current->active = false;
+							if (hit >= stoi(lua::GetContent(LG, "enemy_lives"))) {
+								MessageBoxA(NULL, (lua::GetContent(LG, "enemy_lives") + " Hits").c_str(),
+									(lua::GetContent(LG, "enemy_lives") + " Hits").c_str(), MB_ICONINFORMATION);
+								other->active = false;
+							}
+						}			
 					}
 				), Types::Obj);
 				shotvar++;
@@ -113,7 +118,7 @@ int main() {
 
 
 lua_State* Start() {
-	lua_State* L = lua::LoadFile("F:\\C++\\Hgine\\Hgine\\Source\\Lua\\config.lua");
+	lua_State* L = lua::LoadFile(".\\config.lua");
 	_debug = stoi(lua::GetTableContent(L, "configuration", "debug_mode"));
 
 	_window_size(stoi(lua::GetTableContent(L, "configuration", "window_size_x")),

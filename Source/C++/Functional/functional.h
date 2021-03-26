@@ -27,5 +27,5 @@ namespace sur {
 	//To wait one second, just store the value of the first call and compare in an if, if it is value + 1000.
 	i64 GetMilliseconds();
 
-	i32 Distance(i32 a, i32 b);
+	u32 Distance(sur::Master* a, sur::Master* b, bool xAxis);
 }
