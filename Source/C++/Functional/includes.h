@@ -36,6 +36,8 @@ exit(-1)
 #define assert(con,rt) if(con)\
 return rt
 
+#define eassert(con,mes) if(con) Error(mes)
+
 #define cpar(x) {x;}
 
 using namespace std::this_thread;

@@ -8,9 +8,7 @@ extern sur::Vec2 _window_size;
 
 sur::Maps sur::Initialize()
 {
-	if (_window_size.x == 0 || _window_size.y == 0) {
-		Error("_window_size not initialized");
-	}
+	eassert(_window_size.x == 0 || _window_size.y == 0, "_window_size not initialized");
 	return { new i32[_window_size.x * _window_size.y],new i32[_window_size.x * _window_size.y], 
 	new DWORD[_window_size.x * _window_size.y] };
 }
@@ -34,7 +32,7 @@ void sur::Sound(const char* path, u32 params, i32 volume)
 
 i32 sur::RandomRange(i32 min, i32 max)
 {
-	return  rand() % (max - min + 1) + min;
+	return rand() % (max - min + 1) + min;
 }
 
 void sur::MoveTowards(sur::Master* current, sur::Master* target, const sur::Vec2& speed, bool detect)	// 1 = true(move), 0 = false(don't move)

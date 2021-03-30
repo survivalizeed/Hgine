@@ -130,23 +130,16 @@ void sur::Triangle::Line(sur::Vec2 start, sur::Vec2 end, std::vector<sur::Vec2>*
 	}
 }
 
-auto max_val = [](i32 a, i32 b, i32 c) {
-	if (a >= b && a >= c)
-		return 1;
-	if (b >= a && b >= c)
-		return 2;
-	if (c >= a && c >= b)
-		return 3;
-	return 0;
-};
-
-auto min_val = [](i32 a, i32 b) { return a <= b ? 1 : 2; };
-
-auto near_comp = [](i32 target, i32 a, i32 b) { return (abs(target - a) < abs(target - b)) ? 1 : 2; };
-
 void sur::Triangle::Fill(LineVector& linevector)
 {
-
+	auto max_val = [](i32 a, i32 b, i32 c) { 
+		if (a >= b && a >= c) return 1;
+		if (b >= a && b >= c) return 2;
+		if (c >= a && c >= b) return 3; return 0;
+	};
+	auto min_val = [](i32 a, i32 b) { return a <= b ? 1 : 2; };
+	auto near_comp = [](i32 target, i32 a, i32 b) { return (abs(target - a) < abs(target - b)) ? 1 : 2; };
+	
 	i32 maxv = max_val((i32)linevector.Line1->size(), (i32)linevector.Line2->size(), (i32)linevector.Line3->size());
 	std::vector<sur::Vec2>* hypo = nullptr;
 	std::vector<sur::Vec2>* other = nullptr;
@@ -215,6 +208,7 @@ void sur::Triangle::Bind(bool Render, bool Collider)
 	Line(p1, p2, linevector.Line1,Render,Collider);
 	Line(p2, p3, linevector.Line2,Render,Collider);
 	Line(p3, p1, linevector.Line3,Render,Collider);
-	Fill(linevector);
+	if(Render)
+		Fill(linevector);
 	linevector.clear();
 }

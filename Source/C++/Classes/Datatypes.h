@@ -37,62 +37,32 @@ namespace sur {
 		
 		Vec2(const Vec2& vector2d)	: x(vector2d.x), y(vector2d.y)	{}
 
-		inline void operator ()(i32 x, i32 y) {this->x = x;this->y = y;}
-		
-		inline void operator ()(const Vec2& vector2d) {x = vector2d.x; y = vector2d.y;}
-		
-		inline Vec2 invert() {
-			return { this->x * -1, this->y * -1 };
-		}
-		inline float magnitude() {
-			return (float)sqrt(pow(x, 2) + pow(y, 2));
-		}
-
+		inline Vec2 invert() { return { this->x * -1, this->y * -1 }; }
+		inline float magnitude() { return (float)sqrt(pow(x, 2) + pow(y, 2)); }
+		inline void operator ()(i32 x, i32 y) { this->x = x; this->y = y; }
+		inline void operator ()(const Vec2& vector2d) { x = vector2d.x; y = vector2d.y; }
 		inline void operator =(const Vec2& vector2d) { x = vector2d.x; y = vector2d.y; }
-
-		inline friend Vec2 operator +(const Vec2& first, const Vec2& second) {
-			return { first.x + second.x, first.y + second.y };
-		}
-		inline friend Vec2 operator -(const Vec2& first, const Vec2& second) {
-			return { first.x - second.x, first.y - second.y };
-		}
-		inline friend Vec2 operator *(const Vec2& first, const Vec2& second) {
-			return { first.x * second.x, first.y * second.y };
-		}
-		inline friend Vec2 operator /(const Vec2& first, const Vec2& second) {
-			if (second.x == 0 || second.y == 0) {
-				Error("Dividing by zero not allowed");
-			}
-			return { first.x / second.x, first.y / second.y };
-		}
-		inline friend Vec2 operator --(const Vec2& first) {
-			return { first.x - 1, first.y - 1 };
-		}
-		inline friend Vec2 operator ++(const Vec2& first) {
-			return { first.x + 1, first.y + 1 };
-		}
-		inline friend bool operator ==(const Vec2& first, const Vec2& second) {
-			return (first.x == second.x && first.y == second.y) ? true : false;
-		}
-		inline friend bool operator >(Vec2 first, Vec2 second) {
-			return (first.magnitude() > second.magnitude()) ? true : false;
-		}
-		inline friend bool operator >=(Vec2 first, Vec2 second) {
-			return (first.magnitude() >= second.magnitude()) ? true : false;
-		}
-		inline friend bool operator <(Vec2 first, Vec2 second) {
-			return (first.magnitude() < second.magnitude()) ? true : false;
-		}
-		inline friend bool operator <=(Vec2 first, Vec2 second) {
-			return (first.magnitude() <= second.magnitude()) ? true : false;
-		}
+		inline Vec2 operator +(const Vec2& other) const { return { x + other.x, y + other.y }; }
+		inline Vec2 operator -(const Vec2& other) const { return { x - other.x, y - other.y }; }
+		inline Vec2 operator *(const Vec2& other) const { return { x * other.x, y * other.y }; }
+		inline Vec2 operator /(const Vec2& other) const{
+			eassert(other.x == 0 || other.y == 0, "Dividing by zero not allowed");
+			return { x / other.x, y / other.y }; }	
+		inline Vec2 operator --() { return { x - 1, y - 1 }; }
+		inline Vec2 operator ++() { return { x + 1, y + 1 }; }
+		inline bool operator ==(const Vec2& other) const { return (x == other.x && y == other.y) ? true : false; }
+		inline bool operator !=(const Vec2& other) const { return (x != other.x && y != other.y) ? true : false; }
+		inline bool operator >(Vec2 other) { return (magnitude() > other.magnitude()) ? true : false; }
+		inline bool operator >=(Vec2 other) { return (magnitude() >= other.magnitude()) ? true : false; }
+		inline bool operator <(Vec2 other) { return (magnitude() < other.magnitude()) ? true : false; }
+		inline bool operator <=( Vec2 other) { return (magnitude() <= other.magnitude()) ? true : false; }
 		friend std::ostream& operator<<(std::ostream& os, const Vec2& vector2d) {
 			os << "X: " << vector2d.x << " Y: " << vector2d.y;
 			return os;
 		}
 	};
 	//
-	// Map poi32er for Rendering, Collision and Trigger detection
+	// Map pointer for Rendering, Collision and Trigger detection
 	//
 	struct Maps {
 		i32* ColliderMap, * TriggerMap;
