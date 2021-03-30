@@ -80,14 +80,14 @@ sur::Object::Object(const Object* const obj, sur::Vec2 position, const std::stri
 	ptrs.push_back(this);
 }
 
-void sur::Object::Bind(bool Collider, ColliderType collidertype)
+void sur::Object::Bind(bool Render, bool Collider, ColliderType collidertype)
 {
 
 	if ((position.x < 0 && position.x + size.x < 0) && (position.y < 0 && position.y + size.y < 0)
 		|| (position.x > _window_size.x && position.x + size.x > _window_size.x) && (position.y > _window_size.y
 			&& position.y + size.y > _window_size.y))
 		return;
-	if (collidertype == ColliderType::None) {
+	if (collidertype == ColliderType::None && Render) {
 		for (i32 i = 0; i < YCoords->size(); i++) {
 				_Amap.Render(XCoords->at(i) + position.x, YCoords->at(i) + position.y, Colors->at(i).ToCOLORREF());
 		}
@@ -96,7 +96,7 @@ void sur::Object::Bind(bool Collider, ColliderType collidertype)
 		for (i32 i = 0; i < YCoords->size(); i++) {
 				if (_debug)
 					_Amap.Render(XCoords->at(i) + position.x, YCoords->at(i) + position.y, Color(255, 255, 255));
-				else
+				else if (Render)
 					_Amap.Render(XCoords->at(i) + position.x, YCoords->at(i) + position.y, Colors->at(i).ToCOLORREF());
 			if (Collider)
 				_Amap.Collider(XCoords->at(i) - CO + position.x, YCoords->at(i) - CO + position.y, id);
@@ -104,8 +104,9 @@ void sur::Object::Bind(bool Collider, ColliderType collidertype)
 		return;
 	}
 	if (collidertype == ColliderType::Outline) {	// Outlined Collider -> Good for Objects form outside.
-		for (i32 i = 0; i < YCoords->size(); i++)
-				_Amap.Render(XCoords->at(i) + position.x, YCoords->at(i) + position.y, Colors->at(i).ToCOLORREF());
+		if(Render)
+			for (i32 i = 0; i < YCoords->size(); i++)
+					_Amap.Render(XCoords->at(i) + position.x, YCoords->at(i) + position.y, Colors->at(i).ToCOLORREF());
 		if (Collider) {
 			for (i32 i = position.x; i < size.x + position.x; i++) {
 				if (_debug)
@@ -131,8 +132,9 @@ void sur::Object::Bind(bool Collider, ColliderType collidertype)
 		return;
 	}
 	if (collidertype == ColliderType::Filled) {
-		for (i32 i = 0; i < YCoords->size(); i++)
-				_Amap.Render(XCoords->at(i) + position.x, YCoords->at(i) + position.y, Colors->at(i).ToCOLORREF());
+		if(Render)
+			for (i32 i = 0; i < YCoords->size(); i++)
+					_Amap.Render(XCoords->at(i) + position.x, YCoords->at(i) + position.y, Colors->at(i).ToCOLORREF());
 		if(Collider)
 			for (i32 a = position.y; a < position.y + size.y; a++)
 				for (i32 b = position.x; b < position.x + size.x; b++)

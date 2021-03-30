@@ -25,13 +25,18 @@
 #include <type_traits>
 
 #define l(x) std::cout << x << "\n"
+
 #define byte(x) sizeof(x)
+
 #define Error(x) MessageBoxA(NULL,x,"Error", MB_ICONERROR);\
 exit(-1)
+
 #define Color(r,g,b) RGB(r,g,b)
+
 #define assert(con,rt) if(con)\
 return rt
 
+#define cpar(x) {x;}
 
 using namespace std::this_thread;
 using namespace std::chrono;

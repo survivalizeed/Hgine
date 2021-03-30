@@ -7,7 +7,11 @@
 std::vector<i32> identitys;
 std::vector<void*> ptrs;
 
+
 extern sur::Map_Analyses _Amap;
+extern std::vector<i32> trigger_identitys;
+extern std::vector<void*> trigger_ptrs;
+
 //
 //	Master
 //
@@ -18,6 +22,11 @@ void sur::Master::Move(sur::Vec2 direction, bool detect)
 		if (direction.y > 0) {	//Up
 			for (i32 a = 1; a <= direction.y; a++) {
 				for (i32 i = position.x; i < position.x + size.x; i++) {
+					for (i32 j = 0; j < trigger_identitys.size(); j++) {
+						if (_Amap.Trigger(i, position.y - a - 1) == trigger_identitys[j]) {
+							MessageBoxA(NULL, "Trigger", "Trigger", MB_ICONERROR);
+						}
+					}
 					for (i32 j = 0; j < identitys.size(); j++) {				
 						if (_debug)
 							_Amap.Render(i, position.y - a - 1, Color(0, 255, 0));
@@ -38,6 +47,11 @@ void sur::Master::Move(sur::Vec2 direction, bool detect)
 		if (direction.x > 0) {	//Right
 			for (i32 a = 1; a <= direction.x; a++) {
 				for (i32 i = position.y; i < position.y + size.y; i++) {
+					for (i32 j = 0; j < trigger_identitys.size(); j++) {
+						if (_Amap.Trigger(position.x + size.x + a - 1, i) == trigger_identitys[j]) {
+							MessageBoxA(NULL, "Trigger", "Trigger", MB_ICONERROR);
+						}
+					}
 					for (i32 j = 0; j < identitys.size(); j++) {
 						if (_debug)
 							_Amap.Render(position.x + size.x + a - 1, i, Color(0, 255, 0));
@@ -59,6 +73,11 @@ void sur::Master::Move(sur::Vec2 direction, bool detect)
 			direction.y *= -1;
 			for (i32 a = 0; a <= direction.y; a++) {
 				for (i32 i = position.x; i < position.x + size.x; i++) {
+					for (i32 j = 0; j < trigger_identitys.size(); j++) {
+						if (_Amap.Trigger(i, position.y + size.y + a) == trigger_identitys[j]) {
+							MessageBoxA(NULL, "Trigger", "Trigger", MB_ICONERROR);
+						}
+					}
 					for (i32 j = 0; j < identitys.size(); j++) {			
 						if (_debug)
 							_Amap.Render(i, position.y + size.y + a, Color(0, 255, 0));
@@ -80,6 +99,11 @@ void sur::Master::Move(sur::Vec2 direction, bool detect)
 			direction.x *= -1;
 			for (i32 a = 1; a <= direction.x; a++) {
 				for (i32 i = position.y; i < position.y + size.y; i++) {
+					for (i32 j = 0; j < trigger_identitys.size(); j++) {
+						if (_Amap.Trigger(position.x - a - 1, i) == trigger_identitys[j]) {
+							MessageBoxA(NULL, "Trigger", "Trigger", MB_ICONERROR);
+						}
+					}
 					for (i32 j = 0; j < identitys.size(); j++) {
 						if (_debug)
 							_Amap.Render(position.x - a - 1, i, Color(0, 255, 0));
@@ -190,7 +214,7 @@ void sur::Camera::Move(sur::Vec2 direction)
 	for (i32 i = 0; i < sur::Instancer::GetCount(sur::Instancer::Types::Line); i++) {
 		sur::Instancer::GetLine("", i)->Move(direction.invert(), false);
 	}
-	for (i32 i = 0; i < sur::Instancer::GetCount(sur::Instancer::Types::Obj); i++) {
+	for (i32 i = 0; i < sur::Instancer::GetCount(sur::Instancer::Types::Object); i++) {
 		sur::Instancer::GetObj("", i)->Move(direction.invert(), false);
 	}
 }
@@ -204,12 +228,12 @@ sur::Rectangle::Rectangle(sur::Vec2 position, sur::Vec2 size, Color color, const
 	ptrs.push_back(this);
 }
 
-
-void sur::Rectangle::Bind(bool Collider)
+void sur::Rectangle::Bind(bool Render,bool Collider)
 {
 	for (i32 i = position.y; i < position.y + size.y; i++)
 		for (i32 j = position.x; j < position.x + size.x; j++) {
-			_Amap.Render(j, i, color.ToCOLORREF());
+			if (Render)
+				_Amap.Render(j, i, color.ToCOLORREF());
 			if (Collider)
 				_Amap.Collider(j - CO, i - CO, id);
 		}
@@ -224,9 +248,8 @@ sur::Line::Line(sur::Vec2 start, sur::Vec2 end, Color color, const std::string& 
 	ptrs.push_back(this);
 }
 
-void sur::Line::Bind(bool Collider)
+void sur::Line::Bind(bool Render, bool Collider)
 {
-	i32 lcounter = 0;
 	sur::Vec2 end = this->end;
 	sur::Vec2 start = this-> start;
 	if (start.x == end.x) start.x--;
@@ -244,12 +267,14 @@ void sur::Line::Bind(bool Collider)
 		float counter = 0.0f;
 		i32 countcounter = 1;
 		for (i32 i = start.x; i <= end.x; i++) {
-			_Amap.Render(i, tempy, color.ToCOLORREF());
+			if(Render)
+				_Amap.Render(i, tempy, color.ToCOLORREF());
 			if(Collider)
 				_Amap.Collider(i - CO, tempy - CO, id);	
 			while (counter >= countcounter) {
 				tempy++;
-				_Amap.Render(i, tempy, color.ToCOLORREF());
+				if (Render)
+					_Amap.Render(i, tempy, color.ToCOLORREF());
 				if (Collider)
 					_Amap.Collider(i - CO, tempy - CO, id);
 				countcounter++;
@@ -264,12 +289,14 @@ void sur::Line::Bind(bool Collider)
 		i32 countcounter = 1;
 		bool runned = false;
 		for (i32 i = start.x; i <= end.x; i++) {
-			_Amap.Render(i, tempy, color.ToCOLORREF());
+			if (Render)
+				_Amap.Render(i, tempy, color.ToCOLORREF());
 			if (Collider)
 				_Amap.Collider(i - CO, tempy - CO, id);
 			while (counter >= countcounter) {
 				tempy--;
-				_Amap.Render(i, tempy, color.ToCOLORREF());
+				if (Render)
+					_Amap.Render(i, tempy, color.ToCOLORREF());
 				if (Collider)
 					_Amap.Collider(i - CO, tempy - CO, id);
 				countcounter++;
@@ -282,12 +309,14 @@ void sur::Line::Bind(bool Collider)
 			RunsThrough *= -1;
 			i32 tempx = start.x;
 			for (i32 i = start.y; i <= end.y; i++) {
-				_Amap.Render(tempx, i, color.ToCOLORREF());
+				if (Render)
+					_Amap.Render(tempx, i, color.ToCOLORREF());
 				if(Collider)
 					_Amap.Collider(tempx - CO, i - CO, id);
 				while (counter >= countcounter) {
 					tempx--;
-					_Amap.Render(tempx, i, color.ToCOLORREF());
+					if (Render)
+						_Amap.Render(tempx, i, color.ToCOLORREF());
 					if (Collider)
 						_Amap.Collider(tempx - CO, i - CO, id);
 					countcounter++;
@@ -307,10 +336,10 @@ void sur::Shape::Gen()
 	}
 }
 
-void sur::Shape::Bind(bool Collider)
+void sur::Shape::Bind(bool Render, bool Collider)
 {
 	for (auto&& it : *lines)
-		it->Bind(Collider);
+		it->Bind(Render,Collider);
 }
 //
 //	Instancer
@@ -324,7 +353,7 @@ void sur::Instancer::Add(void* object, Types type)
 	case Types::Line:
 		restricted::lines->push_back(static_cast<Line*>(object));
 		break;
-	case Types::Obj:
+	case Types::Object:
 		restricted::objects->push_back(static_cast<Object*>(object));
 		break;
 	case Types::Triangle:
@@ -383,7 +412,7 @@ i32 sur::Instancer::GetCount(Types type) {
 		return (i32)restricted::rectangles->size();
 	case Types::Line:
 		return (i32)restricted::lines->size();
-	case Types::Obj:
+	case Types::Object:
 		return (i32)restricted::objects->size();
 	default:
 		return -1;
@@ -408,7 +437,7 @@ void sur::Instancer::State(Types type,bool active, const std::string& name, i32 
 		}
 		else if (index >= 0)
 			restricted::lines->at(index)->active = active;
-	if (type == Types::Obj)
+	if (type == Types::Object)
 		if (name != "") {
 			for (i32 j = 0; j < restricted::objects->size(); ++j)
 				if (restricted::objects->at(j)->GetName() == name)
@@ -445,7 +474,7 @@ void sur::Instancer::Delete(Types type, const std::string& name, i32 index)
 		}
 		else if (index >= 0)
 			restricted::lines->erase(restricted::lines->begin() + index);
-	if (type == Types::Obj)
+	if (type == Types::Object)
 		if (name != "") {
 			for (i32 j = 0; j < restricted::objects->size(); ++j)
 				if (restricted::objects->at(j)->GetName() == name)

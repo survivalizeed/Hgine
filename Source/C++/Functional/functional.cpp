@@ -71,3 +71,13 @@ u32 sur::Distance(sur::Master* a, sur::Master* b, bool xAxis)
 		return abs(a->GetPosition().x - b->GetPosition().x);
 	return abs(a->GetPosition().y - b->GetPosition().y);
 }
+
+void sur::Freeze(bool freeze)
+{
+	if (freeze) {
+
+	}
+	else {
+
+	}
+}

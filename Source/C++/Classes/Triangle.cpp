@@ -49,10 +49,9 @@ std::vector<sur::Vec2>* sur::Triangle::LineVector::getother()
 	return nullptr;
 }
 
-void sur::Triangle::Line(sur::Vec2 start, sur::Vec2 end, std::vector<sur::Vec2>* line, bool Collider)
+void sur::Triangle::Line(sur::Vec2 start, sur::Vec2 end, std::vector<sur::Vec2>* line,bool Render, bool Collider)
 {
 	if (start.x == end.x) start.x--;
-	i32 lcounter = 0;
 	if (start.y > end.y && start.x > end.x) {
 		std::swap(start.y, end.y);
 		std::swap(start.x, end.x);
@@ -68,15 +67,17 @@ void sur::Triangle::Line(sur::Vec2 start, sur::Vec2 end, std::vector<sur::Vec2>*
 		float counter = 0.0f;
 		i32 countcounter = 1;
 		for (i32 i = start.x; i <= end.x; i++) {
+			if(Render)
+				_Amap.Render(i, tempy, color.ToCOLORREF());
 			if (Collider)
-				_Amap.Collider(i, tempy, id);
-			_Amap.Render(i, tempy, color.ToCOLORREF());
+				_Amap.Collider(i, tempy, id);	
 			while (counter >= countcounter) {
 				tempy++;
 				line->push_back({ i,tempy });
+				if (Render)
+					_Amap.Render(i, tempy, color.ToCOLORREF());
 				if (Collider)
-					_Amap.Collider(i, tempy, id);
-				_Amap.Render(i, tempy, color.ToCOLORREF());
+					_Amap.Collider(i, tempy, id);		
 				countcounter++;
 			}
 			counter += RunsThrough;
@@ -89,15 +90,17 @@ void sur::Triangle::Line(sur::Vec2 start, sur::Vec2 end, std::vector<sur::Vec2>*
 		i32 countcounter = 1;
 		bool runned = false;
 		for (i32 i = start.x; i <= end.x; i++) {
+			if (Render)
+				_Amap.Render(i, tempy, color.ToCOLORREF());
 			if (Collider)
-				_Amap.Collider(i, tempy, id);
-			_Amap.Render(i, tempy, color.ToCOLORREF());
+				_Amap.Collider(i, tempy, id);	
 			while (counter >= countcounter) {
 				tempy--;
 				line->push_back({ i,tempy });
+				if (Render)
+					_Amap.Render(i, tempy, color.ToCOLORREF());
 				if (Collider)
-					_Amap.Collider(i, tempy, id);
-				_Amap.Render(i, tempy, color.ToCOLORREF());
+					_Amap.Collider(i, tempy, id);			
 				countcounter++;
 			}
 			runned = true;
@@ -109,14 +112,16 @@ void sur::Triangle::Line(sur::Vec2 start, sur::Vec2 end, std::vector<sur::Vec2>*
 			i32 tempx = start.x;
 			for (i32 i = start.y; i <= end.y; i++) {
 				line->push_back({ tempx,i });
+				if (Render)
+					_Amap.Render(tempx, i, color.ToCOLORREF());
 				if (Collider)
-					_Amap.Collider(tempx, i, id);
-				_Amap.Render(tempx, i, color.ToCOLORREF());
+					_Amap.Collider(tempx, i, id);		
 				while (counter >= countcounter) {
 					tempx--;
+					if (Render)
+						_Amap.Render(tempx, i, color.ToCOLORREF());
 					if (Collider)
-						_Amap.Collider(tempx, i, id);
-					_Amap.Render(tempx, i, color.ToCOLORREF());
+						_Amap.Collider(tempx, i, id);	
 					countcounter++;
 				}
 				counter += RunsThrough;
@@ -205,11 +210,11 @@ sur::Triangle::Triangle(sur::Vec2 p1, sur::Vec2 p2, sur::Vec2 p3, Color color, c
 }
 
 
-void sur::Triangle::Bind(bool Collider)
+void sur::Triangle::Bind(bool Render, bool Collider)
 {
-	Line(p1, p2, linevector.Line1,Collider);
-	Line(p2, p3, linevector.Line2,Collider);
-	Line(p3, p1, linevector.Line3,Collider);
+	Line(p1, p2, linevector.Line1,Render,Collider);
+	Line(p2, p3, linevector.Line2,Render,Collider);
+	Line(p3, p1, linevector.Line3,Render,Collider);
 	Fill(linevector);
 	linevector.clear();
 }
