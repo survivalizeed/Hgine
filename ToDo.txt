@@ -23,3 +23,4 @@ Tint for objects
 The object id always needs to be different because otherwise it will call the callback of the first object it finds -> include hash algorithm ?
 Take input only if window is in focus
 Update camera movement
+Game Freeze functionality
