@@ -2,6 +2,51 @@
 #include <cmath>
 #include <windows.h>
 
+HWND hwnd;
+WNDCLASSEX wc;
+COLORREF PBackgroundColor;
+int PSx, PSy;
+LRESULT WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+{
+	return DefWindowProc(hwnd, msg, wParam, lParam);
+}
+
+
+void Window() {
+	HINSTANCE hInstance = GetModuleHandle(0);
+	Gdiplus::GdiplusStartupInput gdiplusStartupInput;
+	ULONG_PTR gdiplusToken;
+	Gdiplus::GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, nullptr);
+	HBRUSH hb = CreateSolidBrush(RGB(50, 50, 50));
+	MSG Msg;
+	wc.cbSize = sizeof(WNDCLASSEX);
+	wc.style = 0;
+	wc.lpfnWndProc = WndProc;
+	wc.cbClsExtra = 0;
+	wc.cbWndExtra = 0;
+	wc.hInstance = hInstance;
+	wc.hIcon = LoadIcon(NULL, IDI_APPLICATION);
+	wc.hCursor = LoadCursor(NULL, IDC_ARROW);
+	wc.hbrBackground = hb;
+	wc.lpszMenuName = NULL;
+	wc.lpszClassName = L"CLASS";
+	wc.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
+	RegisterClassEx(&wc);
+	SetWindowLong(hwnd, GWL_STYLE, GetWindowLong(hwnd, GWL_STYLE) & ~WS_MAXIMIZEBOX);
+	hwnd = CreateWindowEx(WS_EX_CLIENTEDGE, L"CLASS", L"Test", WS_POPUP | WS_BORDER | WS_CAPTION, CW_USEDEFAULT, CW_USEDEFAULT, 500, 500, NULL, NULL, hInstance, NULL);
+	ShowWindow(hwnd, SW_SHOW);
+	UpdateWindow(hwnd);
+	while (GetMessage(&Msg, NULL, 0, 0) > 0)
+	{
+		TranslateMessage(&Msg);
+		DispatchMessage(&Msg);
+	}
+	Gdiplus::GdiplusShutdown(gdiplusToken);
+}
+
+
+
+
 typedef int i32;
 struct Vec2 {
 
