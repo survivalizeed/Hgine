@@ -40,7 +40,7 @@ struct Vec2 {
 
 
 
-
+constexpr double PI = 3.1415;
 
 Vec2 RotateRelativeToOrigin(Vec2 pos, Vec2 origin, float deg) {
 	/*___Maybe we want to always ceil() instead of round()___*/
