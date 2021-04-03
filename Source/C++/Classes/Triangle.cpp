@@ -198,6 +198,7 @@ void sur::Triangle::Fill(LineVector& linevector)
 sur::Triangle::Triangle(sur::Vec2 p1, sur::Vec2 p2, sur::Vec2 p3, Color color, const std::string& name, i32 id, cb_ptr<Master*> callback)
 	: p1(p1), p2(p2), p3(p3), color(color), Master(name, id, callback) 
 {
+	type = Type::Triangle;
 	identitys.push_back(id);
 	ptrs.push_back(this);
 }

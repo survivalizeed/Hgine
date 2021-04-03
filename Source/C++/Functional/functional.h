@@ -30,4 +30,5 @@ namespace sur {
 	u32 Distance(sur::Master* a, sur::Master* b, bool xAxis);
 
 	void Freeze(bool freeze);
+
 }

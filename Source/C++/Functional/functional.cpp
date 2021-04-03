@@ -72,10 +72,6 @@ u32 sur::Distance(sur::Master* a, sur::Master* b, bool xAxis)
 
 void sur::Freeze(bool freeze)
 {
-	if (freeze) {
 
-	}
-	else {
-
-	}
 }
+

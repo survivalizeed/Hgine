@@ -19,6 +19,7 @@ typedef const int size;
 
 constexpr int Second = 1000;
 constexpr int Minute = 60000;
+constexpr float PI = 3.1415926f;
 
 namespace sur {
 	//
@@ -29,33 +30,46 @@ namespace sur {
 	//
 	struct Vec2 {
 
-		i32 x, y;
-		
-		Vec2() { x = 0; y = 0; }
+		i32 x = 0, y = 0;
 
-		Vec2(i32 x, i32 y)	: x(x), y(y){}
-		
-		Vec2(const Vec2& vector2d)	: x(vector2d.x), y(vector2d.y)	{}
+		Vec2() = default;
+
+		Vec2(i32 x, i32 y) : x(x), y(y) {}
+
+		Vec2(const Vec2& vector2d) : x(vector2d.x), y(vector2d.y) {}
 
 		inline Vec2 invert() { return { this->x * -1, this->y * -1 }; }
 		inline float magnitude() { return (float)sqrt(pow(x, 2) + pow(y, 2)); }
+		inline void absolute() { (void)abs(x); (void)abs(y); }
+		inline float AngleToXaxis() {
+			if (y >= 0)
+				return acos(x / magnitude());
+			else
+				return acos(x / magnitude());
+		}
+		
 		inline void operator ()(i32 x, i32 y) { this->x = x; this->y = y; }
 		inline void operator ()(const Vec2& vector2d) { x = vector2d.x; y = vector2d.y; }
-		inline void operator =(const Vec2& vector2d) { x = vector2d.x; y = vector2d.y; }
+		inline void operator =(const Vec2& vector2d) { x = vector2d.x; y = vector2d.y; }	
+	
 		inline Vec2 operator +(const Vec2& other) const { return { x + other.x, y + other.y }; }
 		inline Vec2 operator -(const Vec2& other) const { return { x - other.x, y - other.y }; }
-		inline Vec2 operator *(const Vec2& other) const { return { x * other.x, y * other.y }; }
-		inline Vec2 operator /(const Vec2& other) const{
-			eassert(other.x == 0 || other.y == 0, "Dividing by zero not allowed");
-			return { x / other.x, y / other.y }; }	
+		inline int operator *(const Vec2& other) const { return x * other.x + y * other.y; }
+		inline Vec2 operator /(const Vec2& other) const { return { x / other.x, y / other.y }; }		
+		
+		inline Vec2 operator +(int value) const { return { x + value, y + value }; }
+		inline Vec2 operator -(int value) const { return { x - value, y - value }; }
+		inline Vec2 operator *(int value) const { return { x * value, y * value }; }
+		inline Vec2 operator /(int value) const { return { x / value, y / value }; }
+		
 		inline Vec2 operator --() { return { x - 1, y - 1 }; }
-		inline Vec2 operator ++() { return { x + 1, y + 1 }; }
+		inline Vec2 operator ++() { return { x + 1, y + 1 }; }		
 		inline bool operator ==(const Vec2& other) const { return (x == other.x && y == other.y) ? true : false; }
 		inline bool operator !=(const Vec2& other) const { return (x != other.x && y != other.y) ? true : false; }
 		inline bool operator >(Vec2 other) { return (magnitude() > other.magnitude()) ? true : false; }
 		inline bool operator >=(Vec2 other) { return (magnitude() >= other.magnitude()) ? true : false; }
 		inline bool operator <(Vec2 other) { return (magnitude() < other.magnitude()) ? true : false; }
-		inline bool operator <=( Vec2 other) { return (magnitude() <= other.magnitude()) ? true : false; }
+		inline bool operator <=(Vec2 other) { return (magnitude() <= other.magnitude()) ? true : false; }
 		friend std::ostream& operator<<(std::ostream& os, const Vec2& vector2d) {
 			os << "X: " << vector2d.x << " Y: " << vector2d.y;
 			return os;
@@ -74,11 +88,13 @@ namespace sur {
 //
 
 // Input
-enum Keys : u32{	//	<- No enum class because otherwise GetAsyncKeyState would't be able to read the key
-	A = 0x41, B = 0x42, C = 0x43, D = 0x44, E = 0x45, F = 0x46, G = 0x47, H = 0x48, I = 0x49, J = 0x4A,
-	K = 0x4B, L = 0x4C, M = 0x4D, N = 0x4E, O = 0x4F, P = 0x50, Q = 0x51, R = 0x52, S = 0x53, T = 0x54,
-	U = 0x55, V = 0x56, W = 0x57, X = 0x58, Y = 0x59, Z = 0x5A, SPACE = 0x20
-};
+namespace Keys {
+	enum Keys : u32 {	//	<- No enum class because otherwise GetAsyncKeyState would't be able to read the key
+		A = 0x41, B = 0x42, C = 0x43, D = 0x44, E = 0x45, F = 0x46, G = 0x47, H = 0x48, I = 0x49, J = 0x4A,
+		K = 0x4B, L = 0x4C, M = 0x4D, N = 0x4E, O = 0x4F, P = 0x50, Q = 0x51, R = 0x52, S = 0x53, T = 0x54,
+		U = 0x55, V = 0x56, W = 0x57, X = 0x58, Y = 0x59, Z = 0x5A, SPACE = 0x20
+	};
+}
 
 // Colliders
 enum class ColliderType {

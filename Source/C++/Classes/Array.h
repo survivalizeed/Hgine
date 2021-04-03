@@ -35,6 +35,15 @@ namespace analyses {
 			arr[x + sizeSep.x * y] = what;
 		}
 
+		inline void operator ()(sur::Vec2 pos, T what) {
+			if (typeid(T) == typeid(DWORD)) {
+				pos.y = sizeSep.y - pos.y;
+				pos.y--;
+			}
+			if (pos.x < 0 || pos.y < 0 || pos.x > _window_size.x - 1 || pos.y > _window_size.y - 1) return;
+			arr[pos.x + sizeSep.x * pos.y] = what;
+		}
+
 		//Get
 		inline T operator ()(i32 x, i32 y) {
 			if (typeid(T) == typeid(DWORD)) {

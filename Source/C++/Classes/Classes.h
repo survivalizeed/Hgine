@@ -39,9 +39,15 @@ namespace sur {
 		Master(const std::string& name, i32 id, sur::Vec2 position, sur::Vec2 size, cb_ptr<Master*> callback = nullptr)
 			: name(name), id(id), position(position), size(size), callback(callback) {}		//Rectangle
 
+		sur::Vec2 rot(sur::Vec2 pos, sur::Vec2 origin, i32 Angle);
+		
 		virtual void MoveInject(i32 index, i32 CurMove);
 
 	public:
+		enum class Type {
+			Rectangle, Object, Triangle, Line, Trigger
+		} type;
+
 		//Don't use this variable
 		bool active = true;
 
@@ -59,7 +65,9 @@ namespace sur {
 
 		virtual inline void SetPosition(sur::Vec2 position) { this->position = position; }
 
-		inline bool State() { return active; }
+		inline sur::Vec2 GetOrigin() const { return GetPosition() + GetSize() / 2; }
+
+		inline bool State() const { return active; }
 
 		void Move(sur::Vec2 direction, bool detect);
 	};
@@ -98,7 +106,6 @@ namespace sur {
 	class Rectangle : public Master {
 	private:
 		Color color;
-		//void MoveInject(i32 index, i32 curmove) override;
 	public:
 		Rectangle() {}
 
@@ -106,7 +113,6 @@ namespace sur {
 
 		void Bind(bool Render, bool Collider);
 
-		//Destructor
 	};
 	//
 	//	Load objects that were created with the Hgineres editor
@@ -116,16 +122,25 @@ namespace sur {
 	protected:
 		i32 x = 0;
 		i32 y = 0;
+		i32 previous_angle;
 		std::string path;
+		bool rotatecpy = false;
 
-		std::vector<i32>* XCoords = new std::vector<i32>;
-		std::vector<i32>* YCoords = new std::vector<i32>;
-		std::vector<Gdiplus::Color>* Colors = new std::vector<Gdiplus::Color>;
+		std::vector<i32>* XCoordsO = new std::vector<i32>;
+		std::vector<i32>* YCoordsO = new std::vector<i32>;
+		std::vector<Color>* ColorsO = new std::vector<Color>;
+		
+		std::vector<i32>* XCoordsC = nullptr;
+		std::vector<i32>* YCoordsC = nullptr;
+		std::vector<Color>* ColorsC = nullptr;
+
+		std::vector<i32>* XCoords = XCoordsO;
+		std::vector<i32>* YCoords = YCoordsO;
+		std::vector<Color>* Colors = ColorsO;
+		
 		std::vector<i32>* MaxX = new std::vector<i32>;
 
 		void Load();
-
-		//void MoveInject(i32 index, i32 curmove) override;
 
 	public:
 		Object() {}
@@ -136,6 +151,8 @@ namespace sur {
 		Object(const Object* const obj, sur::Vec2 position, const std::string& name, i32 id, cb_ptr<Master*> callback = nullptr);
 
 		void Bind(bool Render, bool Collider, ColliderType collidertype);
+
+		void Rotate(sur::Vec2 origin, i32 Angle);
 
 		~Object() {
 			delete YCoords, XCoords, Colors;
@@ -301,7 +318,7 @@ namespace sur {
 			bool RClick() const;
 		};
 		struct Keyboard {
-			bool Key(Keys key) const;
+			bool Key(Keys::Keys key) const;
 		};
 		Mouse mouse;
 		Keyboard keyboard;

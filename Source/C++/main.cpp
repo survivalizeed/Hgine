@@ -20,9 +20,20 @@ int main() {
 	renderer.DebugConsole(_debug);
 	renderer.FPS();
 
+	sur::Object b(_resource_path + "Bottle.Hgineres", { 200,200 }, "obj", 1);
+	
+	int i = 0;
 	for (;;) {
 		renderer.ClearScreenBuffer();
-
+		
+		b.Rotate(b.GetOrigin(),i);
+		b.Bind(true, false, ColliderType::None);
+		if (_input.keyboard.Key(Keys::A)) {
+			i--;
+		}
+		if (_input.keyboard.Key(Keys::D)) {
+			i++;
+		}
 		renderer.RenderScreenBuffer();
 	}
 }

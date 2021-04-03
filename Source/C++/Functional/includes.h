@@ -20,6 +20,7 @@
 #include <string>
 #include <cmath>
 #include <algorithm>
+#include <iterator>
 #include <fstream>
 #include <sstream>
 #include <type_traits>
@@ -36,7 +37,7 @@ exit(-1)
 #define assert(con,rt) if(con)\
 return rt
 
-#define eassert(con,mes) if(con) Error(mes)
+#define eassert(con,mes) if(con){ Error(mes);}
 
 #define cpar(x) {x;}
 
@@ -49,8 +50,8 @@ using namespace std::chrono;
 #include "../Classes/Classes.h"
 //#include "functional.h" <- included in main so I don't get linker errors
 
-constexpr i32 RO = 0;
-constexpr i32 CO = 0;
+constexpr i32 RO = 0;	//currently useless
+constexpr i32 CO = 0;	//currently useless
 
 
 extern sur::Vec2 _window_size;

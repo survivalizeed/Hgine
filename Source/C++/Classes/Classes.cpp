@@ -134,6 +134,13 @@ void sur::Master::Move(sur::Vec2 direction, bool detect)
 	}
 }
 
+sur::Vec2 sur::Master::rot(sur::Vec2 pos, sur::Vec2 origin, i32 Angle)
+{
+	sur::Vec2 dist(pos - origin);
+	return 	sur::Vec2((i32)(dist.x * cos(Angle * PI / 180) - dist.y * sin(Angle * PI / 180)),
+		(i32)(dist.x * sin(Angle * PI / 180) + dist.y * cos(Angle * PI / 180))) + origin;
+}
+
 void sur::Master::MoveInject(i32 index, i32 CurMove)
 {
 	switch (index)
@@ -224,6 +231,7 @@ void sur::Camera::Move(sur::Vec2 direction)
 sur::Rectangle::Rectangle(sur::Vec2 position, sur::Vec2 size, Color color, const std::string& name, i32 id, cb_ptr<Master*> callback)
 	:color(color), Master(name,id, position, size, callback)
 {
+	type = Type::Rectangle;
 	identitys.push_back(id);
 	ptrs.push_back(this);
 }
@@ -244,6 +252,7 @@ void sur::Rectangle::Bind(bool Render,bool Collider)
 sur::Line::Line(sur::Vec2 start, sur::Vec2 end, Color color, const std::string& name, i32 id, cb_ptr<Master*> callback)
 	: start(start), end(end), color(color), Master(name, id, callback)
 {
+	type = Type::Line;
 	identitys.push_back(id);
 	ptrs.push_back(this);
 }
@@ -523,7 +532,7 @@ bool sur::Input::Mouse::RClick() const
 }
 
 // Keyboard
-bool sur::Input::Keyboard::Key(Keys key) const
+bool sur::Input::Keyboard::Key(Keys::Keys key) const
 {
 	if (GetAsyncKeyState(key))
 		return true;
