@@ -17,28 +17,26 @@ int main() {
 	lua_State* LC = Start();
 
 	sur::Render renderer(Color(100, 107, 47), 1);
-	renderer.DebugConsole(_debug);
+	renderer.DebugConsole(true);
 	renderer.FPS();
 
-	sur::Object b(_resource_path + "Bottle.Hgineres", { 200,200 }, "obj", 1);
-	
-	int i = 0;
+	//sur::Object b(_resource_path + "Bottle.Hgineres", { 0,200 }, "obj", 1);
+	sur::Rectangle a({ 100,100 }, { 30,30 }, Color(124, 124, 124), "a", 1);
+	sur::Rectangle b({ 200,200 }, { 30,30 }, Color(124, 124, 124), "b", 2, [](sur::Master* current, sur::Master* other) {
+		if (other->GetName() == "a")
+			l("Collision");
+	});
+
+	sur::Vec2f dir(a.GetPosition() - b.GetPosition());
+	dir.normalize();
 	for (;;) {
 		renderer.ClearScreenBuffer();
-		
-		b.Rotate(b.GetOrigin(),i);
-		b.Bind(true, false, ColliderType::None);
-		if (_input.keyboard.Key(Keys::A)) {
-			i--;
-		}
-		if (_input.keyboard.Key(Keys::D)) {
-			i++;
-		}
+		a.Bind(true, true);
+		b.Bind(true, true);
+		b.Move(dir * 2, true);
 		renderer.RenderScreenBuffer();
 	}
 }
-
-
 
 lua_State* Start() {
 	lua_State* L = lua::LoadFile("F:\\C++\\Hgine\\Hgine\\Source\\Lua\\config.lua");

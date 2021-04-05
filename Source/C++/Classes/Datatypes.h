@@ -8,10 +8,14 @@ typedef int8_t i8;
 typedef	int16_t i16;
 typedef int i32;
 typedef	long int i64;
+
 typedef uint8_t u8;
 typedef uint16_t u16;
 typedef	unsigned int u32;
 typedef unsigned long int u64;
+
+typedef float f32;
+typedef double f64;
 
 typedef Gdiplus::Color Color;
 
@@ -19,7 +23,7 @@ typedef const int size;
 
 constexpr int Second = 1000;
 constexpr int Minute = 60000;
-constexpr float PI = 3.1415926f;
+constexpr f32 PI = 3.1415926f;
 
 namespace sur {
 	//
@@ -28,6 +32,34 @@ namespace sur {
 	//
 	// Vec2 -> i32
 	//
+	struct Vec2f {
+		f32 x, y;
+
+
+		Vec2f() = default;
+
+		Vec2f(f32 x, f32 y) : x(x), y(y) {}
+
+		Vec2f(const Vec2f& vector2d) : x(vector2d.x), y(vector2d.y) {}
+
+		inline f32 magnitude() { return (f32)sqrt(pow(x, 2) + pow(y, 2)); }
+		inline void invert() { x *= -1.f; y *= -1.f; }
+		inline void normalize() { float mag = magnitude();  x /= mag; y /= mag; }
+
+		inline void operator ()(f32 x, f32 y) { this->x = x; this->y = y; }
+		inline void operator ()(const Vec2f& vector2d) { x = vector2d.x; y = vector2d.y; }
+		inline void operator =(const Vec2f& vector2d) { x = vector2d.x; y = vector2d.y; }
+
+		inline Vec2f operator +(const Vec2f& other) const { return { x + other.x, y + other.y }; }
+		inline Vec2f operator -(const Vec2f& other) const { return { x - other.x, y - other.y }; }
+		inline Vec2f operator *(f32 value) const { return{ x * value, y * value }; }
+
+		friend std::ostream& operator<<(std::ostream& os, const Vec2f& vector2d) {
+			os << "X: " << vector2d.x << " Y: " << vector2d.y;
+			return os;
+		}
+	};
+
 	struct Vec2 {
 
 		i32 x = 0, y = 0;
@@ -38,10 +70,10 @@ namespace sur {
 
 		Vec2(const Vec2& vector2d) : x(vector2d.x), y(vector2d.y) {}
 
-		inline Vec2 invert() { return { this->x * -1, this->y * -1 }; }
-		inline float magnitude() { return (float)sqrt(pow(x, 2) + pow(y, 2)); }
+		inline void invert() { x *= -1; y *= -1; }
+		inline f32 magnitude() { return (f32)sqrt(pow(x, 2) + pow(y, 2)); }
 		inline void absolute() { (void)abs(x); (void)abs(y); }
-		inline float AngleToXaxis() {
+		inline f32 angleToXaxis() {
 			if (y >= 0)
 				return acos(x / magnitude());
 			else
@@ -74,7 +106,9 @@ namespace sur {
 			os << "X: " << vector2d.x << " Y: " << vector2d.y;
 			return os;
 		}
+		operator Vec2f() { return { (f32)x,(f32)y }; }
 	};
+
 	//
 	// Map pointer for Rendering, Collision and Trigger detection
 	//

@@ -57,14 +57,14 @@ void sur::Triangle::Line(sur::Vec2 start, sur::Vec2 end, std::vector<sur::Vec2>*
 		std::swap(start.x, end.x);
 	}
 	i32 Dx, Dy;
-	float RunsThrough;
+	f32 RunsThrough;
 	Dx = end.x - start.x;
 	Dy = end.y - start.y;
-	RunsThrough = (float)Dy / (float)Dx;
+	RunsThrough = (f32)Dy / (f32)Dx;
 	line->push_back(start);
 	if (RunsThrough >= 0) {
 		i32 tempy = start.y;
-		float counter = 0.0f;
+		f32 counter = 0.0f;
 		i32 countcounter = 1;
 		for (i32 i = start.x; i <= end.x; i++) {
 			if(Render)
@@ -86,7 +86,7 @@ void sur::Triangle::Line(sur::Vec2 start, sur::Vec2 end, std::vector<sur::Vec2>*
 	else {
 		RunsThrough *= -1;
 		i32 tempy = start.y;
-		float counter = 0.0f;
+		f32 counter = 0.0f;
 		i32 countcounter = 1;
 		bool runned = false;
 		for (i32 i = start.x; i <= end.x; i++) {
@@ -107,7 +107,7 @@ void sur::Triangle::Line(sur::Vec2 start, sur::Vec2 end, std::vector<sur::Vec2>*
 			counter += RunsThrough;
 		}
 		if (!runned) {
-			RunsThrough = (float)Dx / (float)Dy;
+			RunsThrough = (f32)Dx / (f32)Dy;
 			RunsThrough *= -1;
 			i32 tempx = start.x;
 			for (i32 i = start.y; i <= end.y; i++) {

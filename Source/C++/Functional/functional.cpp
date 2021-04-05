@@ -2,7 +2,6 @@
 
 #include "functional.h"
 
-
 extern sur::Map_Analyses _Amap;
 extern sur::Vec2 _window_size;
 
@@ -24,20 +23,20 @@ i32 sur::CharCounter(char Char, const std::string& Data) {
 	return counter;
 }
 
-void sur::Sound(const char* path, u32 params, i32 volume)
+inline void sur::Sound(const char* path, u32 params, i32 volume)
 {
 	waveOutSetVolume(NULL, volume);
 	PlaySoundA(path, NULL, params);
 }
 
-i32 sur::RandomRange(i32 min, i32 max)
+inline i32 sur::RandomRange(i32 min, i32 max)
 {
 	return rand() % (max - min + 1) + min;
 }
 
-void sur::MoveTowards(sur::Master* current, sur::Master* target, const sur::Vec2& speed, bool detect)	// 1 = true(move), 0 = false(don't move)
+void sur::MoveTowards(sur::Master* current, sur::Master* target, const sur::Vec2f& speed, bool detect)	// 1 = true(move), 0 = false(don't move)
 {
-	assert(target->GetName() == "invalid" || current->GetName() == "invalid");
+	//assert(target->GetName() == "invalid" || current->GetName() == "invalid");
 	if (current->GetPosition().x < target->GetPosition().x) {	// positive x
 		if (current->GetPosition().x != target->GetPosition().x)
 			current->Move({ speed.x,0 },detect);

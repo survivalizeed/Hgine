@@ -15,8 +15,27 @@ extern std::vector<void*> trigger_ptrs;
 //
 //	Master
 //
-void sur::Master::Move(sur::Vec2 direction, bool detect)
+void sur::Master::Move(sur::Vec2f direction, bool detect)
 {
+	counter = counter + direction;
+	direction = { 0,0 };
+	while (counter.x >= (f32)countercountpos.x) {
+		direction.x += 1;
+		countercountpos.x++;
+	}
+	while (counter.y >= (f32)countercountpos.y) {
+		direction.y += 1;
+		countercountpos.y++;
+	}
+	while (counter.x <= (f32)countercountneg.x) {
+		direction.x -= 1;
+		countercountneg.x--;
+	}
+	while (counter.y <= (f32)countercountneg.y) {
+		direction.y -= 1;
+		countercountneg.y--;
+	}
+	direction.y *= -1;
 	if (detect) {
 		i32 CurMove = 0;
 		if (direction.y > 0) {	//Up
@@ -124,13 +143,13 @@ void sur::Master::Move(sur::Vec2 direction, bool detect)
 	}
 	else {
 		if (direction.y > 0)
-			position.y -= direction.y;
+			position.y -= (i32)direction.y;
 		if (direction.x > 0)
-			position.x += direction.x;
+			position.x += (i32)direction.x;
 		if (direction.y < 0)
-			position.y -= direction.y;
+			position.y -= (i32)direction.y;
 		if (direction.x < 0)
-			position.x += direction.x;
+			position.x += (i32)direction.x;
 	}
 }
 
@@ -213,16 +232,17 @@ void sur::Render::DebugConsole(bool Show)
 //
 //	Camera
 //
-void sur::Camera::Move(sur::Vec2 direction)
+void sur::Camera::Move(sur::Vec2f direction)
 {
+	direction.invert();
 	for (i32 i = 0; i < sur::Instancer::GetCount(sur::Instancer::Types::Rectangle); i++) {
-		sur::Instancer::GetRect("", i)->Move(direction.invert(), false);
+		sur::Instancer::GetRect("", i)->Move(direction, false);
 	}
 	for (i32 i = 0; i < sur::Instancer::GetCount(sur::Instancer::Types::Line); i++) {
-		sur::Instancer::GetLine("", i)->Move(direction.invert(), false);
+		sur::Instancer::GetLine("", i)->Move(direction, false);
 	}
 	for (i32 i = 0; i < sur::Instancer::GetCount(sur::Instancer::Types::Object); i++) {
-		sur::Instancer::GetObj("", i)->Move(direction.invert(), false);
+		sur::Instancer::GetObj("", i)->Move(direction, false);
 	}
 }
 //
@@ -267,13 +287,13 @@ void sur::Line::Bind(bool Render, bool Collider)
 		std::swap(start.x, end.x);
 	}
 	i32 Dx, Dy;
-	float RunsThrough;
+	f32 RunsThrough;
 	Dx = end.x - start.x;
 	Dy = end.y - start.y;
-	RunsThrough = (float)Dy / (float)Dx;
+	RunsThrough = (f32)Dy / (f32)Dx;
 	if (RunsThrough >= 0) {
 		i32 tempy = start.y;
-		float counter = 0.0f;
+		f32 counter = 0.0f;
 		i32 countcounter = 1;
 		for (i32 i = start.x; i <= end.x; i++) {
 			if(Render)
@@ -294,7 +314,7 @@ void sur::Line::Bind(bool Render, bool Collider)
 	else {
 		RunsThrough *= -1;
 		i32 tempy = start.y;
-		float counter = 0.0f;
+		f32 counter = 0.0f;
 		i32 countcounter = 1;
 		bool runned = false;
 		for (i32 i = start.x; i <= end.x; i++) {
@@ -314,7 +334,7 @@ void sur::Line::Bind(bool Render, bool Collider)
 			counter += RunsThrough;
 		}
 		if (!runned) {
-			RunsThrough = (float)Dx / (float)Dy;
+			RunsThrough = (f32)Dx / (f32)Dy;
 			RunsThrough *= -1;
 			i32 tempx = start.x;
 			for (i32 i = start.y; i <= end.y; i++) {

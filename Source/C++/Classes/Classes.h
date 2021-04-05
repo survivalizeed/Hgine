@@ -25,6 +25,10 @@ namespace sur {
 	class Master {
 	protected:
 
+		sur::Vec2f counter;
+		sur::Vec2 countercountpos = { 1,1 };
+		sur::Vec2 countercountneg = { -1,-1 };
+
 		sur::Vec2 moveiter;
 		std::string name;
 		sur::Vec2 position;
@@ -69,13 +73,12 @@ namespace sur {
 
 		inline bool State() const { return active; }
 
-		void Move(sur::Vec2 direction, bool detect);
+		void Move(sur::Vec2f direction, bool detect);
 	};
 	//
 	//	Render class
 	//
-	class Render
-	{
+	class Render {
 	private:
 		bool thread = false;
 		i32 frameCounter = 0;
@@ -98,7 +101,7 @@ namespace sur {
 	// Camera class
 	//
 	namespace Camera {
-		void Move(sur::Vec2 direction);
+		void Move(sur::Vec2f direction);
 	};
 	//
 	//	Shape: Rectangle
@@ -107,7 +110,6 @@ namespace sur {
 	private:
 		Color color;
 	public:
-		Rectangle() {}
 
 		Rectangle(sur::Vec2 position, sur::Vec2 size, Color color, const std::string& name, i32 id, cb_ptr<Master*> callback = nullptr);
 
@@ -117,8 +119,7 @@ namespace sur {
 	//
 	//	Load objects that were created with the Hgineres editor
 	//
-	class Object : public Master
-	{
+	class Object : public Master {
 	protected:
 		i32 x = 0;
 		i32 y = 0;
@@ -143,7 +144,6 @@ namespace sur {
 		void Load();
 
 	public:
-		Object() {}
 
 		Object(const std::string& path, sur::Vec2 position, const std::string& name, i32 id, cb_ptr<Master*> callback = nullptr);
 
@@ -168,8 +168,6 @@ namespace sur {
 		Color color;
 		size_t lenght = 0;
 	public:
-
-		Line() {}
 
 		Line(sur::Vec2 start, sur::Vec2 end, Color color, const std::string& name, i32 id, cb_ptr<Master*> callback = nullptr);
 
@@ -210,7 +208,6 @@ namespace sur {
 		void Fill(LineVector& linevector);
 
 	public:
-		Triangle() {}
 
 		Triangle(sur::Vec2 p1, sur::Vec2 p2, sur::Vec2 p3, Color color, const std::string& name, i32 id, cb_ptr<Master*> callback = nullptr);
 
@@ -226,8 +223,7 @@ namespace sur {
 	//
 	//	Shape: Custom wire shape
 	//
-	class Shape : public Master
-	{
+	class Shape : public Master {
 	private:
 		Color color;
 		std::vector<sur::Vec2>* vec = new std::vector<sur::Vec2>;
@@ -297,13 +293,14 @@ namespace sur {
 	//	Triggers
 	//
 	namespace Triggers {
-		class Rectangle : public Master{
+		class Rectangle : public Master
+		{
 		private:
 
 		public:
 			Rectangle(sur::Vec2 position, sur::Vec2 size, const std::string& name, i32 id, cb_ptr<Master*> callback = nullptr);
 
-			inline void Move(sur::Vec2 direction) cpar(Master::Move(direction, false))
+			inline void Move(sur::Vec2f direction) cpar(Master::Move(direction, false))
 
 			void Bind();
 		};

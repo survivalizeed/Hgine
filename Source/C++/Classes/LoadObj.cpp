@@ -151,7 +151,7 @@ void sur::Object::Bind(bool Render, bool Collider, ColliderType collidertype)
 
 void sur::Object::Rotate(sur::Vec2 origin, i32 Angle)
 { 
-	assert(rotatecpy && previous_angle == Angle);
+	//assert(rotatecpy && previous_angle == Angle);
 	if (!rotatecpy) {
 		XCoordsC = new std::vector<i32>(*XCoords);
 		YCoordsC = new std::vector<i32>(*YCoords);
@@ -182,26 +182,26 @@ void sur::Object::Rotate(sur::Vec2 origin, i32 Angle)
 //auto arot = [&](sur::Vec2 pos, sur::Vec2 origin, i32 Angle) -> sur::Vec2 {
 //	Angle *= PI / 180;
 //	sur::Vec2 pos_new;
-//	float angle;
+//	f32 angle;
 //	sur::Vec2 dist(pos - origin);
-//	float hypothenuse = dist.magnitude();
-//	angle = atan((float)dist.y / (float)dist.x) + Angle;
+//	f32 hypothenuse = dist.magnitude();
+//	angle = atan((f32)dist.y / (f32)dist.x) + Angle;
 //	pos_new((i32)(cos(angle) * hypothenuse + 0.5f),
 //		(i32)(sin(angle) * hypothenuse + 0.5f));
 //	return pos_new + origin;
 //};
 //if (xb && yb) {
-//	angle = atan((float)dist.x / (float)dist.y) + Angle + PI / 2;
+//	angle = atan((f32)dist.x / (f32)dist.y) + Angle + PI / 2;
 //	pos_new((i32)(cos(angle) * hypothenuse + 0.5f),
 //		(i32)(sin(angle) * hypothenuse + 0.5f));
 //}
 //if (xb && !yb) {
-//	angle = atan((float)dist.y / (float)dist.x) + Angle + PI;
+//	angle = atan((f32)dist.y / (f32)dist.x) + Angle + PI;
 //	pos_new((i32)(sin(angle) * hypothenuse + 0.5f),
 //		(i32)(cos(angle) * hypothenuse + 0.5f));
 //}
 //if (!xb && yb) {
-//	angle = atan((float)dist.x / (float)dist.y) + Angle + 3 * PI / 2;
+//	angle = atan((f32)dist.x / (f32)dist.y) + Angle + 3 * PI / 2;
 //	pos_new((i32)(sin(angle) * hypothenuse + 0.5f),
 //		(i32)(cos(angle) * hypothenuse + 0.5f));
 //}
