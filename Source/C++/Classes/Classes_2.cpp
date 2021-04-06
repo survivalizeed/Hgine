@@ -1,3 +1,5 @@
+
+
 #include "Classes.h"
 
 std::vector<i32> trigger_identitys;
@@ -7,10 +9,10 @@ extern sur::Map_Analyses _Amap;
 //
 //	Trigger: Rectangle
 //
-sur::Triggers::Rectangle::Rectangle(sur::Vec2 position, sur::Vec2 size, const std::string& name, i32 id, cb_ptr<Master*> callback)
+sur::Triggers::Rectangle::Rectangle(Vec2 position, Vec2 size, const std::string& name, i32 id, cb_ptr<Master*> callback)
 	: Master(name, id, position, size, callback)
 {
-	type = Type::Trigger;
+	type = Type::Trigger_Rectangle;
 	trigger_identitys.push_back(id);
 	trigger_ptrs.push_back(this);
 }

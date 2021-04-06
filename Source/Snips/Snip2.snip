@@ -18,3 +18,30 @@
 			sur::Camera::Move({ 20,0 });
 		if (_input.keyboard.Key(Keys::F))
 			sur::Instancer::GetObj("shot0")->Move({ 2,0 }, false);
+
+			//auto arot = [&](sur::Vec2 pos, sur::Vec2 origin, i32 Angle) -> sur::Vec2 {
+//	Angle *= PI / 180;
+//	sur::Vec2 pos_new;
+//	f32 angle;
+//	sur::Vec2 dist(pos - origin);
+//	f32 hypothenuse = dist.magnitude();
+//	angle = atan((f32)dist.y / (f32)dist.x) + Angle;
+//	pos_new((i32)(cos(angle) * hypothenuse + 0.5f),
+//		(i32)(sin(angle) * hypothenuse + 0.5f));
+//	return pos_new + origin;
+//};
+//if (xb && yb) {
+//	angle = atan((f32)dist.x / (f32)dist.y) + Angle + PI / 2;
+//	pos_new((i32)(cos(angle) * hypothenuse + 0.5f),
+//		(i32)(sin(angle) * hypothenuse + 0.5f));
+//}
+//if (xb && !yb) {
+//	angle = atan((f32)dist.y / (f32)dist.x) + Angle + PI;
+//	pos_new((i32)(sin(angle) * hypothenuse + 0.5f),
+//		(i32)(cos(angle) * hypothenuse + 0.5f));
+//}
+//if (!xb && yb) {
+//	angle = atan((f32)dist.x / (f32)dist.y) + Angle + 3 * PI / 2;
+//	pos_new((i32)(sin(angle) * hypothenuse + 0.5f),
+//		(i32)(cos(angle) * hypothenuse + 0.5f));
+//}

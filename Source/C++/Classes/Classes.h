@@ -9,23 +9,16 @@ extern HWND _hwnd;
 
 namespace sur {
 	//
-	//	Static var
-	//
-
-	//
-	//	Static func
-	//
-
-	//
 	//	Classes
 	//
 	//
 	//	Master: Defines the standard attributes of an object
-	//
+	// Classes.cpp
 	class Master {
 	protected:
 
-		sur::Vec2f counter;
+		sur::Vec2f counterpos;
+		sur::Vec2f counterneg;
 		sur::Vec2 countercountpos = { 1,1 };
 		sur::Vec2 countercountneg = { -1,-1 };
 
@@ -49,7 +42,7 @@ namespace sur {
 
 	public:
 		enum class Type {
-			Rectangle, Object, Triangle, Line, Trigger
+			Rectangle, Object, Triangle, Line, Shape, Trigger_Rectangle
 		} type;
 
 		//Don't use this variable
@@ -77,7 +70,7 @@ namespace sur {
 	};
 	//
 	//	Render class
-	//
+	// Classes.cpp
 	class Render {
 	private:
 		bool thread = false;
@@ -99,13 +92,13 @@ namespace sur {
 	};
 	//
 	// Camera class
-	//
+	// Classes.cpp
 	namespace Camera {
 		void Move(sur::Vec2f direction);
 	};
 	//
 	//	Shape: Rectangle
-	//
+	// Classes.cpp
 	class Rectangle : public Master {
 	private:
 		Color color;
@@ -118,7 +111,7 @@ namespace sur {
 	};
 	//
 	//	Load objects that were created with the Hgineres editor
-	//
+	// LoadObj.cpp
 	class Object : public Master {
 	protected:
 		i32 x = 0;
@@ -155,12 +148,14 @@ namespace sur {
 		void Rotate(sur::Vec2 origin, i32 Angle);
 
 		~Object() {
-			delete YCoords, XCoords, Colors;
+			delete YCoordsO, XCoordsO, ColorsO;
+			if (rotatecpy)
+				delete YCoordsC, XCoordsC, ColorsC;
 		}
 	};
 	//
 	//	Shape: Procedual Line
-	//
+	// Classes.cpp
 	class Line : public Master {
 	private:
 		sur::Vec2 start;
@@ -183,7 +178,7 @@ namespace sur {
 	};
 	//
 	//	Shape: Triangle
-	//
+	// Triangle.cpp
 	class Triangle : public Master {
 	private:
 		sur::Vec2 p1, p2, p3;
@@ -207,6 +202,8 @@ namespace sur {
 
 		void Fill(LineVector& linevector);
 
+		void MoveInject(i32 index, i32 CurMove) override;
+
 	public:
 
 		Triangle(sur::Vec2 p1, sur::Vec2 p2, sur::Vec2 p3, Color color, const std::string& name, i32 id, cb_ptr<Master*> callback = nullptr);
@@ -215,14 +212,13 @@ namespace sur {
 			switch (which) {
 			case 1: p1 = pos; return;
 			case 2: p2 = pos; return;
-			case 3: p3 = pos; return;
-			}
+			case 3: p3 = pos; return;}
 		}
 		void Bind(bool Render, bool Collider);
 	};
 	//
 	//	Shape: Custom wire shape
-	//
+	// Classes.cpp
 	class Shape : public Master {
 	private:
 		Color color;
@@ -238,12 +234,9 @@ namespace sur {
 		}
 
 	public:
-		Shape(Color color, i32 id, cb_ptr<Master*> callback = nullptr)
-			: color(color)
-		{
-			this->id = id;
-		}
+		Shape(Color color, const std::string& name, i32 id, cb_ptr<Master*> callback = nullptr);
 
+		// Call after constructor
 		template<VEC F, VEC ... R>
 		void Pass(F f, R ... r) {
 			vec->push_back((sur::Vec2)f);
@@ -253,45 +246,8 @@ namespace sur {
 		void Bind(bool Render, bool Collider);
 	};
 	//
-	//	Instancer <- For object management
-	//
-	namespace Instancer {
-		namespace restricted {
-			static std::vector<Rectangle*>* rectangles = new std::vector<Rectangle*>;
-			static std::vector<Line*>* lines = new std::vector<Line*>;
-			static std::vector<Object*>* objects = new std::vector<Object*>;
-			static std::vector<Triangle*>* triangles = new std::vector<Triangle*>;
-
-			// To return if nothing was found -> prevent error of nullpointer
-			static Rectangle* Rdefault = new Rectangle({ 0,0 }, { 0,0 }, Color(0, 0, 0), "invalid", -1);
-			static Line* Ldefault = new Line({ 0,0 }, { 0,0 }, Color(0, 0, 0), "invalid", -1);
-			static Object* Odefault = new Object("invalid", { 0,0 }, "invalid", -1);
-			static Triangle* Tdefault = new Triangle({ 0,0 }, { 0,0 }, { 0,0 }, Color(0, 0, 0), "invalid", -1);
-		}
-
-		enum class Types {
-			Rectangle, Line, Object, Triangle
-		};
-
-		void Add(void* object, Types type);
-
-		sur::Rectangle* GetRect(const std::string& name = "", i32 index = -1);
-
-		sur::Line* GetLine(const std::string& name = "", i32 index = -1);
-
-		sur::Object* GetObj(const std::string& name = "", i32 index = -1);
-
-		sur::Triangle* GetTri(const std::string& name = "", i32 index = -1);
-
-		i32 GetCount(Types type);
-
-		void State(Types type, bool active, const std::string& name = "", i32 index = -1);
-
-		void Delete(Types type, const std::string& name = "", i32 index = -1);
-	}
-	//
 	//	Triggers
-	//
+	// Classes_2.cpp
 	namespace Triggers {
 		class Rectangle : public Master
 		{
@@ -306,8 +262,45 @@ namespace sur {
 		};
 	}
 	//
-	//	Input
+	//	Instancer <- For object management
+	// Instancer.cpp
+	namespace Instancer {	
+		struct restricted {
+			inline static std::vector<sur::Rectangle*>* rectangles = new std::vector<sur::Rectangle*>;
+			inline static std::vector<sur::Line*>* lines = new std::vector<sur::Line*>;
+			inline static std::vector<sur::Object*>* objects = new std::vector<sur::Object*>;
+			inline static std::vector<sur::Triangle*>* triangles = new std::vector<sur::Triangle*>;
+			inline static std::vector<sur::Shape*>* shapes = new std::vector<sur::Shape*>;
+			inline static std::vector<sur::Triggers::Rectangle*>* trigger_rectangles = new std::vector<sur::Triggers::Rectangle*>;
+			 
+			// To return if nothing was found -> prevent error of nullpointer
+			inline static sur::Rectangle* Rdefault = new sur::Rectangle({ 0,0 }, { 0,0 }, Color(0, 0, 0), "invalid", -1);
+			inline static sur::Line* Ldefault = new sur::Line({ 0,0 }, { 0,0 }, Color(0, 0, 0), "invalid", -1);
+			inline static sur::Object* Odefault = new sur::Object("invalid", { 0,0 }, "invalid", -1);
+			inline static sur::Triangle* Tdefault = new sur::Triangle({ 0,0 }, { 0,0 }, { 0,0 }, Color(0, 0, 0), "invalid", -1);
+			inline static sur::Shape* Sdefault = new sur::Shape(Color(0, 0, 0), "invalid", -1);
+			inline static sur::Triggers::Rectangle* TRdefault = new sur::Triggers::Rectangle({ 0,0 }, { 0,0 }, "invalid", -1);
+		};
+
+		enum class Types {
+			Rectangle, Line, Object, Triangle, Shape, Trigger_Rectangle
+		};
+
+		void Add(void* object, Types type);
+
+		template<typename RetTy>
+		RetTy* Get(Types type, const std::string& name = "", i32 index = -1);
+
+		u32 GetCount(Types type);
+
+		void State(Types type, bool active, const std::string& name = "", i32 index = -1);
+
+		void Delete(Types type, const std::string& name = "", i32 index = -1);
+	}
+
 	//
+	//	Input
+	// Classes.cpp
 	struct Input {
 		struct Mouse {
 			sur::Vec2 Position() const;
@@ -322,7 +315,7 @@ namespace sur {
 	};
 	//
 	//	struct
-	//
+	// Classes.cpp
 	struct Map_Analyses {
 		analyses::Array<i32> Collider, Trigger;
 		analyses::Array<DWORD> Render;

@@ -15,23 +15,30 @@ extern std::vector<void*> trigger_ptrs;
 //
 //	Master
 //
-void sur::Master::Move(sur::Vec2f direction, bool detect)
+void sur::Master::Move(Vec2f direction, bool detect)
 {
-	counter = counter + direction;
+	if(direction.x > 0)
+		counterpos.x += direction.x;
+	else
+		counterneg.x += direction.x;
+	if (direction.y > 0)
+		counterpos.y += direction.y;
+	else
+		counterneg.y += direction.y;
 	direction = { 0,0 };
-	while (counter.x >= (f32)countercountpos.x) {
+	while (counterpos.x >= (f32)countercountpos.x) {
 		direction.x += 1;
 		countercountpos.x++;
 	}
-	while (counter.y >= (f32)countercountpos.y) {
+	while (counterpos.y >= (f32)countercountpos.y) {
 		direction.y += 1;
 		countercountpos.y++;
 	}
-	while (counter.x <= (f32)countercountneg.x) {
+	while (counterneg.x <= (f32)countercountneg.x) {
 		direction.x -= 1;
 		countercountneg.x--;
 	}
-	while (counter.y <= (f32)countercountneg.y) {
+	while (counterneg.y <= (f32)countercountneg.y) {
 		direction.y -= 1;
 		countercountneg.y--;
 	}
@@ -51,9 +58,9 @@ void sur::Master::Move(sur::Vec2f direction, bool detect)
 							_Amap.Render(i, position.y - a - 1, Color(0, 255, 0));
 						if (_Amap.Collider(i, position.y - a - 1) == identitys[j] && this->id != identitys[j]) {
 							if (callback != nullptr)
-								callback(static_cast<Master*>(this),static_cast<Master*>(ptrs[j]));
+								callback((Master*)this, (Master*)ptrs[j]);
 							if (static_cast<Master*>(ptrs[j])->callback != nullptr)
-								static_cast<Master*>(ptrs[j])->callback(static_cast<Master*>(ptrs[j]),this);
+								static_cast<Master*>(ptrs[j])->callback((Master*)(ptrs[j]), this);
 							goto dir1;
 						}	
 					}
@@ -76,9 +83,9 @@ void sur::Master::Move(sur::Vec2f direction, bool detect)
 							_Amap.Render(position.x + size.x + a - 1, i, Color(0, 255, 0));
 						if (_Amap.Collider(position.x + size.x + a - 1, i) == identitys[j] && this->id != identitys[j]) {
 							if (callback != nullptr)
-								callback(static_cast<Master*>(this),static_cast<Master*>(ptrs[j]));
+								callback((Master*)this, (Master*)ptrs[j]);
 							if (static_cast<Master*>(ptrs[j])->callback != nullptr)
-								static_cast<Master*>(ptrs[j])->callback(static_cast<Master*>(ptrs[j]),this);
+								static_cast<Master*>(ptrs[j])->callback((Master*)ptrs[j],this);
 							goto dir2;
 						}			
 					}
@@ -102,9 +109,9 @@ void sur::Master::Move(sur::Vec2f direction, bool detect)
 							_Amap.Render(i, position.y + size.y + a, Color(0, 255, 0));
 						if (_Amap.Collider(i, position.y + size.y + a) == identitys[j] && this->id != identitys[j]) {
 							if (callback != nullptr)
-								callback(static_cast<Master*>(this),static_cast<Master*>(ptrs[j]));
+								callback((Master*)this, (Master*)ptrs[j]);
 							if (static_cast<Master*>(ptrs[j])->callback != nullptr)
-								static_cast<Master*>(ptrs[j])->callback(static_cast<Master*>(ptrs[j]), this);
+								static_cast<Master*>(ptrs[j])->callback((Master*)ptrs[j], this);
 							goto dir3;
 						}
 					}
@@ -128,9 +135,9 @@ void sur::Master::Move(sur::Vec2f direction, bool detect)
 							_Amap.Render(position.x - a - 1, i, Color(0, 255, 0));
 						if (_Amap.Collider(position.x - a - 1, i) == identitys[j] && this->id != identitys[j]) {
 							if (callback != nullptr)
-								callback(static_cast<Master*>(this),static_cast<Master*>(ptrs[j]));
+								callback((Master*)this, (Master*)ptrs[j]);
 							if (static_cast<Master*>(ptrs[j])->callback != nullptr)
-								static_cast<Master*>(ptrs[j])->callback(static_cast<Master*>(ptrs[j]),this);
+								static_cast<Master*>(ptrs[j])->callback((Master*)ptrs[j],this);
 							goto dir4;
 						}
 					}
@@ -153,7 +160,7 @@ void sur::Master::Move(sur::Vec2f direction, bool detect)
 	}
 }
 
-sur::Vec2 sur::Master::rot(sur::Vec2 pos, sur::Vec2 origin, i32 Angle)
+sur::Vec2 sur::Master::rot(Vec2 pos, Vec2 origin, i32 Angle)
 {
 	sur::Vec2 dist(pos - origin);
 	return 	sur::Vec2((i32)(dist.x * cos(Angle * PI / 180) - dist.y * sin(Angle * PI / 180)),
@@ -232,23 +239,33 @@ void sur::Render::DebugConsole(bool Show)
 //
 //	Camera
 //
-void sur::Camera::Move(sur::Vec2f direction)
+void sur::Camera::Move(Vec2f direction)
 {
+	using namespace sur::Instancer;
 	direction.invert();
-	for (i32 i = 0; i < sur::Instancer::GetCount(sur::Instancer::Types::Rectangle); i++) {
-		sur::Instancer::GetRect("", i)->Move(direction, false);
+	for (i32 i = 0; i < restricted::rectangles->size(); i++) {
+		restricted::rectangles->at(i)->Move(direction, false);
 	}
-	for (i32 i = 0; i < sur::Instancer::GetCount(sur::Instancer::Types::Line); i++) {
-		sur::Instancer::GetLine("", i)->Move(direction, false);
+	for (i32 i = 0; i < restricted::lines->size(); i++) {
+		restricted::lines->at(i)->Move(direction, false);
 	}
-	for (i32 i = 0; i < sur::Instancer::GetCount(sur::Instancer::Types::Object); i++) {
-		sur::Instancer::GetObj("", i)->Move(direction, false);
+	for (i32 i = 0; i < restricted::objects->size(); i++) {
+		restricted::objects->at(i)->Move(direction, false);
+	}
+	for (i32 i = 0; i < restricted::triangles->size(); i++) {
+		restricted::triangles->at(i)->Move(direction, false);
+	}
+	for (i32 i = 0; i < restricted::shapes->size(); i++) {
+		restricted::shapes->at(i)->Move(direction, false);
+	}
+	for (i32 i = 0; i < restricted::trigger_rectangles->size(); i++) {
+		restricted::trigger_rectangles->at(i)->Move(direction);
 	}
 }
 //
 //	Rectangle
 //
-sur::Rectangle::Rectangle(sur::Vec2 position, sur::Vec2 size, Color color, const std::string& name, i32 id, cb_ptr<Master*> callback)
+sur::Rectangle::Rectangle(Vec2 position, Vec2 size, Color color, const std::string& name, i32 id, cb_ptr<Master*> callback)
 	:color(color), Master(name,id, position, size, callback)
 {
 	type = Type::Rectangle;
@@ -269,7 +286,7 @@ void sur::Rectangle::Bind(bool Render,bool Collider)
 //
 //	Line
 //
-sur::Line::Line(sur::Vec2 start, sur::Vec2 end, Color color, const std::string& name, i32 id, cb_ptr<Master*> callback)
+sur::Line::Line(Vec2 start, Vec2 end, Color color, const std::string& name, i32 id, cb_ptr<Master*> callback)
 	: start(start), end(end), color(color), Master(name, id, callback)
 {
 	type = Type::Line;
@@ -279,8 +296,8 @@ sur::Line::Line(sur::Vec2 start, sur::Vec2 end, Color color, const std::string& 
 
 void sur::Line::Bind(bool Render, bool Collider)
 {
-	sur::Vec2 end = this->end;
-	sur::Vec2 start = this-> start;
+	Vec2 end = this->end;
+	Vec2 start = this-> start;
 	if (start.x == end.x) start.x--;
 	if (this->start.y > this->end.y && this->start.x > this->end.x) {
 		std::swap(start.y, end.y);
@@ -358,6 +375,15 @@ void sur::Line::Bind(bool Render, bool Collider)
 //
 //	Custom wire shape
 //
+sur::Shape::Shape(Color color, const std::string& name, i32 id, cb_ptr<Master*> callback) : color(color)
+{
+	this->name = name;
+	type = Type::Shape;
+	identitys.push_back(id);
+	ptrs.push_back(this);
+	this->id = id;
+}
+
 void sur::Shape::Gen()
 {
 	for (i32 i = 0; i < vec->size() - 1; ++i) {
@@ -369,156 +395,6 @@ void sur::Shape::Bind(bool Render, bool Collider)
 {
 	for (auto&& it : *lines)
 		it->Bind(Render,Collider);
-}
-//
-//	Instancer
-//
-void sur::Instancer::Add(void* object, Types type)
-{
-	switch (type) {
-	case Types::Rectangle:
-		restricted::rectangles->push_back(static_cast<Rectangle*>(object));
-		break;
-	case Types::Line:
-		restricted::lines->push_back(static_cast<Line*>(object));
-		break;
-	case Types::Object:
-		restricted::objects->push_back(static_cast<Object*>(object));
-		break;
-	case Types::Triangle:
-		restricted::triangles->push_back(static_cast<Triangle*>(object));
-		break;
-	}
-}
-
-sur::Rectangle* sur::Instancer::GetRect(const std::string& name, i32 index)
-{
-	if (name != "") {
-		for (auto&& it : *restricted::rectangles)
-			if (it->GetName() == name && it->State()) return it;
-	}
-	else if (index >= 0 && index < restricted::rectangles->size() && restricted::rectangles->at(index)->State()) 
-		return restricted::rectangles->at(index);
-	return restricted::Rdefault;
-}
-
-sur::Line* sur::Instancer::GetLine(const std::string& name, i32 index)
-{
-	if (name != "") {
-		for (auto&& it : *restricted::lines)
-			if (it->GetName() == name && it->State()) return it;
-	}
-	else if (index >= 0 && index < restricted::lines->size() && restricted::lines->at(index)->State()) 
-		return restricted::lines->at(index);
-	return restricted::Ldefault;
-}
-
-sur::Object* sur::Instancer::GetObj(const std::string& name, i32 index)
-{
-	if (name != "") {
-		for (auto&& it : *restricted::objects)
-			if (it->GetName() == name && it->State()) return it;
-	}
-	else if (index >= 0 && index < restricted::objects->size() && restricted::objects->at(index)->State())
-		return restricted::objects->at(index);
-	return restricted::Odefault;
-}
-
-sur::Triangle* sur::Instancer::GetTri(const std::string& name, i32 index)
-{
-	if (name != "") {
-		for (auto&& it : *restricted::triangles)
-			if (it->GetName() == name && it->State()) return it;
-	}
-	else if (index >= 0 && index < restricted::triangles->size() && restricted::triangles->at(index)->State()) 
-		return restricted::triangles->at(index);
-	return restricted::Tdefault;
-}
-
-i32 sur::Instancer::GetCount(Types type) {
-	switch (type) {
-	case Types::Rectangle:
-		return (i32)restricted::rectangles->size();
-	case Types::Line:
-		return (i32)restricted::lines->size();
-	case Types::Object:
-		return (i32)restricted::objects->size();
-	default:
-		return -1;
-	}
-}
-
-void sur::Instancer::State(Types type,bool active, const std::string& name, i32 index)
-{
-	if (type == Types::Rectangle)
-		if (name != "") {
-			for (i32 j = 0; j < restricted::rectangles->size(); ++j)
-				if (restricted::rectangles->at(j)->GetName() == name)
-					restricted::rectangles->at(j)->active = active;
-		}
-		else if (index >= 0)
-			restricted::rectangles->at(index)->active = active;
-	if (type == Types::Line)
-		if (name != "") {
-			for (i32 j = 0; j < restricted::lines->size(); ++j)
-				if (restricted::lines->at(j)->GetName() == name)
-					restricted::lines->at(j)->active = active;
-		}
-		else if (index >= 0)
-			restricted::lines->at(index)->active = active;
-	if (type == Types::Object)
-		if (name != "") {
-			for (i32 j = 0; j < restricted::objects->size(); ++j)
-				if (restricted::objects->at(j)->GetName() == name)
-					restricted::objects->at(j)->active = active;
-		}
-		else if (index >= 0)
-			restricted::objects->at(index)->active = active;
-	if (type == Types::Triangle)
-		if (name != "") {
-			for (i32 j = 0; j < restricted::triangles->size(); ++j)
-				if (restricted::triangles->at(j)->GetName() == name)
-					restricted::triangles->at(j)->active = active;
-		}
-		else if (index >= 0)
-			restricted::triangles->at(index)->active = active;
-}
-
-
-void sur::Instancer::Delete(Types type, const std::string& name, i32 index)
-{
-	if (type == Types::Rectangle)
-		if (name != "") {
-			for (i32 j = 0; j < restricted::rectangles->size(); ++j)
-				if (restricted::rectangles->at(j)->GetName() == name)
-					restricted::rectangles->erase(restricted::rectangles->begin() + j);
-		}
-		else if (index >= 0)
-			restricted::rectangles->erase(restricted::rectangles->begin() + index);
-	if (type == Types::Line)
-		if (name != "") {
-			for (i32 j = 0; j < restricted::lines->size(); ++j)
-				if (restricted::lines->at(j)->GetName() == name)
-					restricted::lines->erase(restricted::lines->begin() + j);
-		}
-		else if (index >= 0)
-			restricted::lines->erase(restricted::lines->begin() + index);
-	if (type == Types::Object)
-		if (name != "") {
-			for (i32 j = 0; j < restricted::objects->size(); ++j)
-				if (restricted::objects->at(j)->GetName() == name)
-					restricted::objects->erase(restricted::objects->begin() + j);
-		}
-		else if (index >= 0)
-			restricted::objects->erase(restricted::objects->begin() + index);
-	if (type == Types::Triangle)
-		if (name != "") {
-			for (i32 j = 0; j < restricted::triangles->size(); ++j)
-				if (restricted::triangles->at(j)->GetName() == name)
-					restricted::triangles->erase(restricted::triangles->begin() + j);
-		}
-		else if (index >= 0)
-			restricted::triangles->erase(restricted::triangles->begin() + index);
 }
 //
 //	Input
@@ -561,7 +437,7 @@ bool sur::Input::Keyboard::Key(Keys::Keys key) const
 //
 //	Map_Analyses
 //
-void sur::Map_Analyses::operator()(sur::Maps map, sur::Vec2 size)
+void sur::Map_Analyses::operator()(Maps map, Vec2 size)
 {
 	Collider(map.ColliderMap, size);
 	Trigger(map.ColliderMap, size);

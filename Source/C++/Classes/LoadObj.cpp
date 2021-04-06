@@ -64,7 +64,7 @@ void sur::Object::Load()
 	}
 }
 
-sur::Object::Object(const std::string& path, sur::Vec2 position, const std::string& name, i32 id, cb_ptr<Master*> callback)
+sur::Object::Object(const std::string& path, Vec2 position, const std::string& name, i32 id, cb_ptr<Master*> callback)
 	: path(path), Master(name, id, position,callback)
 {
 	type = Type::Object;
@@ -73,7 +73,7 @@ sur::Object::Object(const std::string& path, sur::Vec2 position, const std::stri
 	Load();
 }
 
-sur::Object::Object(const Object* const obj, sur::Vec2 position, const std::string& name, i32 id, cb_ptr<Master*> callback)
+sur::Object::Object(const Object* const obj, Vec2 position, const std::string& name, i32 id, cb_ptr<Master*> callback)
 	: XCoords(obj->XCoords), YCoords(obj->YCoords), Colors(obj->Colors), Master(name,id,position, callback)
 {
 	type = Type::Object;
@@ -149,9 +149,9 @@ void sur::Object::Bind(bool Render, bool Collider, ColliderType collidertype)
 }
 
 
-void sur::Object::Rotate(sur::Vec2 origin, i32 Angle)
+void sur::Object::Rotate(Vec2 origin, i32 Angle)
 { 
-	//assert(rotatecpy && previous_angle == Angle);
+	assert(rotatecpy && previous_angle == Angle);
 	if (!rotatecpy) {
 		XCoordsC = new std::vector<i32>(*XCoords);
 		YCoordsC = new std::vector<i32>(*YCoords);
@@ -168,7 +168,7 @@ void sur::Object::Rotate(sur::Vec2 origin, i32 Angle)
 		std::copy(ColorsO->begin(), ColorsO->end(), back_inserter(*ColorsC));
 	}
 	previous_angle = Angle;
-	sur::Vec2 v;
+	Vec2 v;
 	for (i32 i = 0; i < YCoords->size(); ++i) {
 		v = rot({XCoords->at(i) + position.x, YCoords->at(i) + position.y }, origin, Angle);
 		v = v - position;
@@ -176,32 +176,3 @@ void sur::Object::Rotate(sur::Vec2 origin, i32 Angle)
 		YCoords->at(i) = v.y;
 	}
 }
-
-
-
-//auto arot = [&](sur::Vec2 pos, sur::Vec2 origin, i32 Angle) -> sur::Vec2 {
-//	Angle *= PI / 180;
-//	sur::Vec2 pos_new;
-//	f32 angle;
-//	sur::Vec2 dist(pos - origin);
-//	f32 hypothenuse = dist.magnitude();
-//	angle = atan((f32)dist.y / (f32)dist.x) + Angle;
-//	pos_new((i32)(cos(angle) * hypothenuse + 0.5f),
-//		(i32)(sin(angle) * hypothenuse + 0.5f));
-//	return pos_new + origin;
-//};
-//if (xb && yb) {
-//	angle = atan((f32)dist.x / (f32)dist.y) + Angle + PI / 2;
-//	pos_new((i32)(cos(angle) * hypothenuse + 0.5f),
-//		(i32)(sin(angle) * hypothenuse + 0.5f));
-//}
-//if (xb && !yb) {
-//	angle = atan((f32)dist.y / (f32)dist.x) + Angle + PI;
-//	pos_new((i32)(sin(angle) * hypothenuse + 0.5f),
-//		(i32)(cos(angle) * hypothenuse + 0.5f));
-//}
-//if (!xb && yb) {
-//	angle = atan((f32)dist.x / (f32)dist.y) + Angle + 3 * PI / 2;
-//	pos_new((i32)(sin(angle) * hypothenuse + 0.5f),
-//		(i32)(cos(angle) * hypothenuse + 0.5f));
-//}

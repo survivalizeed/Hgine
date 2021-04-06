@@ -49,7 +49,7 @@ std::vector<sur::Vec2>* sur::Triangle::LineVector::getother()
 	return nullptr;
 }
 
-void sur::Triangle::Line(sur::Vec2 start, sur::Vec2 end, std::vector<sur::Vec2>* line,bool Render, bool Collider)
+void sur::Triangle::Line(Vec2 start, Vec2 end, std::vector<Vec2>* line,bool Render, bool Collider)
 {
 	if (start.x == end.x) start.x--;
 	if (start.y > end.y && start.x > end.x) {
@@ -195,7 +195,8 @@ void sur::Triangle::Fill(LineVector& linevector)
 	}
 }
 
-sur::Triangle::Triangle(sur::Vec2 p1, sur::Vec2 p2, sur::Vec2 p3, Color color, const std::string& name, i32 id, cb_ptr<Master*> callback)
+
+sur::Triangle::Triangle(Vec2 p1, Vec2 p2, Vec2 p3, Color color, const std::string& name, i32 id, cb_ptr<Master*> callback)
 	: p1(p1), p2(p2), p3(p3), color(color), Master(name, id, callback) 
 {
 	type = Type::Triangle;
@@ -212,4 +213,31 @@ void sur::Triangle::Bind(bool Render, bool Collider)
 	if(Render)
 		Fill(linevector);
 	linevector.clear();
+}
+
+void sur::Triangle::MoveInject(i32 index, i32 CurMove)
+{
+	switch (index)
+	{
+	case 1:
+		p1.y -= CurMove;
+		p2.y -= CurMove;
+		p3.y -= CurMove;
+		break;
+	case 2:
+		p1.x += CurMove;
+		p2.x += CurMove;
+		p3.x += CurMove;
+		break;
+	case 3:
+		p1.y += CurMove;
+		p2.y += CurMove;
+		p3.y += CurMove;
+		break;
+	case 4:
+		p1.x -= CurMove;
+		p2.x -= CurMove;
+		p3.x -= CurMove;
+		break;
+	}
 }

@@ -19,21 +19,25 @@ int main() {
 	sur::Render renderer(Color(100, 107, 47), 1);
 	renderer.DebugConsole(true);
 	renderer.FPS();
-
-	//sur::Object b(_resource_path + "Bottle.Hgineres", { 0,200 }, "obj", 1);
-	sur::Rectangle a({ 100,100 }, { 30,30 }, Color(124, 124, 124), "a", 1);
-	sur::Rectangle b({ 200,200 }, { 30,30 }, Color(124, 124, 124), "b", 2, [](sur::Master* current, sur::Master* other) {
-		if (other->GetName() == "a")
-			l("Collision");
-	});
-
-	sur::Vec2f dir(a.GetPosition() - b.GetPosition());
-	dir.normalize();
+	
+	sur::Instancer::Add(new sur::Rectangle({ 40,40 }, { 100,100 }, Color(255, 0, 0), "Rect", 0), Types::Rectangle);
+	sur::Instancer::Add(new sur::Rectangle({ 100,253 }, { 100,100 }, Color(255, 0, 0), "Rect2", 0), Types::Rectangle);
 	for (;;) {
 		renderer.ClearScreenBuffer();
-		a.Bind(true, true);
-		b.Bind(true, true);
-		b.Move(dir * 2, true);
+		sur::Instancer::Get<sur::Rectangle>(Types::Rectangle, "", 0)->Bind(true, true);
+		sur::Instancer::Get<sur::Rectangle>(Types::Rectangle, "", 1)->Bind(true, true);
+		if (_input.keyboard.Key(Keys::A)) {
+			sur::Camera::Move({ -1, 0});
+		}
+		if (_input.keyboard.Key(Keys::D)) {
+			sur::Camera::Move({ 1, 0 });
+		}
+		if (_input.keyboard.Key(Keys::W)) {
+			sur::Camera::Move({ 0, -1 });
+		}
+		if (_input.keyboard.Key(Keys::S)) {
+			sur::Camera::Move({ 0, 1 });
+		}	
 		renderer.RenderScreenBuffer();
 	}
 }

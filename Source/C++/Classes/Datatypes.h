@@ -135,6 +135,11 @@ enum class ColliderType {
 	Static, Filled, Outline, None
 };
 
+// Describes the axis something can move on
+enum class Axis {
+	X,Y,Both
+};
+
 // Template stuff
 template <typename CallBackType>
 using cb_ptr = void(*)(CallBackType,CallBackType);

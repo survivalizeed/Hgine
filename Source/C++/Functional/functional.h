@@ -22,13 +22,23 @@ namespace sur {
 	i32 RandomRange(i32 min, i32 max);
 
 	//Cast the object to a (sur::Master*). Make sure it inheritates from the Master class
-	void MoveTowards(sur::Master* const current, sur::Master* const target, const sur::Vec2f& speed, bool detect);
+	void MoveTowards(Master* const current, Master* const target, const Vec2f& speed, Axis axis, bool detect);
 
 	//To wait one second, just store the value of the first call and compare in an if, if it is value + 1000.
 	i64 GetMilliseconds();
 
-	u32 Distance(sur::Master* a, sur::Master* b, bool xAxis);
-
-	void Freeze(bool freeze);
+	template<Axis axis>
+	auto Distance(Master* const a, Master* const b) {
+		assert(a->GetName() == "invalid" || b->GetName() == "invalid", 999999999);
+		if constexpr (axis == Axis::X) {
+			return abs(a->GetPosition().x - b->GetPosition().x);
+		} 
+		else if (axis == Axis::Y) {
+			return abs(a->GetPosition().y - b->GetPosition().y);
+		} 
+		if constexpr (axis == Axis::Both) {
+			return Vec2(a->GetPosition() - b->GetPosition()).absolute();
+		}
+	}
 
 }

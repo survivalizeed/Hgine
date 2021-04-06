@@ -34,25 +34,16 @@ inline i32 sur::RandomRange(i32 min, i32 max)
 	return rand() % (max - min + 1) + min;
 }
 
-void sur::MoveTowards(sur::Master* current, sur::Master* target, const sur::Vec2f& speed, bool detect)	// 1 = true(move), 0 = false(don't move)
+void sur::MoveTowards(Master* current, Master* target, const Vec2f& speed, Axis axis, bool detect)
 {
-	//assert(target->GetName() == "invalid" || current->GetName() == "invalid");
-	if (current->GetPosition().x < target->GetPosition().x) {	// positive x
-		if (current->GetPosition().x != target->GetPosition().x)
-			current->Move({ speed.x,0 },detect);
-	}
-	if (current->GetPosition().x > target->GetPosition().x) { // negative x
-		if (current->GetPosition().x != target->GetPosition().x)
-			current->Move({ -speed.x,0 }, detect);
-	}
-	if (current->GetPosition().y < target->GetPosition().y) {	// positive y
-		if (current->GetPosition().y != target->GetPosition().y)
-			current->Move({ 0,-speed.y }, detect);
-	}
-	if (current->GetPosition().y > target->GetPosition().y) { // negative y
-		if (current->GetPosition().y != target->GetPosition().y)
-			current->Move({ 0,speed.y }, detect);
-	}
+	assert(target->GetName() == "invalid" || current->GetName() == "invalid");
+	Vec2f direction(target->GetPosition() - current->GetPosition());
+	switch (axis){
+	case Axis::X: direction.y = 0; break;
+	case Axis::Y: direction.x = 0; break;
+	default: break;}
+	direction.normalize();
+	current->Move(direction + speed, detect);
 }
 
 i64 sur::GetMilliseconds()
@@ -61,16 +52,4 @@ i64 sur::GetMilliseconds()
 	return (i64)duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
 }
 
-u32 sur::Distance(sur::Master* a, sur::Master* b, bool xAxis)
-{
-	assert(a->GetName() == "invalid" || b->GetName() == "invalid",999999999);
-	if(xAxis)
-		return abs(a->GetPosition().x - b->GetPosition().x);
-	return abs(a->GetPosition().y - b->GetPosition().y);
-}
-
-void sur::Freeze(bool freeze)
-{
-
-}
 
