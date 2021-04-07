@@ -11,34 +11,39 @@ namespace sur {
 	//
 	//	Classes
 	//
+	struct CollisionPackage;
 	//
 	//	Master: Defines the standard attributes of an object
 	// Classes.cpp
 	class Master {
 	protected:
 
-		sur::Vec2f counterpos;
-		sur::Vec2f counterneg;
-		sur::Vec2 countercountpos = { 1,1 };
-		sur::Vec2 countercountneg = { -1,-1 };
+		Vec2f counterpos;
+		Vec2f counterneg;
+		Vec2 countercountpos = { 1,1 };
+		Vec2 countercountneg = { -1,-1 };
 
-		sur::Vec2 moveiter;
+		Vec2 moveiter;
 		std::string name;
-		sur::Vec2 position;
-		sur::Vec2 size;
+		Vec2 position;
+		Vec2 size;
+
+		std::vector<CollisionPackage>* packs = new std::vector<CollisionPackage>;
 
 		Master(const std::string& name, i32 id, cb_ptr<Master*> callback = nullptr)
 			: name(name), id(id), callback(callback) {}		//Line, Triangle
 
-		Master(const std::string& name, i32 id, sur::Vec2 position, cb_ptr<Master*> callback = nullptr)
+		Master(const std::string& name, i32 id, Vec2 position, cb_ptr<Master*> callback = nullptr)
 			: name(name), id(id), position(position), callback(callback) {}		//OBJ
 
-		Master(const std::string& name, i32 id, sur::Vec2 position, sur::Vec2 size, cb_ptr<Master*> callback = nullptr)
+		Master(const std::string& name, i32 id, Vec2 position, Vec2 size, cb_ptr<Master*> callback = nullptr)
 			: name(name), id(id), position(position), size(size), callback(callback) {}		//Rectangle
 
-		sur::Vec2 rot(sur::Vec2 pos, sur::Vec2 origin, i32 Angle);
+		Vec2 rot(Vec2 pos, Vec2 origin, i32 Angle);
 		
 		virtual void MoveInject(i32 index, i32 CurMove);
+
+		Vec2 MovQueue(Vec2f direction);
 
 	public:
 		enum class Type {
@@ -54,7 +59,7 @@ namespace sur {
 
 		Master() = default;
 
-		virtual inline const std::string& GetName() const { return name; }
+		inline const std::string& GetName() const { return name; }
 
 		virtual inline sur::Vec2 GetPosition() const { return position; }
 
@@ -66,7 +71,7 @@ namespace sur {
 
 		inline bool State() const { return active; }
 
-		void Move(sur::Vec2f direction, bool detect);
+		virtual void Move(sur::Vec2f direction, bool detect);
 	};
 	//
 	//	Render class
@@ -107,7 +112,6 @@ namespace sur {
 		Rectangle(sur::Vec2 position, sur::Vec2 size, Color color, const std::string& name, i32 id, cb_ptr<Master*> callback = nullptr);
 
 		void Bind(bool Render, bool Collider);
-
 	};
 	//
 	//	Load objects that were created with the Hgineres editor
@@ -321,6 +325,10 @@ namespace sur {
 		analyses::Array<DWORD> Render;
 		void operator ()(sur::Maps map, sur::Vec2 size);		
 		void operator ()(i32* cptr, i32* tptr, DWORD* rptr, sur::Vec2 size);
+	};
+	
+	struct CollisionPackage {
+		Master* ptr; i16 steps;
 	};
 
 }

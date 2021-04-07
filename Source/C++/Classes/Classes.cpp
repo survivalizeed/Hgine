@@ -3,7 +3,6 @@
 #include "Classes.h"
 
 
-
 std::vector<i32> identitys;
 std::vector<void*> ptrs;
 
@@ -12,10 +11,89 @@ extern sur::Map_Analyses _Amap;
 extern std::vector<i32> trigger_identitys;
 extern std::vector<void*> trigger_ptrs;
 
+sur::CollisionPackage CheckCollision(sur::Master* object, const sur::Vec2& pos, i32 dir, const Axis& axis)
+{
+	using sur::Master;
+	i16 i = 1;
+	bool neg = false;
+	if (dir < 0)
+		neg = true;
+
+	switch (axis)
+	{
+	case Axis::X:
+		if (!neg) {
+			for (; i <= dir; ++i)
+				for (i32 j = 0; j < identitys.size(); ++j)
+					if (_debug)
+						_Amap.Render(pos.x + i, pos.y, Color(255, 0, 0));
+					else if (_Amap.Collider(pos.x + i, pos.y) == identitys[j] && object->id != identitys[j])
+						return { (Master*)ptrs[j], --i };
+			return { nullptr, --i };
+		}
+		dir *= -1;
+		for (; i <= dir; ++i)
+			for (i32 j = 0; j < identitys.size(); ++j)
+				if (_debug)
+					_Amap.Render(pos.x - i, pos.y, Color(255, 0, 0));
+				else if (_Amap.Collider(pos.x - i, pos.y) == identitys[j] && object->id != identitys[j])
+					return { (Master*)ptrs[j], --i };
+		return { nullptr, --i };
+
+	case Axis::Y:
+		if (!neg) {
+			for (; i <= dir; ++i)
+				for (i32 j = 0; j < identitys.size(); ++j)
+					if (_debug)
+						_Amap.Render(pos.x, pos.y + i, Color(255, 0, 0));
+					else if (_Amap.Collider(pos.x, pos.y + i) == identitys[j] && object->id != identitys[j])
+						return { (Master*)ptrs[j], --i };
+			return { nullptr, --i };
+		}
+		dir *= -1;
+		for (; i <= dir; ++i)
+			for (i32 j = 0; j < identitys.size(); ++j)
+				if (_debug)
+					_Amap.Render(pos.x, pos.y - i, Color(255, 0, 0));
+				else if (_Amap.Collider(pos.x, pos.y - i) == identitys[j] && object->id != identitys[j])
+					return { (Master*)ptrs[j], --i };
+		return { nullptr, --i };
+
+	case Axis::Both:
+		Error("Both axes are not valid. Change either to X or Y");
+	}
+}
+
 //
 //	Master
 //
-void sur::Master::Move(Vec2f direction, bool detect)
+sur::Vec2 sur::Master::rot(Vec2 pos, Vec2 origin, i32 Angle)
+{
+	sur::Vec2 dist(pos - origin);
+	return 	sur::Vec2((i32)(dist.x * cos(Angle * PI / 180) - dist.y * sin(Angle * PI / 180)),
+		(i32)(dist.x * sin(Angle * PI / 180) + dist.y * cos(Angle * PI / 180))) + origin;
+}
+
+void sur::Master::MoveInject(i32 index, i32 CurMove)
+{
+	switch (index)
+	{
+	case 1:
+		position.y -= CurMove;
+		break;
+	case 2:
+		position.x += CurMove;
+		break;
+	case 3:
+		position.y += CurMove;
+		break;
+	case 4:
+		position.x -= CurMove;
+		break;
+	}
+}
+
+sur::Vec2 sur::Master::MovQueue(Vec2f direction)
 {
 	if(direction.x > 0)
 		counterpos.x += direction.x;
@@ -42,148 +120,57 @@ void sur::Master::Move(Vec2f direction, bool detect)
 		direction.y -= 1;
 		countercountneg.y--;
 	}
-	direction.y *= -1;
+	return { (i32)direction.x , (i32)direction.y};
+}
+
+void sur::Master::Move(sur::Vec2f direction, bool detect)
+{
+	auto cbcall = [&]() -> i32 {
+		std::sort(packs->begin(), packs->end(), [](const auto& f, const auto& s)
+			{
+				return f.steps < s.steps;
+			});
+		CollisionPackage cp = packs->at(0);
+		if (callback != nullptr)
+			cp.ptr->callback(this, cp.ptr);
+		if (cp.ptr != nullptr)
+			if (cp.ptr->callback != nullptr)
+				cp.ptr->callback(cp.ptr, this);
+		i32 steps = packs->at(0).steps;
+		packs->clear();
+		return steps;
+	};
+	Vec2 newdirection = MovQueue(direction);
+	assert(newdirection == Vec2(0, 0));
 	if (detect) {
-		i32 CurMove = 0;
-		if (direction.y > 0) {	//Up
-			for (i32 a = 1; a <= direction.y; a++) {
-				for (i32 i = position.x; i < position.x + size.x; i++) {
-					for (i32 j = 0; j < trigger_identitys.size(); j++) {
-						if (_Amap.Trigger(i, position.y - a - 1) == trigger_identitys[j]) {
-							MessageBoxA(NULL, "Trigger", "Trigger", MB_ICONERROR);
-						}
-					}
-					for (i32 j = 0; j < identitys.size(); j++) {				
-						if (_debug)
-							_Amap.Render(i, position.y - a - 1, Color(0, 255, 0));
-						if (_Amap.Collider(i, position.y - a - 1) == identitys[j] && this->id != identitys[j]) {
-							if (callback != nullptr)
-								callback((Master*)this, (Master*)ptrs[j]);
-							if (static_cast<Master*>(ptrs[j])->callback != nullptr)
-								static_cast<Master*>(ptrs[j])->callback((Master*)(ptrs[j]), this);
-							goto dir1;
-						}	
-					}
-				}
-				CurMove = a;
+		if (newdirection.x > 0) {
+			for (i32 i = position.y; i < position.y + size.y; ++i) {
+				packs->push_back(CheckCollision(this, Vec2(position.x + size.x - 1, i), newdirection.x, Axis::X));
 			}
-		dir1:
-			MoveInject(1, CurMove);
+			position.x += cbcall();
 		}
-		if (direction.x > 0) {	//Right
-			for (i32 a = 1; a <= direction.x; a++) {
-				for (i32 i = position.y; i < position.y + size.y; i++) {
-					for (i32 j = 0; j < trigger_identitys.size(); j++) {
-						if (_Amap.Trigger(position.x + size.x + a - 1, i) == trigger_identitys[j]) {
-							MessageBoxA(NULL, "Trigger", "Trigger", MB_ICONERROR);
-						}
-					}
-					for (i32 j = 0; j < identitys.size(); j++) {
-						if (_debug)
-							_Amap.Render(position.x + size.x + a - 1, i, Color(0, 255, 0));
-						if (_Amap.Collider(position.x + size.x + a - 1, i) == identitys[j] && this->id != identitys[j]) {
-							if (callback != nullptr)
-								callback((Master*)this, (Master*)ptrs[j]);
-							if (static_cast<Master*>(ptrs[j])->callback != nullptr)
-								static_cast<Master*>(ptrs[j])->callback((Master*)ptrs[j],this);
-							goto dir2;
-						}			
-					}
-				}
-				CurMove = a;
+		if (newdirection.x < 0) {
+			for (i32 i = position.y; i < position.y + size.y; ++i) {
+				packs->push_back(CheckCollision(this, Vec2(position.x, i), newdirection.x, Axis::X));
 			}
-		dir2:
-			MoveInject(2, CurMove);
+			position.x -= cbcall();
 		}
-		if (direction.y < 0) {	//Down
-			direction.y *= -1;
-			for (i32 a = 0; a <= direction.y; a++) {
-				for (i32 i = position.x; i < position.x + size.x; i++) {
-					for (i32 j = 0; j < trigger_identitys.size(); j++) {
-						if (_Amap.Trigger(i, position.y + size.y + a) == trigger_identitys[j]) {
-							MessageBoxA(NULL, "Trigger", "Trigger", MB_ICONERROR);
-						}
-					}
-					for (i32 j = 0; j < identitys.size(); j++) {			
-						if (_debug)
-							_Amap.Render(i, position.y + size.y + a, Color(0, 255, 0));
-						if (_Amap.Collider(i, position.y + size.y + a) == identitys[j] && this->id != identitys[j]) {
-							if (callback != nullptr)
-								callback((Master*)this, (Master*)ptrs[j]);
-							if (static_cast<Master*>(ptrs[j])->callback != nullptr)
-								static_cast<Master*>(ptrs[j])->callback((Master*)ptrs[j], this);
-							goto dir3;
-						}
-					}
-				}
-				CurMove = a;
+		if (newdirection.y > 0) {
+			for (i32 i = position.x; i < position.x + size.x; ++i) {
+				packs->push_back(CheckCollision(this, Vec2(i, position.y + size.y - 1), newdirection.y, Axis::Y));
 			}
-		dir3:
-			MoveInject(3, CurMove);
+			position.y += cbcall();
 		}
-		if (direction.x < 0) {	//Left
-			direction.x *= -1;
-			for (i32 a = 1; a <= direction.x; a++) {
-				for (i32 i = position.y; i < position.y + size.y; i++) {
-					for (i32 j = 0; j < trigger_identitys.size(); j++) {
-						if (_Amap.Trigger(position.x - a - 1, i) == trigger_identitys[j]) {
-							MessageBoxA(NULL, "Trigger", "Trigger", MB_ICONERROR);
-						}
-					}
-					for (i32 j = 0; j < identitys.size(); j++) {
-						if (_debug)
-							_Amap.Render(position.x - a - 1, i, Color(0, 255, 0));
-						if (_Amap.Collider(position.x - a - 1, i) == identitys[j] && this->id != identitys[j]) {
-							if (callback != nullptr)
-								callback((Master*)this, (Master*)ptrs[j]);
-							if (static_cast<Master*>(ptrs[j])->callback != nullptr)
-								static_cast<Master*>(ptrs[j])->callback((Master*)ptrs[j],this);
-							goto dir4;
-						}
-					}
-				}
-				CurMove = a;
+		if (newdirection.y < 0) {
+			for (i32 i = position.x; i < position.x + size.x; ++i) {
+				packs->push_back(CheckCollision(this, Vec2(i, position.y), newdirection.y, Axis::Y));
 			}
-		dir4:
-			MoveInject(4, CurMove);
+			position.y -= cbcall();
 		}
+		return;
 	}
-	else {
-		if (direction.y > 0)
-			position.y -= (i32)direction.y;
-		if (direction.x > 0)
-			position.x += (i32)direction.x;
-		if (direction.y < 0)
-			position.y -= (i32)direction.y;
-		if (direction.x < 0)
-			position.x += (i32)direction.x;
-	}
-}
-
-sur::Vec2 sur::Master::rot(Vec2 pos, Vec2 origin, i32 Angle)
-{
-	sur::Vec2 dist(pos - origin);
-	return 	sur::Vec2((i32)(dist.x * cos(Angle * PI / 180) - dist.y * sin(Angle * PI / 180)),
-		(i32)(dist.x * sin(Angle * PI / 180) + dist.y * cos(Angle * PI / 180))) + origin;
-}
-
-void sur::Master::MoveInject(i32 index, i32 CurMove)
-{
-	switch (index)
-	{
-	case 1:
-		position.y -= CurMove;
-		break;
-	case 2:
-		position.x += CurMove;
-		break;
-	case 3:
-		position.y += CurMove;
-		break;
-	case 4:
-		position.x -= CurMove;
-		break;
-	}
+	position.x += newdirection.x;
+	position.y += newdirection.y;
 }
 //
 //	Render
@@ -283,6 +270,7 @@ void sur::Rectangle::Bind(bool Render,bool Collider)
 				_Amap.Collider(j - CO, i - CO, id);
 		}
 }
+
 //
 //	Line
 //

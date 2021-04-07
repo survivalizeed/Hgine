@@ -4,6 +4,8 @@
 
 extern sur::Map_Analyses _Amap;
 extern sur::Vec2 _window_size;
+extern std::vector<i32> identitys;
+extern std::vector<void*> ptrs;
 
 sur::Maps sur::Initialize()
 {
@@ -23,18 +25,18 @@ i32 sur::CharCounter(char Char, const std::string& Data) {
 	return counter;
 }
 
-inline void sur::Sound(const char* path, u32 params, i32 volume)
+void sur::Sound(const char* path, u32 params, i32 volume)
 {
 	waveOutSetVolume(NULL, volume);
 	PlaySoundA(path, NULL, params);
 }
 
-inline i32 sur::RandomRange(i32 min, i32 max)
+i32 sur::RandomRange(i32 min, i32 max)
 {
 	return rand() % (max - min + 1) + min;
 }
 
-void sur::MoveTowards(Master* current, Master* target, const Vec2f& speed, Axis axis, bool detect)
+void sur::MoveTowards(Master* current, Master* target, f32 speed, const Axis& axis, bool detect)
 {
 	assert(target->GetName() == "invalid" || current->GetName() == "invalid");
 	Vec2f direction(target->GetPosition() - current->GetPosition());
@@ -43,7 +45,7 @@ void sur::MoveTowards(Master* current, Master* target, const Vec2f& speed, Axis 
 	case Axis::Y: direction.x = 0; break;
 	default: break;}
 	direction.normalize();
-	current->Move(direction + speed, detect);
+	//current->Move(direction * speed, detect);
 }
 
 i64 sur::GetMilliseconds()
@@ -51,5 +53,6 @@ i64 sur::GetMilliseconds()
 	using namespace std::chrono;
 	return (i64)duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
 }
+
 
 

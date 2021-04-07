@@ -6,6 +6,8 @@ std::vector<i32> trigger_identitys;
 std::vector<void*> trigger_ptrs;
 
 extern sur::Map_Analyses _Amap;
+
+
 //
 //	Trigger: Rectangle
 //

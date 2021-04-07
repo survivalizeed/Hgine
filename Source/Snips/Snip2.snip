@@ -45,3 +45,18 @@
 //	pos_new((i32)(sin(angle) * hypothenuse + 0.5f),
 //		(i32)(cos(angle) * hypothenuse + 0.5f));
 //}
+
+		sur::Instancer::Get<sur::Rectangle>(Types::Rectangle, "", 0)->Bind(true, true);
+		sur::Instancer::Get<sur::Rectangle>(Types::Rectangle, "", 1)->Bind(true, true);
+		if (_input.keyboard.Key(Keys::A)) {
+			sur::Camera::Move({ -1, 0});
+		}
+		if (_input.keyboard.Key(Keys::D)) {
+			sur::Camera::Move({ 1, 0 });
+		}
+		if (_input.keyboard.Key(Keys::W)) {
+			sur::Camera::Move({ 0, -1 });
+		}
+		if (_input.keyboard.Key(Keys::S)) {
+			sur::Camera::Move({ 0, 1 });
+		}	

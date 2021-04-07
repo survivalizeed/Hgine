@@ -9,6 +9,7 @@
 #pragma warning(disable: 26812)
 #pragma warning(disable: 26451)
 #pragma warning(disable: 26495)
+#pragma warning(disable: 4003)
 
 #include <Windows.h>
 #include <gdiplus.h>
@@ -53,7 +54,6 @@ using namespace std::chrono;
 
 constexpr i32 RO = 0;	//currently useless
 constexpr i32 CO = 0;	//currently useless
-
 
 extern sur::Vec2 _window_size;
 extern HWND _hwnd;

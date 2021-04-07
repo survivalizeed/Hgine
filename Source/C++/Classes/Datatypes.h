@@ -137,8 +137,9 @@ enum class ColliderType {
 
 // Describes the axis something can move on
 enum class Axis {
-	X,Y,Both
+	X, Y, Both
 };
+
 
 // Template stuff
 template <typename CallBackType>

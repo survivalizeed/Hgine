@@ -22,7 +22,7 @@ namespace sur {
 	i32 RandomRange(i32 min, i32 max);
 
 	//Cast the object to a (sur::Master*). Make sure it inheritates from the Master class
-	void MoveTowards(Master* const current, Master* const target, const Vec2f& speed, Axis axis, bool detect);
+	void MoveTowards(Master* const current, Master* const target, f32 speed, const Axis& axis, bool detect);
 
 	//To wait one second, just store the value of the first call and compare in an if, if it is value + 1000.
 	i64 GetMilliseconds();
@@ -41,4 +41,5 @@ namespace sur {
 		}
 	}
 
+	
 }
