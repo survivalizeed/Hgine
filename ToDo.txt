@@ -1,4 +1,5 @@
 Camera movement |Done|
+Movement with and without collider for every object
 Collisions for line
 Line outside of screen fix
 Upload HGINERES editor & fix bugs |(DONE)|
