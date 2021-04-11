@@ -41,11 +41,16 @@ void sur::MoveTowards(Master* current, Master* target, f32 speed, const Axis& ax
 	assert(target->GetName() == "invalid" || current->GetName() == "invalid");
 	Vec2f direction(target->GetPosition() - current->GetPosition());
 	switch (axis){
-	case Axis::X: direction.y = 0; break;
-	case Axis::Y: direction.x = 0; break;
+	case Axis::X: direction.y = 1; break;
+	case Axis::Y: direction.x = 1; break;
 	default: break;}
 	direction.normalize();
-	//current->Move(direction * speed, detect);
+	switch (axis) {
+	case Axis::X: direction.y = 0; break;
+	case Axis::Y: direction.x = 0; break;
+	default: break;
+	}
+	current->Move(direction * speed, detect);
 }
 
 i64 sur::GetMilliseconds()

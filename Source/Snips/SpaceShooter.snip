@@ -1,6 +1,5 @@
 // SpaceShooter demo -> paste this into the main
 
-
 #include "Functional/includes.h"
 #include "Functional/functional.h"
 #include "Lua/SurLua.h"
@@ -27,7 +26,7 @@ int main() {
 
 	sur::Instancer::Add(new sur::Object(_resource_path + "Player.Hgineres", { 10,400 }, "Player", 1), Types::Object);
 
-	//sur::Instancer::Add(new sur::Object(_resource_path + "Enemy.Hgineres", { 0,10 }, "Enemy", 2), Types::Object);
+	sur::Instancer::Add(new sur::Object(_resource_path + "Enemy.Hgineres", { 0,10 }, "Enemy", 2), Types::Object);
 
 	sur::Instancer::Add(new sur::Object(_resource_path + "Shot.Hgineres", { 0,0 }, "Shot", 3), Types::Object); // <- prefab for shots
 
@@ -38,11 +37,8 @@ int main() {
 	sur::Instancer::Add(new sur::Line({ _window_size.x - 1,0 }, { _window_size.x - 1,_window_size.y - 1 },
 		Color(0, 0, 0), "LineRight", 4), Types::Line);
 
-	sur::Instancer::Add(new sur::Line({ 0,333 }, { _window_size.x,333 }, Color(0, 0, 0), "LineTop", 4), Types::Line);
+	sur::Instancer::Add(new sur::Triangle({ 0,0 }, { 100,0 }, { 0,100 }, Color(125, 54, 125), "Tri", 123), Types::Triangle);
 
-	sur::Instancer::Add(new sur::Line({ 0,_window_size.y - 1}, { _window_size.x,_window_size.y - 1 },
-		Color(0, 0, 0), "LineBottom", 4), Types::Line);
-	
 	i32 shotvar = 0, shotenemyvar = 0;
 
 	i64 delay = sur::GetMilliseconds();
@@ -59,8 +55,6 @@ int main() {
 			sur::Instancer::Get<sur::Object>("Player")->Bind(true, true, ColliderType::Filled);
 			sur::Instancer::Get<sur::Line>("LineLeft")->Bind(false, true);
 			sur::Instancer::Get<sur::Line>("LineRight")->Bind(false, true);
-			sur::Instancer::Get<sur::Line>("LineTop")->Bind(false, true);
-			sur::Instancer::Get<sur::Line>("LineBottom")->Bind(false, true);
 			for (i16 i = 0; i < shotvar; ++i) {
 				sur::Instancer::Get<sur::Object>("CloneShot" + std::to_string(i))->Bind(true, true, ColliderType::Filled);
 				sur::Instancer::Get<sur::Object>("CloneShot" + std::to_string(i))->Move({ 0,-4 }, true);
@@ -81,10 +75,10 @@ int main() {
 				sur::Sound((_sound_path + "EnemyShot.wav").c_str(), SND_ASYNC, 0x22222222);
 				Add(new sur::Object(Get<sur::Object>("ShotE"), { Get<sur::Object>("Enemy")->GetPosition().x + 37,
 					Get<sur::Object>("Enemy")->GetPosition().y + 78 },
-					"CloneShotE" + std::to_string(shotenemyvar), shotenemyvar + 1000,{4},
+					"CloneShotE" + std::to_string(shotenemyvar), shotenemyvar + 1000,
 					[](sur::Master* current, sur::Master* other) {
 						if (other->GetName() == "Player")
-							MessageBoxA(NULL, "You got hit", "You are Dead", MB_ICONINFORMATION);
+							exit(0);
 					}), Types::Object);
 				shotenemyvar++;
 				enemysnapshot = enemydelay;
@@ -96,20 +90,16 @@ int main() {
 				Get<sur::Object>("Player")->Move({ -3,0 }, true);
 			if (_input.keyboard.Key(Keys::D))
 				Get<sur::Object>("Player")->Move({ 3,0 }, true);
-			if (_input.keyboard.Key(Keys::W))
-				Get<sur::Object>("Player")->Move({ 0,-3 }, true);
-			if (_input.keyboard.Key(Keys::S))
-				Get<sur::Object>("Player")->Move({ 0,3 }, true);
 			if (_input.keyboard.Key(Keys::SPACE) && delay - snapshot >= 150) {
 				static int hit = 0;
 				sur::Sound((_sound_path + "PlayerShot.wav").c_str(), SND_ASYNC, 0x22222222);
 				Add(new sur::Object(Get<sur::Object>("Shot"), { Get<sur::Object>("Player")->GetPosition().x + 40,
 					Get<sur::Object>("Player")->GetPosition().y - 35 }, "CloneShot" + std::to_string(shotvar),
-					-shotvar - 1000,{4},
+					-shotvar - 1000,
 					// OnCollision for the shot. obj will be the other object
 					[](sur::Master* current, sur::Master* other) {
 						if (other->GetName() == "Enemy") {
-							hit++;
+ 							hit++;
 							current->active = false;
 							if (hit >= stoi(lua::GetContent(LG, "enemy_lives"))) {
 								MessageBoxA(NULL, (lua::GetContent(LG, "enemy_lives") + " Hits").c_str(),
@@ -149,4 +139,3 @@ lua_State* Start() {
 
 	return L;
 }
-

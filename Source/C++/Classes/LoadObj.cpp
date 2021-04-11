@@ -26,6 +26,7 @@ void sur::Object::Load()
 				x++;
 			}
 			if (Data[i] == 'E') {
+				//Get X Value. It will be the last of the row. Here are (X,Y) the last of the row.
 				y++;
 				MaxX->push_back(x);
 				x = 0;
@@ -64,18 +65,22 @@ void sur::Object::Load()
 	}
 }
 
-sur::Object::Object(const std::string& path, Vec2 position, const std::string& name, i32 id, cb_ptr<Master*> callback)
+sur::Object::Object(const std::string& path, Vec2 position, const std::string& name, i32 id, const std::vector<int>& ignoreids,
+	cb_ptr<Master*> callback)
 	: path(path), Master(name, id, position,callback)
 {
+	ignore = ignoreids;
 	type = Type::Object;
 	identitys.push_back(id);
 	ptrs.push_back(this);
 	Load();
 }
 
-sur::Object::Object(const Object* const obj, Vec2 position, const std::string& name, i32 id, cb_ptr<Master*> callback)
+sur::Object::Object(const Object* const obj, Vec2 position, const std::string& name, i32 id, const std::vector<int>& ignoreids,
+	cb_ptr<Master*> callback)
 	: XCoords(obj->XCoords), YCoords(obj->YCoords), Colors(obj->Colors), Master(name,id,position, callback)
 {
+	ignore = ignoreids;
 	type = Type::Object;
 	size = obj->size;
 	identitys.push_back(id);

@@ -32,7 +32,7 @@ namespace sur {
 		assert(a->GetName() == "invalid" || b->GetName() == "invalid", 999999999);
 		if constexpr (axis == Axis::X) {
 			return abs(a->GetPosition().x - b->GetPosition().x);
-		} 
+		}
 		else if (axis == Axis::Y) {
 			return abs(a->GetPosition().y - b->GetPosition().y);
 		} 

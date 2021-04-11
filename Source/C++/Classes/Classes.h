@@ -18,8 +18,8 @@ namespace sur {
 	class Master {
 	protected:
 
-		Vec2f counterpos;
-		Vec2f counterneg;
+		Vec2f counterneg = { -0.f,-0.f };
+		Vec2f counterpos = { 0.f,0.f };	
 		Vec2 countercountpos = { 1,1 };
 		Vec2 countercountneg = { -1,-1 };
 
@@ -28,8 +28,8 @@ namespace sur {
 		Vec2 position;
 		Vec2 size;
 
-		std::vector<CollisionPackage>* packs = new std::vector<CollisionPackage>;
-
+		std::vector<CollisionPackage>* packs = new std::vector<CollisionPackage>;	// Will be used by all objects -> ok, because it will get cleared each time
+		
 		Master(const std::string& name, i32 id, cb_ptr<Master*> callback = nullptr)
 			: name(name), id(id), callback(callback) {}		//Line, Triangle
 
@@ -49,6 +49,8 @@ namespace sur {
 		enum class Type {
 			Rectangle, Object, Triangle, Line, Shape, Trigger_Rectangle
 		} type;
+
+		std::vector<i32> ignore;
 
 		//Don't use this variable
 		bool active = true;
@@ -109,7 +111,8 @@ namespace sur {
 		Color color;
 	public:
 
-		Rectangle(sur::Vec2 position, sur::Vec2 size, Color color, const std::string& name, i32 id, cb_ptr<Master*> callback = nullptr);
+		Rectangle(sur::Vec2 position, sur::Vec2 size, Color color, const std::string& name, i32 id,
+			const std::vector<int>& ignoreids = {0}, cb_ptr<Master*> callback = nullptr);
 
 		void Bind(bool Render, bool Collider);
 	};
@@ -142,10 +145,12 @@ namespace sur {
 
 	public:
 
-		Object(const std::string& path, sur::Vec2 position, const std::string& name, i32 id, cb_ptr<Master*> callback = nullptr);
+		Object(const std::string& path, sur::Vec2 position, const std::string& name, i32 id, const std::vector<int>& ignoreids = {0},
+			cb_ptr<Master*> callback = nullptr);
 
 		// Don't delete those objects, just unactivate them
-		Object(const Object* const obj, sur::Vec2 position, const std::string& name, i32 id, cb_ptr<Master*> callback = nullptr);
+		Object(const Object* const obj, sur::Vec2 position, const std::string& name, i32 id, const std::vector<int>& ignoreids = {0},
+			cb_ptr<Master*> callback = nullptr);
 
 		void Bind(bool Render, bool Collider, ColliderType collidertype);
 
@@ -168,7 +173,8 @@ namespace sur {
 		size_t lenght = 0;
 	public:
 
-		Line(sur::Vec2 start, sur::Vec2 end, Color color, const std::string& name, i32 id, cb_ptr<Master*> callback = nullptr);
+		Line(sur::Vec2 start, sur::Vec2 end, Color color, const std::string& name, i32 id, const std::vector<int>& ignoreids = {0},
+			cb_ptr<Master*> callback = nullptr);
 
 		inline void End(sur::Vec2 end) { this->end = end; }
 
@@ -210,7 +216,8 @@ namespace sur {
 
 	public:
 
-		Triangle(sur::Vec2 p1, sur::Vec2 p2, sur::Vec2 p3, Color color, const std::string& name, i32 id, cb_ptr<Master*> callback = nullptr);
+		Triangle(sur::Vec2 p1, sur::Vec2 p2, sur::Vec2 p3, Color color, const std::string& name, i32 id, 
+			const std::vector<int>& ignoreids = {0}, cb_ptr<Master*> callback = nullptr);
 
 		inline void SetPosition(i32 which, sur::Vec2 pos) {
 			switch (which) {
@@ -218,6 +225,7 @@ namespace sur {
 			case 2: p2 = pos; return;
 			case 3: p3 = pos; return;}
 		}
+
 		void Bind(bool Render, bool Collider);
 	};
 	//
@@ -238,7 +246,8 @@ namespace sur {
 		}
 
 	public:
-		Shape(Color color, const std::string& name, i32 id, cb_ptr<Master*> callback = nullptr);
+		Shape(Color color, const std::string& name, i32 id, const std::vector<int>& ignoreids = {0},
+			cb_ptr<Master*> callback = nullptr);
 
 		// Call after constructor
 		template<VEC F, VEC ... R>
@@ -258,7 +267,8 @@ namespace sur {
 		private:
 
 		public:
-			Rectangle(sur::Vec2 position, sur::Vec2 size, const std::string& name, i32 id, cb_ptr<Master*> callback = nullptr);
+			Rectangle(sur::Vec2 position, sur::Vec2 size, const std::string& name, i32 id, const std::vector<int>& ignoreids = {0},
+				cb_ptr<Master*> callback = nullptr);
 
 			inline void Move(sur::Vec2f direction) cpar(Master::Move(direction, false))
 
@@ -293,7 +303,7 @@ namespace sur {
 		void Add(void* object, Types type);
 
 		template<typename RetTy>
-		RetTy* Get(Types type, const std::string& name = "", i32 index = -1);
+		RetTy* Get(const std::string& name = "", i32 index = -1);
 
 		u32 GetCount(Types type);
 

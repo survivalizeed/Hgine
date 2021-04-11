@@ -25,38 +25,46 @@ sur::CollisionPackage CheckCollision(sur::Master* object, const sur::Vec2& pos, 
 		if (!neg) {
 			for (; i <= dir; ++i)
 				for (i32 j = 0; j < identitys.size(); ++j)
-					if (_debug)
-						_Amap.Render(pos.x + i, pos.y, Color(255, 0, 0));
-					else if (_Amap.Collider(pos.x + i, pos.y) == identitys[j] && object->id != identitys[j])
-						return { (Master*)ptrs[j], --i };
+					for(i32 k = 0; k < object->ignore.size(); ++k)
+						if (_debug)
+							_Amap.Render(pos.x + i, pos.y, Color(255, 0, 0));
+						else if (_Amap.Collider(pos.x + i, pos.y) == identitys[j] && 
+							object->id != identitys[j] && object->ignore[k] != identitys[j])
+							return { (Master*)ptrs[j], --i };
 			return { nullptr, --i };
 		}
 		dir *= -1;
 		for (; i <= dir; ++i)
 			for (i32 j = 0; j < identitys.size(); ++j)
-				if (_debug)
-					_Amap.Render(pos.x - i, pos.y, Color(255, 0, 0));
-				else if (_Amap.Collider(pos.x - i, pos.y) == identitys[j] && object->id != identitys[j])
-					return { (Master*)ptrs[j], --i };
+				for (i32 k = 0; k < object->ignore.size(); ++k)
+					if (_debug)
+						_Amap.Render(pos.x - i, pos.y, Color(255, 0, 0));
+					else if (_Amap.Collider(pos.x - i, pos.y) == identitys[j] &&
+						object->id != identitys[j] && object->ignore[k] != identitys[j])
+						return { (Master*)ptrs[j], --i };
 		return { nullptr, --i };
 
 	case Axis::Y:
 		if (!neg) {
 			for (; i <= dir; ++i)
 				for (i32 j = 0; j < identitys.size(); ++j)
-					if (_debug)
-						_Amap.Render(pos.x, pos.y + i, Color(255, 0, 0));
-					else if (_Amap.Collider(pos.x, pos.y + i) == identitys[j] && object->id != identitys[j])
-						return { (Master*)ptrs[j], --i };
+					for (i32 k = 0; k < object->ignore.size(); ++k)
+						if (_debug)
+							_Amap.Render(pos.x, pos.y + i, Color(255, 0, 0));
+						else if (_Amap.Collider(pos.x, pos.y + i) == identitys[j] && 
+							object->id != identitys[j] && object->ignore[k] != identitys[j])
+							return { (Master*)ptrs[j], --i };
 			return { nullptr, --i };
 		}
 		dir *= -1;
 		for (; i <= dir; ++i)
 			for (i32 j = 0; j < identitys.size(); ++j)
-				if (_debug)
-					_Amap.Render(pos.x, pos.y - i, Color(255, 0, 0));
-				else if (_Amap.Collider(pos.x, pos.y - i) == identitys[j] && object->id != identitys[j])
-					return { (Master*)ptrs[j], --i };
+				for (i32 k = 0; k < object->ignore.size(); ++k)
+					if (_debug)
+						_Amap.Render(pos.x, pos.y - i, Color(255, 0, 0));
+					else if (_Amap.Collider(pos.x, pos.y - i) == identitys[j] &&
+						object->id != identitys[j] && object->ignore[k] != identitys[j])
+						return { (Master*)ptrs[j], --i };
 		return { nullptr, --i };
 
 	case Axis::Both:
@@ -95,14 +103,18 @@ void sur::Master::MoveInject(i32 index, i32 CurMove)
 
 sur::Vec2 sur::Master::MovQueue(Vec2f direction)
 {
+	//counterneg = {-nan(ind),-nan(ind)}??? Error!
+	
 	if(direction.x > 0)
 		counterpos.x += direction.x;
-	else
+	else 
 		counterneg.x += direction.x;
+	
 	if (direction.y > 0)
 		counterpos.y += direction.y;
-	else
+	else 
 		counterneg.y += direction.y;
+	
 	direction = { 0,0 };
 	while (counterpos.x >= (f32)countercountpos.x) {
 		direction.x += 1;
@@ -130,22 +142,24 @@ void sur::Master::Move(sur::Vec2f direction, bool detect)
 			{
 				return f.steps < s.steps;
 			});
+		assert(packs->size() < 1, 0);
 		CollisionPackage cp = packs->at(0);
-		if (callback != nullptr)
-			cp.ptr->callback(this, cp.ptr);
-		if (cp.ptr != nullptr)
+		if (cp.ptr != nullptr) {
+			if (callback != nullptr)
+				callback(this, cp.ptr);
 			if (cp.ptr->callback != nullptr)
 				cp.ptr->callback(cp.ptr, this);
+		}
 		i32 steps = packs->at(0).steps;
 		packs->clear();
 		return steps;
 	};
 	Vec2 newdirection = MovQueue(direction);
-	assert(newdirection == Vec2(0, 0));
+	assert(newdirection == Vec2(0, 0) || this->GetName() == "invalid");
 	if (detect) {
 		if (newdirection.x > 0) {
 			for (i32 i = position.y; i < position.y + size.y; ++i) {
-				packs->push_back(CheckCollision(this, Vec2(position.x + size.x - 1, i), newdirection.x, Axis::X));
+				packs->push_back(CheckCollision(this, Vec2(position.x + size.x, i), newdirection.x, Axis::X));
 			}
 			position.x += cbcall();
 		}
@@ -157,7 +171,7 @@ void sur::Master::Move(sur::Vec2f direction, bool detect)
 		}
 		if (newdirection.y > 0) {
 			for (i32 i = position.x; i < position.x + size.x; ++i) {
-				packs->push_back(CheckCollision(this, Vec2(i, position.y + size.y - 1), newdirection.y, Axis::Y));
+				packs->push_back(CheckCollision(this, Vec2(i, position.y + size.y), newdirection.y, Axis::Y));
 			}
 			position.y += cbcall();
 		}
@@ -252,9 +266,11 @@ void sur::Camera::Move(Vec2f direction)
 //
 //	Rectangle
 //
-sur::Rectangle::Rectangle(Vec2 position, Vec2 size, Color color, const std::string& name, i32 id, cb_ptr<Master*> callback)
+sur::Rectangle::Rectangle(Vec2 position, Vec2 size, Color color, const std::string& name, i32 id, const std::vector<int>& ignoreids,
+	cb_ptr<Master*> callback)
 	:color(color), Master(name,id, position, size, callback)
 {
+	ignore = ignoreids;
 	type = Type::Rectangle;
 	identitys.push_back(id);
 	ptrs.push_back(this);
@@ -274,9 +290,11 @@ void sur::Rectangle::Bind(bool Render,bool Collider)
 //
 //	Line
 //
-sur::Line::Line(Vec2 start, Vec2 end, Color color, const std::string& name, i32 id, cb_ptr<Master*> callback)
+sur::Line::Line(Vec2 start, Vec2 end, Color color, const std::string& name, i32 id, const std::vector<int>& ignoreids,
+	cb_ptr<Master*> callback)
 	: start(start), end(end), color(color), Master(name, id, callback)
 {
+	ignore = ignoreids;
 	type = Type::Line;
 	identitys.push_back(id);
 	ptrs.push_back(this);
@@ -363,8 +381,10 @@ void sur::Line::Bind(bool Render, bool Collider)
 //
 //	Custom wire shape
 //
-sur::Shape::Shape(Color color, const std::string& name, i32 id, cb_ptr<Master*> callback) : color(color)
+sur::Shape::Shape(Color color, const std::string& name, i32 id, const std::vector<int>& ignoreids,
+	cb_ptr<Master*> callback) : color(color)
 {
+	ignore = ignoreids;
 	this->name = name;
 	type = Type::Shape;
 	identitys.push_back(id);
@@ -375,7 +395,7 @@ sur::Shape::Shape(Color color, const std::string& name, i32 id, cb_ptr<Master*> 
 void sur::Shape::Gen()
 {
 	for (i32 i = 0; i < vec->size() - 1; ++i) {
-		lines->push_back(new Line(vec->at(i), vec->at(i + 1), color, "ShapeLine" + std::to_string(i), id));
+		lines->push_back(new Line(vec->at(i), vec->at(i + 1), color, "ShapeLine" + std::to_string(i), id, ignore));
 	}
 }
 

@@ -24,12 +24,12 @@ void sur::Instancer::Add(void* object, Types type)
 
 
 template<typename RetTy>
-RetTy* sur::Instancer::Get(Types type, const std::string& name, i32 index)
+RetTy* sur::Instancer::Get(const std::string& name, i32 index)
 {
 	using namespace sur::Instancer;
 	for (i32 i = 0;; i++) {
 		if (name != "") {
-			if (type == Types::Rectangle)
+			if (typeid(RetTy) == typeid(sur::Rectangle))
 				if (i < restricted::rectangles->size()) {
 					if (name == restricted::rectangles->at(i)->GetName() && restricted::rectangles->at(i)->State())
 						return (RetTy*)restricted::rectangles->at(i);
@@ -37,7 +37,7 @@ RetTy* sur::Instancer::Get(Types type, const std::string& name, i32 index)
 				else
 					return (RetTy*)restricted::Rdefault;
 
-			if (type == Types::Line)
+			if (typeid(RetTy) == typeid(sur::Line))
 				if (i < restricted::lines->size()) {
 					if (name == restricted::lines->at(i)->GetName() && restricted::lines->at(i)->State())
 						return (RetTy*)restricted::lines->at(i);
@@ -45,7 +45,7 @@ RetTy* sur::Instancer::Get(Types type, const std::string& name, i32 index)
 				else
 					return (RetTy*)restricted::Ldefault;
 
-			if (type == Types::Object)
+			if (typeid(RetTy) == typeid(sur::Object))
 				if (i < restricted::objects->size()) {
 					if (name == restricted::objects->at(i)->GetName() && restricted::objects->at(i)->State())
 						return (RetTy*)restricted::objects->at(i);
@@ -53,7 +53,7 @@ RetTy* sur::Instancer::Get(Types type, const std::string& name, i32 index)
 				else
 					return (RetTy*)restricted::Odefault;
 
-			if (type == Types::Triangle)
+			if (typeid(RetTy) == typeid(sur::Triangle))
 				if (i < restricted::triangles->size()) {
 					if (name == restricted::triangles->at(i)->GetName() && restricted::triangles->at(i)->State())
 						return (RetTy*)restricted::triangles->at(i);
@@ -61,7 +61,7 @@ RetTy* sur::Instancer::Get(Types type, const std::string& name, i32 index)
 				else
 					return (RetTy*)restricted::Tdefault;
 
-			if (type == Types::Shape)
+			if (typeid(RetTy) == typeid(sur::Shape))
 				if (i < restricted::shapes->size()) {
 					if (name == restricted::shapes->at(i)->GetName() && restricted::shapes->at(i)->State())
 						return (RetTy*)restricted::shapes->at(i);
@@ -69,7 +69,7 @@ RetTy* sur::Instancer::Get(Types type, const std::string& name, i32 index)
 				else
 					return (RetTy*)restricted::Sdefault;
 
-			if (type == Types::Trigger_Rectangle)
+			if (typeid(RetTy) == typeid(sur::Triggers::Rectangle))
 				if (i < restricted::trigger_rectangles->size()) {
 					if (name == restricted::trigger_rectangles->at(i)->GetName() && restricted::trigger_rectangles->at(i)->State())
 						return (RetTy*)restricted::trigger_rectangles->at(i);
@@ -78,37 +78,37 @@ RetTy* sur::Instancer::Get(Types type, const std::string& name, i32 index)
 					return (RetTy*)restricted::TRdefault;
 		}
 		else if (index >= 0) {
-			if (type == Types::Rectangle)
+			if (typeid(RetTy) == typeid(sur::Rectangle))
 				if (index < restricted::rectangles->size())
 					return (RetTy*)restricted::rectangles->at(index);
 				else
 					return (RetTy*)restricted::Rdefault;
 			
-			if (type == Types::Line)
+			if (typeid(RetTy) == typeid(sur::Line))
 				if (index < restricted::lines->size())
 					return (RetTy*)restricted::lines->at(index);
 				else
 					return (RetTy*)restricted::Ldefault;
 			
-			if (type == Types::Object)
+			if (typeid(RetTy) == typeid(sur::Object))
 				if (index > restricted::objects->size())
 					return (RetTy*)restricted::objects->at(index);
 				else
 					return (RetTy*)restricted::Odefault;
 			
-			if (type == Types::Triangle)
+			if (typeid(RetTy) == typeid(sur::Triangle))
 				if (index < restricted::triangles->size())
 					return (RetTy*)restricted::triangles->at(index);
 				else
 					return (RetTy*)restricted::Tdefault;
 			
-			if (type == Types::Shape)
+			if (typeid(RetTy) == typeid(sur::Shape))
 				if (index > restricted::shapes->size())
 					return (RetTy*)restricted::shapes->at(index);
 				else
 					return (RetTy*)restricted::Sdefault;
 			
-			if (type == Types::Trigger_Rectangle)
+			if (typeid(RetTy) == typeid(sur::Triggers::Rectangle))
 				if (index < restricted::trigger_rectangles->size())
 					return (RetTy*)restricted::trigger_rectangles->at(index);
 				else
@@ -117,12 +117,12 @@ RetTy* sur::Instancer::Get(Types type, const std::string& name, i32 index)
 	}
 }
 
-template sur::Rectangle* sur::Instancer::Get(Types type, const std::string& name, i32 index);
-template sur::Line* sur::Instancer::Get(Types type, const std::string& name, i32 index);
-template sur::Object* sur::Instancer::Get(Types type, const std::string& name, i32 index);
-template sur::Triangle* sur::Instancer::Get(Types type, const std::string& name, i32 index);
-template sur::Shape* sur::Instancer::Get(Types type, const std::string& name, i32 index);
-template sur::Triggers::Rectangle* sur::Instancer::Get(Types type, const std::string& name, i32 index);
+template sur::Rectangle* sur::Instancer::Get(const std::string& name, i32 index);
+template sur::Line* sur::Instancer::Get(const std::string& name, i32 index);
+template sur::Object* sur::Instancer::Get(const std::string& name, i32 index);
+template sur::Triangle* sur::Instancer::Get(const std::string& name, i32 index);
+template sur::Shape* sur::Instancer::Get(const std::string& name, i32 index);
+template sur::Triggers::Rectangle* sur::Instancer::Get(const std::string& name, i32 index);
 
 u32 sur::Instancer::GetCount(Types type) {
 	switch (type) {
