@@ -1,18 +1,18 @@
 Camera movement |Done|
 Movement with and without collider for every object
 Collisions for line
-Line outside of screen fix
+Line outside of screen fix |DONE|
 Upload HGINERES editor & fix bugs |(DONE)|
-Triggers
+Triggers |(DONE)|
 Create runtime object handler |DONE|
 Fix Lua... |DONE|
-Custom collider creator??? Using LUA???
+Custom collider creator??? Using Lua???
 Sound manager |DONE|
 Fastcheck for outside of screen |DONE|
 Target FPS / stable FPS <- if second param in render constructor isn't 0 it limits it to 60 FPS???
 Fix only Quad window |DONE|
 Collisions for Triangle
-Triangle out of screen fix
+Triangle out of screen fix |DONE|
 If window is not Quad, out of bounds not working correctly
 Activate and unactivate Objects through the Instancer |DONE|
 Calculate Collisions / Rebind after Movement
@@ -27,4 +27,4 @@ Game Freeze functionality
 Hold type of object by enum in Master class -> cast in callback 
 Rotation for all Objects
 Rotation for Camera
-Fix Collision ignore layer for right left and down
+Fix Collision ignore layer for right left and down |DONE|
