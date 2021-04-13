@@ -2,7 +2,6 @@
 
 #include "functional.h"
 
-extern sur::Map_Analyses _Amap;
 extern sur::Vec2 _window_size;
 extern std::vector<i32> identitys;
 extern std::vector<void*> ptrs;

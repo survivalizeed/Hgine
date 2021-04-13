@@ -178,8 +178,9 @@ void sur::Instancer::Delete(Types type, const std::string& name, i32 index)
 	if (type == Types::Rectangle)
 		if (name != "") {
 			for (i32 j = 0; j < restricted::rectangles->size(); ++j)
-				if (restricted::rectangles->at(j)->GetName() == name)
+				if (restricted::rectangles->at(j)->GetName() == name) {
 					restricted::rectangles->erase(restricted::rectangles->begin() + j);
+				}
 		}
 		else if (index >= 0)
 			restricted::rectangles->erase(restricted::rectangles->begin() + index);
@@ -194,8 +195,11 @@ void sur::Instancer::Delete(Types type, const std::string& name, i32 index)
 	if (type == Types::Object)
 		if (name != "") {
 			for (i32 j = 0; j < restricted::objects->size(); ++j)
-				if (restricted::objects->at(j)->GetName() == name)
+				if (restricted::objects->at(j)->GetName() == name) {
 					restricted::objects->erase(restricted::objects->begin() + j);
+					if (!restricted::objects->at(j)->parentmem)
+						delete restricted::objects->at(j);
+				}
 		}
 		else if (index >= 0)
 			restricted::objects->erase(restricted::objects->begin() + index);

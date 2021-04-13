@@ -85,9 +85,11 @@ namespace sur {
 		i32 Wait;
 		HDC dc;
 		Color bg;
+		bool dontFillBackground;
 	public:
 
-		Render(Color bg, i32 Wait = 0) : bg(bg), Wait(Wait) { dc = GetDC(_hwnd); }
+		Render(Color bg, bool dontFillBackground, i32 Wait = 0) : bg(bg), dontFillBackground(dontFillBackground), Wait(Wait)
+		{ dc = GetDC(_hwnd); }
 
 		void ClearScreenBuffer();
 
@@ -145,16 +147,19 @@ namespace sur {
 
 	public:
 
+		bool parentmem;
+
 		Object(const std::string& path, sur::Vec2 position, const std::string& name, i32 id, const std::vector<int>& ignoreids = {0},
 			cb_ptr<Master*> callback = nullptr);
 
-		// Don't delete those objects, just unactivate them
 		Object(const Object* const obj, sur::Vec2 position, const std::string& name, i32 id, const std::vector<int>& ignoreids = {0},
 			cb_ptr<Master*> callback = nullptr);
 
-		void Bind(bool Render, bool Collider, ColliderType collidertype);
+		void Bind(bool Render, ColliderType collidertype);
 
 		void Rotate(sur::Vec2 origin, i32 Angle);
+
+		void Tint(sRGB color);
 
 		~Object() {
 			delete YCoordsO, XCoordsO, ColorsO;
@@ -183,8 +188,6 @@ namespace sur {
 		inline void SetColor(Color color) { this->color = color; }
 
 		void Bind(bool Render, bool Collider);
-
-		//Destructor
 	};
 	//
 	//	Shape: Triangle

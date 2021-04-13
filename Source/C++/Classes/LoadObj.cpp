@@ -69,6 +69,7 @@ sur::Object::Object(const std::string& path, Vec2 position, const std::string& n
 	cb_ptr<Master*> callback)
 	: path(path), Master(name, id, position,callback)
 {
+	parentmem = false;
 	ignore = ignoreids;
 	type = Type::Object;
 	identitys.push_back(id);
@@ -80,6 +81,7 @@ sur::Object::Object(const Object* const obj, Vec2 position, const std::string& n
 	cb_ptr<Master*> callback)
 	: XCoords(obj->XCoords), YCoords(obj->YCoords), Colors(obj->Colors), Master(name,id,position, callback)
 {
+	parentmem = true;
 	ignore = ignoreids;
 	type = Type::Object;
 	size = obj->size;
@@ -87,13 +89,19 @@ sur::Object::Object(const Object* const obj, Vec2 position, const std::string& n
 	ptrs.push_back(this);
 }
 
-void sur::Object::Bind(bool Render, bool Collider, ColliderType collidertype)
+void sur::Object::Bind(bool Render, ColliderType collidertype)
 {
+	auto OutOfScreenCheck = [&]() -> bool
+	{
+		if (position.x >= _window_size.x) return true;
+		if (position.y >= _window_size.y) return true;
+		if (position.x + size.x < 0) return true;
+		if (position.y + size.y < 0) return true;
+		return false;
+	};
 
-	if ((position.x < 0 && position.x + size.x < 0) && (position.y < 0 && position.y + size.y < 0)
-		|| (position.x > _window_size.x && position.x + size.x > _window_size.x) && (position.y > _window_size.y
-			&& position.y + size.y > _window_size.y))
-		return;
+	if (OutOfScreenCheck()) return;
+
 	if (collidertype == ColliderType::None && Render) {
 		for (i32 i = 0; i < YCoords->size(); i++) {
 				_Amap.Render(XCoords->at(i) + position.x, YCoords->at(i) + position.y, Colors->at(i).ToCOLORREF());
@@ -105,7 +113,6 @@ void sur::Object::Bind(bool Render, bool Collider, ColliderType collidertype)
 					_Amap.Render(XCoords->at(i) + position.x, YCoords->at(i) + position.y, Color(255, 255, 255));
 				else if (Render)
 					_Amap.Render(XCoords->at(i) + position.x, YCoords->at(i) + position.y, Colors->at(i).ToCOLORREF());
-			if (Collider)
 				_Amap.Collider(XCoords->at(i) - CO + position.x, YCoords->at(i) - CO + position.y, id);
 		}
 		return;
@@ -114,7 +121,6 @@ void sur::Object::Bind(bool Render, bool Collider, ColliderType collidertype)
 		if(Render)
 			for (i32 i = 0; i < YCoords->size(); i++)
 					_Amap.Render(XCoords->at(i) + position.x, YCoords->at(i) + position.y, Colors->at(i).ToCOLORREF());
-		if (Collider) {
 			for (i32 i = position.x; i < size.x + position.x; i++) {
 				if (_debug)
 					_Amap.Render(i, position.y, Color(255, 255, 255));
@@ -135,14 +141,12 @@ void sur::Object::Bind(bool Render, bool Collider, ColliderType collidertype)
 					_Amap.Render(size.x + position.x, i, Color(255, 255, 255));
 				_Amap.Collider(size.x - CO + position.x, i - CO, id);
 			}
-		}
 		return;
 	}
 	if (collidertype == ColliderType::Filled) {
 		if(Render)
 			for (i32 i = 0; i < YCoords->size(); i++)
 					_Amap.Render(XCoords->at(i) + position.x, YCoords->at(i) + position.y, Colors->at(i).ToCOLORREF());
-		if(Collider)
 			for (i32 a = position.y; a < position.y + size.y; a++)
 				for (i32 b = position.x; b < position.x + size.x; b++)
 					if (_debug)
@@ -180,4 +184,29 @@ void sur::Object::Rotate(Vec2 origin, i32 Angle)
 		XCoords->at(i) = v.x;
 		YCoords->at(i) = v.y;
 	}
+}
+
+void sur::Object::Tint(sRGB color)
+{
+	auto DwToRGB = [=](DWORD reef) -> sRGB {
+		return { GetRValue(reef),GetGValue(reef),GetBValue(reef) };
+	};
+	for (i32 i = 0; i < Colors->size(); ++i) {	
+		sRGB tmp = DwToRGB(Colors->at(i).ToCOLORREF());
+		tmp = tmp + color;
+		if (tmp.r > 255)
+			tmp.r = 255;
+		if (tmp.r < 0)
+			tmp.r = 0;
+		if (tmp.g > 255)
+			tmp.g = 255;		// Do that in Render (no change in vector)
+		if (tmp.g < 0)
+			tmp.g = 0;
+		if (tmp.b > 255)
+			tmp.b = 255;
+		if (tmp.b < 0)
+			tmp.b = 0;
+		Colors->at(i) = Color(tmp.r, tmp.g, tmp.b);
+	}
+
 }

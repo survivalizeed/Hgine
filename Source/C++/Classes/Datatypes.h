@@ -116,6 +116,15 @@ namespace sur {
 		i32* ColliderMap, * TriggerMap;
 		DWORD* RenderMap;
 	};
+
+	struct sRGB {
+		u32 r, g, b;
+		sRGB(u32 r, u32 g, u32 b) : r(r), g(g), b(b) {}
+
+		sRGB operator +(const sRGB& other) { return{ r + other.r, g + other.g,b + other.b }; }
+		sRGB operator -(const sRGB& other) { return{ r - other.r, g - other.g,b - other.b }; }
+		
+	};
 }
 //
 // enum

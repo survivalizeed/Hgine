@@ -25,47 +25,59 @@ sur::CollisionPackage CheckCollision(sur::Master* object, const sur::Vec2& pos, 
 		if (!neg) {
 			for (; i <= dir; ++i)
 				for (i32 j = 0; j < identitys.size(); ++j)
-					for(i32 k = 0; k < object->ignore.size(); ++k)
 						if (_debug)
 							_Amap.Render(pos.x + i, pos.y, Color(255, 0, 0));
-						else if (_Amap.Collider(pos.x + i, pos.y) == identitys[j] && 
-							object->id != identitys[j] && object->ignore[k] != identitys[j])
+						else if (_Amap.Collider(pos.x + i, pos.y) == identitys[j] && object->id != identitys[j]) {
+							for (i32 k = 0; k < object->ignore.size(); ++k) {
+								if (object->ignore[k] == identitys[j])
+									return { nullptr, (i16)dir };
+							}
 							return { (Master*)ptrs[j], --i };
-			return { nullptr, --i };
+						}
+			return { nullptr, (i16)dir };
 		}
 		dir *= -1;
 		for (; i <= dir; ++i)
-			for (i32 j = 0; j < identitys.size(); ++j)
-				for (i32 k = 0; k < object->ignore.size(); ++k)
+			for (i32 j = 0; j < identitys.size(); ++j)		
 					if (_debug)
 						_Amap.Render(pos.x - i, pos.y, Color(255, 0, 0));
-					else if (_Amap.Collider(pos.x - i, pos.y) == identitys[j] &&
-						object->id != identitys[j] && object->ignore[k] != identitys[j])
+					else if (_Amap.Collider(pos.x - i, pos.y) == identitys[j] && object->id != identitys[j]) {
+						for (i32 k = 0; k < object->ignore.size(); ++k) {
+							if (object->ignore[k] == identitys[j])
+								return { nullptr, (i16)dir };
+						}
 						return { (Master*)ptrs[j], --i };
-		return { nullptr, --i };
+					}
+		return { nullptr, (i16)dir };
 
 	case Axis::Y:
 		if (!neg) {
 			for (; i <= dir; ++i)
 				for (i32 j = 0; j < identitys.size(); ++j)
-					for (i32 k = 0; k < object->ignore.size(); ++k)
 						if (_debug)
 							_Amap.Render(pos.x, pos.y + i, Color(255, 0, 0));
-						else if (_Amap.Collider(pos.x, pos.y + i) == identitys[j] && 
-							object->id != identitys[j] && object->ignore[k] != identitys[j])
+						else if (_Amap.Collider(pos.x, pos.y + i) == identitys[j] && object->id != identitys[j]) {
+							for (i32 k = 0; k < object->ignore.size(); ++k) {
+								if (object->ignore[k] == identitys[j])
+									return { nullptr, (i16)dir };
+							}
 							return { (Master*)ptrs[j], --i };
-			return { nullptr, --i };
+						}
+			return { nullptr, (i16)dir };
 		}
 		dir *= -1;
-		for (; i <= dir; ++i)
+		for (; i <= dir; ++i)		//do this for all other code blocks
 			for (i32 j = 0; j < identitys.size(); ++j)
-				for (i32 k = 0; k < object->ignore.size(); ++k)
-					if (_debug)
-						_Amap.Render(pos.x, pos.y - i, Color(255, 0, 0));
-					else if (_Amap.Collider(pos.x, pos.y - i) == identitys[j] &&
-						object->id != identitys[j] && object->ignore[k] != identitys[j])
-						return { (Master*)ptrs[j], --i };
-		return { nullptr, --i };
+				if (_debug)
+					_Amap.Render(pos.x, pos.y - i, Color(255, 0, 0));
+				else if (_Amap.Collider(pos.x, pos.y - i) == identitys[j] && object->id != identitys[j]) {
+					for (i32 k = 0; k < object->ignore.size(); ++k) {
+						if (object->ignore[k] == identitys[j])
+							return { nullptr, (i16)dir };
+					}
+					return { (Master*)ptrs[j], --i };
+				}	
+		return { nullptr, (i16)dir };
 
 	case Axis::Both:
 		Error("Both axes are not valid. Change either to X or Y");
@@ -191,7 +203,8 @@ void sur::Master::Move(sur::Vec2f direction, bool detect)
 //
 void sur::Render::ClearScreenBuffer()
 {
-	std::fill(_map.RenderMap, _map.RenderMap + _window_size.x * _window_size.y, bg.ToCOLORREF());
+	if(!dontFillBackground)
+		std::fill(_map.RenderMap, _map.RenderMap + _window_size.x * _window_size.y, bg.ToCOLORREF());	
 	std::fill(_map.ColliderMap, _map.ColliderMap + _window_size.x * _window_size.y, 0);
 	std::fill(_map.TriggerMap, _map.TriggerMap + _window_size.x * _window_size.y, 0);
 }

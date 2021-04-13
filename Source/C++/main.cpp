@@ -10,18 +10,43 @@ extern sur::Input _input;
 
 using sur::Instancer::Types;
 
+// The object id always needs to be different because otherwise it will call the 
+// callback of the first object it finds -> include hash algorithm ?
+
 int main() {
 	lua_State* LC = Start();
 
-	sur::Render renderer(Color(100, 107, 47), 1);
+	sur::Render renderer(Color(100, 107, 47),false,1);
 	renderer.DebugConsole(_debug);
 	renderer.FPS();
+	i32 ti = 0;
 
-
-
+	sur::Instancer::Add(new sur::Object(_resource_path + "survivalizeed.hgineres", { 100,100 }, "sur", 1), Types::Object);
 	for (;;) {
 		renderer.ClearScreenBuffer();
-		
+		sur::Instancer::Get<sur::Object>("sur")->Bind(true, ColliderType::None);
+		if (_input.keyboard.Key(Keys::W)) {
+			sur::Instancer::Get<sur::Object>("sur")->Move({ 0,-1 }, true);
+		}
+		if (_input.keyboard.Key(Keys::A)) {
+			sur::Instancer::Get<sur::Object>("sur")->Move({ -1,0 }, true);
+		}
+		if (_input.keyboard.Key(Keys::S)) {
+			sur::Instancer::Get<sur::Object>("sur")->Move({ 0,1 }, true);
+		}
+		if (_input.keyboard.Key(Keys::D)) {
+			sur::Instancer::Get<sur::Object>("sur")->Move({ 1,0 }, true);
+		}
+		if (_input.keyboard.Key(Keys::G)) {
+			--ti;
+			sur::Instancer::Get<sur::Object>("sur")->Tint(sur::sRGB(0, ti, 0));	//Tint is not finished yet
+			Sleep(100);
+		}
+		if (_input.keyboard.Key(Keys::H)) {
+			++ti;
+			sur::Instancer::Get<sur::Object>("sur")->Tint(sur::sRGB(0, ti, 0));
+			Sleep(100);
+		}
 		renderer.RenderScreenBuffer();
 	}
 }
