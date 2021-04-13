@@ -20,7 +20,7 @@ Use Asio as P2P
 Animations using preloaded images and change them
 Memshare for Objects |DONE|
 Wire colliders for Rectangles
-Tint for objects |(DONE)|
+Tint for objects |(DONE)| -> it's more a hue shift
 The object id always needs to be different because otherwise it will call the callback of the first object it finds -> include hash algorithm ?
 Take input only if window is in focus
 Game Freeze functionality
