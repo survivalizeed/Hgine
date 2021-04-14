@@ -126,8 +126,9 @@ namespace sur {
 		i32 x = 0;
 		i32 y = 0;
 		i32 previous_angle;
-		std::string path;
 		bool rotatecpy = false;
+		std::string path;		
+		sRGB tint_by;
 
 		std::vector<i32>* XCoordsO = new std::vector<i32>;
 		std::vector<i32>* YCoordsO = new std::vector<i32>;
@@ -159,7 +160,9 @@ namespace sur {
 
 		void Rotate(sur::Vec2 origin, i32 Angle);
 
-		void Tint(sRGB color);
+		void LSD();
+
+		inline void Tint(sRGB rgb_intensity) { tint_by = rgb_intensity; }
 
 		~Object() {
 			delete YCoordsO, XCoordsO, ColorsO;

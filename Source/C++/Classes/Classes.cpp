@@ -291,6 +291,11 @@ sur::Rectangle::Rectangle(Vec2 position, Vec2 size, Color color, const std::stri
 
 void sur::Rectangle::Bind(bool Render,bool Collider)
 {
+	auto OutOfScreenCheck = [&]() -> bool {
+		return (position.x >= _window_size.x || position.y >= _window_size.y ||
+			position.x + size.x < 0 || position.y + size.y < 0) ? true : false;
+	};
+	if (OutOfScreenCheck()) return;
 	for (i32 i = position.y; i < position.y + size.y; i++)
 		for (i32 j = position.x; j < position.x + size.x; j++) {
 			if (Render)

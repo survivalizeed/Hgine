@@ -32,7 +32,7 @@ void sur::Sound(const char* path, u32 params, i32 volume)
 
 i32 sur::RandomRange(i32 min, i32 max)
 {
-	return rand() % (max - min + 1) + min;
+	return (min >= 0) ? rand() % (max - min + 1) + min : rand() % (max + min + 1) - min;
 }
 
 void sur::MoveTowards(Master* current, Master* target, f32 speed, const Axis& axis, bool detect)

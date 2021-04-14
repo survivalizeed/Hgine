@@ -20,6 +20,7 @@ namespace sur {
 	*/
 	void Sound(const char* path, u32 params, i32 volume);
 
+	//Slow. Use it wisely :)
 	i32 RandomRange(i32 min, i32 max);
 
 	//Cast the object to a (sur::Master*). Make sure it inheritates from the Master class

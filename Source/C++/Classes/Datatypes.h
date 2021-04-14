@@ -118,11 +118,15 @@ namespace sur {
 	};
 
 	struct sRGB {
-		u32 r, g, b;
-		sRGB(u32 r, u32 g, u32 b) : r(r), g(g), b(b) {}
+		i32 r, g, b;
 
-		sRGB operator +(const sRGB& other) { return{ r + other.r, g + other.g,b + other.b }; }
-		sRGB operator -(const sRGB& other) { return{ r - other.r, g - other.g,b - other.b }; }
+		sRGB() = default;
+
+		sRGB(i32 r, i32 g, i32 b) : r(r), g(g), b(b) {}
+
+		inline void operator()(i32 r, i32 g, i32 b) { this->r = r; this->g = g; this->b = b; }
+		inline sRGB operator +(const sRGB& other) { return{ r + other.r, g + other.g,b + other.b }; }
+		inline sRGB operator -(const sRGB& other) { return{ r - other.r, g - other.g,b - other.b }; }
 		
 	};
 }

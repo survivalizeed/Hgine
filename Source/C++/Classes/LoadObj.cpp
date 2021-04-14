@@ -1,6 +1,7 @@
 
 
 #include "Classes.h"
+#include "../Functional/functional.h"
 
 extern sur::Map_Analyses _Amap;
 extern std::vector<i32> identitys;
@@ -91,20 +92,29 @@ sur::Object::Object(const Object* const obj, Vec2 position, const std::string& n
 
 void sur::Object::Bind(bool Render, ColliderType collidertype)
 {
-	auto OutOfScreenCheck = [&]() -> bool
+	auto OutOfScreenCheck = [&]() -> bool {
+		return (position.x >= _window_size.x || position.y >= _window_size.y || 
+			position.x + size.x < 0 || position.y + size.y < 0) ? true : false;
+	};
+	auto TintIt = [&](Color color) -> DWORD
 	{
-		if (position.x >= _window_size.x) return true;
-		if (position.y >= _window_size.y) return true;
-		if (position.x + size.x < 0) return true;
-		if (position.y + size.y < 0) return true;
-		return false;
+		sRGB tmp(color.GetRed(),color.GetGreen(),color.GetBlue());
+		tmp = tmp + tint_by;
+		if (tmp.r > 255) tmp.r = 255;
+		if (tmp.r < 0) tmp.r = 0;
+		if (tmp.g > 255) tmp.g = 255;
+		if (tmp.g < 0) tmp.g = 0;
+		if (tmp.b > 255) tmp.b = 255;
+		if (tmp.b < 0) tmp.b = 0;
+		Color c(tmp.b, tmp.g, tmp.r);	// red and blue are swaped ??? Idk why???
+		return c.ToCOLORREF();
 	};
 
 	if (OutOfScreenCheck()) return;
 
 	if (collidertype == ColliderType::None && Render) {
 		for (i32 i = 0; i < YCoords->size(); i++) {
-				_Amap.Render(XCoords->at(i) + position.x, YCoords->at(i) + position.y, Colors->at(i).ToCOLORREF());
+				_Amap.Render(XCoords->at(i) + position.x, YCoords->at(i) + position.y, TintIt(Colors->at(i)));
 		}
 	}
 	if (collidertype == ColliderType::Static) {
@@ -112,7 +122,7 @@ void sur::Object::Bind(bool Render, ColliderType collidertype)
 				if (_debug)
 					_Amap.Render(XCoords->at(i) + position.x, YCoords->at(i) + position.y, Color(255, 255, 255));
 				else if (Render)
-					_Amap.Render(XCoords->at(i) + position.x, YCoords->at(i) + position.y, Colors->at(i).ToCOLORREF());
+					_Amap.Render(XCoords->at(i) + position.x, YCoords->at(i) + position.y, TintIt(Colors->at(i)));
 				_Amap.Collider(XCoords->at(i) - CO + position.x, YCoords->at(i) - CO + position.y, id);
 		}
 		return;
@@ -120,7 +130,7 @@ void sur::Object::Bind(bool Render, ColliderType collidertype)
 	if (collidertype == ColliderType::Outline) {	// Outlined Collider -> Good for Objects form outside.
 		if(Render)
 			for (i32 i = 0; i < YCoords->size(); i++)
-					_Amap.Render(XCoords->at(i) + position.x, YCoords->at(i) + position.y, Colors->at(i).ToCOLORREF());
+					_Amap.Render(XCoords->at(i) + position.x, YCoords->at(i) + position.y, TintIt(Colors->at(i)));
 			for (i32 i = position.x; i < size.x + position.x; i++) {
 				if (_debug)
 					_Amap.Render(i, position.y, Color(255, 255, 255));
@@ -146,7 +156,7 @@ void sur::Object::Bind(bool Render, ColliderType collidertype)
 	if (collidertype == ColliderType::Filled) {
 		if(Render)
 			for (i32 i = 0; i < YCoords->size(); i++)
-					_Amap.Render(XCoords->at(i) + position.x, YCoords->at(i) + position.y, Colors->at(i).ToCOLORREF());
+					_Amap.Render(XCoords->at(i) + position.x, YCoords->at(i) + position.y, TintIt(Colors->at(i)));
 			for (i32 a = position.y; a < position.y + size.y; a++)
 				for (i32 b = position.x; b < position.x + size.x; b++)
 					if (_debug)
@@ -186,27 +196,38 @@ void sur::Object::Rotate(Vec2 origin, i32 Angle)
 	}
 }
 
-void sur::Object::Tint(sRGB color)
+void sur::Object::LSD()
 {
 	auto DwToRGB = [=](DWORD reef) -> sRGB {
 		return { GetRValue(reef),GetGValue(reef),GetBValue(reef) };
 	};
+	sRGB inc(0,0,0);
+	switch (sur::RandomRange(1, 6))
+	{
+	case 1:
+		inc(-1, 1, 1);
+		break;
+	case 2:
+		inc(1, -1, 1);
+		break;
+	case 3:
+		inc(1, 1, -1);
+		break;
+	case 4:
+		inc(-1, -1, -1);
+		break;
+	case 5:
+		inc(-1, -1, 1);
+		break;
+	case 6:
+		inc(1, -1, -1);
+		break;
+	}
 	for (i32 i = 0; i < Colors->size(); ++i) {	
-		sRGB tmp = DwToRGB(Colors->at(i).ToCOLORREF());
-		tmp = tmp + color;
-		if (tmp.r > 255)
-			tmp.r = 255;
-		if (tmp.r < 0)
-			tmp.r = 0;
-		if (tmp.g > 255)
-			tmp.g = 255;		// Do that in Render (no change in vector)
-		if (tmp.g < 0)
-			tmp.g = 0;
-		if (tmp.b > 255)
-			tmp.b = 255;
-		if (tmp.b < 0)
-			tmp.b = 0;
+		sRGB tmp = tmp + DwToRGB(Colors->at(i).ToCOLORREF());
+		tmp = tmp + inc;
 		Colors->at(i) = Color(tmp.r, tmp.g, tmp.b);
+		tmp = inc;
 	}
 
 }

@@ -38,14 +38,10 @@ int main() {
 			sur::Instancer::Get<sur::Object>("sur")->Move({ 1,0 }, true);
 		}
 		if (_input.keyboard.Key(Keys::G)) {
-			--ti;
-			sur::Instancer::Get<sur::Object>("sur")->Tint(sur::sRGB(0, ti, 0));	//Tint is not finished yet
-			Sleep(100);
+			sur::Instancer::Get<sur::Object>("sur")->Tint({ --ti,ti,ti });
 		}
 		if (_input.keyboard.Key(Keys::H)) {
-			++ti;
-			sur::Instancer::Get<sur::Object>("sur")->Tint(sur::sRGB(0, ti, 0));
-			Sleep(100);
+			sur::Instancer::Get<sur::Object>("sur")->Tint({ ++ti,ti,ti });
 		}
 		renderer.RenderScreenBuffer();
 	}
