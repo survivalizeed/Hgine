@@ -28,3 +28,4 @@ Hold type of object by enum in Master class -> cast in callback |DONE|
 Rotation for all Objects
 Rotation for Camera
 Fix Collision ignore layer for right left and down |DONE|
+Rotation and movement together are buggy
