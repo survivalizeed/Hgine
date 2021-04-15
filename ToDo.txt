@@ -29,3 +29,4 @@ Rotation for all Objects
 Rotation for Camera
 Fix Collision ignore layer for right left and down |DONE|
 Rotation and movement together are buggy
+Fix those annoying RGB and Tint bugs. Understand what the fck windows wants with all those typedefs
