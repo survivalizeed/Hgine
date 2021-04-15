@@ -24,7 +24,7 @@ Tint for objects |DONE)
 The object id always needs to be different because otherwise it will call the callback of the first object it finds -> include hash algorithm ?
 Take input only if window is in focus
 Game Freeze functionality
-Hold type of object by enum in Master class -> cast in callback 
+Hold type of object by enum in Master class -> cast in callback |DONE|
 Rotation for all Objects
 Rotation for Camera
 Fix Collision ignore layer for right left and down |DONE|
