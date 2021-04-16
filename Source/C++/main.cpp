@@ -21,9 +21,11 @@ int main() {
 	renderer.FPS();
 	
 	sur::ParticlesSetting set;
+	
 	for (int i = 20; i < 255; i++) {
 		set.colors.push_back(Color(255, i, 0));
 	}
+	
 	set.emission = 5000;
 	set.emission_point_min(250, 250);
 	set.emission_point_max(250, 250);
