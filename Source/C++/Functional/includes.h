@@ -33,7 +33,7 @@
 #define Error(x) MessageBoxA(NULL,x,"Error", MB_ICONERROR);\
 exit(-1)
 
-#define Color(r,g,b) RGB(r,g,b)
+#define Color(r,g,b) (DWORD)(((((255)&0xff)<<24)|(((r)&0xff)<<16)|(((g)&0xff)<<8)|((b)&0xff)))
 
 #define assert(con,rt) if(con)\
 return rt

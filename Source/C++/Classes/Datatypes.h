@@ -17,7 +17,7 @@ typedef unsigned long int u64;
 typedef float f32;
 typedef double f64;
 
-typedef Gdiplus::Color Color;
+typedef DWORD Color;
 
 typedef const int size;
 
@@ -117,17 +117,25 @@ namespace sur {
 		DWORD* RenderMap;
 	};
 
-	struct sRGB {
+	struct sRGB {	//sRGB because RGB is already taken ;)
 		i32 r, g, b;
 
 		sRGB() = default;
 
 		sRGB(i32 r, i32 g, i32 b) : r(r), g(g), b(b) {}
 
+		inline void ToRGB(const Color& color) { r = GetBValue(color); g = GetGValue(color); b = GetRValue(color); }
 		inline void operator()(i32 r, i32 g, i32 b) { this->r = r; this->g = g; this->b = b; }
 		inline sRGB operator +(const sRGB& other) { return{ r + other.r, g + other.g,b + other.b }; }
 		inline sRGB operator -(const sRGB& other) { return{ r - other.r, g - other.g,b - other.b }; }
-		
+		inline bool operator ==(const sRGB& other) { return (r == other.r && g == other.g && b == other.b) ? true : false; }
+	};
+
+	struct ParticlesSetting {
+		Vec2 max, min, emission_point_min, emission_point_max;
+		i32 emission, noise_factor;
+		std::vector<Color> colors;
+		Vec2f direction;
 	};
 }
 //

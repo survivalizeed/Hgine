@@ -39,13 +39,15 @@ namespace sur {
 		Master(const std::string& name, i32 id, Vec2 position, Vec2 size, cb_ptr<Master*> callback = nullptr)
 			: name(name), id(id), position(position), size(size), callback(callback) {}		//Rectangle
 
-		Vec2 rot(Vec2 pos, Vec2 origin, i32 Angle);
+		Vec2 rot(Vec2 pos, Vec2 origin, i32 Angle);	// The actual rotation math
 		
-		virtual void MoveInject(i32 index, i32 CurMove);
+		virtual void MoveInject(i32 index, i32 CurMove); // useless
 
-		Vec2 MovQueue(Vec2f direction);
+		Vec2 MovQueue(Vec2f direction);	// Handles floats and does nothing until a floating number becomes an integer
 
 	public:
+		bool parentmem;
+
 		enum class Type {
 			Rectangle, Object, Triangle, Line, Shape, Trigger_Rectangle
 		} type;
@@ -69,7 +71,7 @@ namespace sur {
 
 		virtual inline void SetPosition(sur::Vec2 position) { this->position = position; }
 
-		inline sur::Vec2 GetOrigin() const { return GetPosition() + GetSize() / 2; }
+		virtual inline sur::Vec2 GetOrigin() const { return GetPosition() + GetSize() / 2; }
 
 		inline bool State() const { return active; }
 
@@ -85,10 +87,10 @@ namespace sur {
 		i32 Wait;
 		HDC dc;
 		Color bg;
-		bool dontFillBackground;
+		bool FillBackground;
 	public:
 
-		Render(Color bg, bool dontFillBackground, i32 Wait = 0) : bg(bg), dontFillBackground(dontFillBackground), Wait(Wait)
+		Render(Color bg, bool FillBackground, i32 Wait = 0) : bg(bg), FillBackground(FillBackground), Wait(Wait)
 		{ dc = GetDC(_hwnd); }
 
 		void ClearScreenBuffer();
@@ -113,10 +115,12 @@ namespace sur {
 		Color color;
 	public:
 
-		Rectangle(sur::Vec2 position, sur::Vec2 size, Color color, const std::string& name, i32 id,
+		Rectangle(sur::Vec2 position, sur::Vec2 size, Color color, const std::string& name, i32 id, bool canrotate,
 			const std::vector<int>& ignoreids = {0}, cb_ptr<Master*> callback = nullptr);
 
 		void Bind(bool Render, bool Collider);
+
+		void Rotate(sur::Vec2 origin, i32 Angle);
 	};
 	//
 	//	Load objects that were created with the Hgineres editor
@@ -147,8 +151,6 @@ namespace sur {
 		void Load();
 
 	public:
-
-		bool parentmem;
 
 		Object(const std::string& path, sur::Vec2 position, const std::string& name, i32 id, const std::vector<int>& ignoreids = {0},
 			cb_ptr<Master*> callback = nullptr);
@@ -265,6 +267,25 @@ namespace sur {
 		void Bind(bool Render, bool Collider);
 	};
 	//
+	//	Particle system
+	// 
+	class Particles : public Master {
+	private:
+		struct Particle {
+			Vec2 pos;
+			Color color;
+		};
+		
+		bool doonce = false;
+		std::vector<Particle>* Coords = new std::vector<Particle>;
+		ParticlesSetting* settings;
+	
+	public:
+		Particles(ParticlesSetting* settings) : settings(settings) {}
+
+		void Bind(bool Render);
+	};
+	//
 	//	Triggers
 	// Classes_2.cpp
 	namespace Triggers {
@@ -294,7 +315,7 @@ namespace sur {
 			inline static std::vector<sur::Triggers::Rectangle*>* trigger_rectangles = new std::vector<sur::Triggers::Rectangle*>;
 			 
 			// To return if nothing was found -> prevent error of nullpointer
-			inline static sur::Rectangle* Rdefault = new sur::Rectangle({ 0,0 }, { 0,0 }, Color(0, 0, 0), "invalid", -1);
+			inline static sur::Rectangle* Rdefault = new sur::Rectangle({ 0,0 }, { 0,0 }, Color(0, 0, 0), "invalid", -1, false);
 			inline static sur::Line* Ldefault = new sur::Line({ 0,0 }, { 0,0 }, Color(0, 0, 0), "invalid", -1);
 			inline static sur::Object* Odefault = new sur::Object("invalid", { 0,0 }, "invalid", -1);
 			inline static sur::Triangle* Tdefault = new sur::Triangle({ 0,0 }, { 0,0 }, { 0,0 }, Color(0, 0, 0), "invalid", -1);

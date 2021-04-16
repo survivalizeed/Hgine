@@ -68,14 +68,14 @@ void sur::Triangle::Line(Vec2 start, Vec2 end, std::vector<Vec2>* line,bool Rend
 		i32 countcounter = 1;
 		for (i32 i = start.x; i <= end.x; i++) {
 			if(Render)
-				_Amap.Render(i, tempy, color.ToCOLORREF());
+				_Amap.Render(i, tempy, color);
 			if (Collider)
 				_Amap.Collider(i, tempy, id);	
 			while (counter >= countcounter) {
 				tempy++;
 				line->push_back({ i,tempy });
 				if (Render)
-					_Amap.Render(i, tempy, color.ToCOLORREF());
+					_Amap.Render(i, tempy, color);
 				if (Collider)
 					_Amap.Collider(i, tempy, id);		
 				countcounter++;
@@ -91,14 +91,14 @@ void sur::Triangle::Line(Vec2 start, Vec2 end, std::vector<Vec2>* line,bool Rend
 		bool runned = false;
 		for (i32 i = start.x; i <= end.x; i++) {
 			if (Render)
-				_Amap.Render(i, tempy, color.ToCOLORREF());
+				_Amap.Render(i, tempy, color);
 			if (Collider)
 				_Amap.Collider(i, tempy, id);	
 			while (counter >= countcounter) {
 				tempy--;
 				line->push_back({ i,tempy });
 				if (Render)
-					_Amap.Render(i, tempy, color.ToCOLORREF());
+					_Amap.Render(i, tempy, color);
 				if (Collider)
 					_Amap.Collider(i, tempy, id);			
 				countcounter++;
@@ -113,13 +113,13 @@ void sur::Triangle::Line(Vec2 start, Vec2 end, std::vector<Vec2>* line,bool Rend
 			for (i32 i = start.y; i <= end.y; i++) {
 				line->push_back({ tempx,i });
 				if (Render)
-					_Amap.Render(tempx, i, color.ToCOLORREF());
+					_Amap.Render(tempx, i, color);
 				if (Collider)
 					_Amap.Collider(tempx, i, id);		
 				while (counter >= countcounter) {
 					tempx--;
 					if (Render)
-						_Amap.Render(tempx, i, color.ToCOLORREF());
+						_Amap.Render(tempx, i, color);
 					if (Collider)
 						_Amap.Collider(tempx, i, id);	
 					countcounter++;
@@ -165,12 +165,12 @@ void sur::Triangle::Fill(LineVector& linevector)
 			if (dir == 1) {
 				if (counter < hypo->size() && counter < other->size())
 					for (i32 j = hypo->at(counter).x; j <= other->at(counter).x; j++)
-						_Amap.Render(j, i, color.ToCOLORREF());
+						_Amap.Render(j, i, color);
 			}
 			else {
 				if (counter < hypo->size() && counter < other->size())
 					for (i32 j = other->at(counter).x; j <= hypo->at(counter).x; j++)
-						_Amap.Render(j, i, color.ToCOLORREF());
+						_Amap.Render(j, i, color);
 			}
 			counter++;
 		}
@@ -183,12 +183,12 @@ void sur::Triangle::Fill(LineVector& linevector)
 			if (dir == 1) {
 				if (counter < hypo->size() && counter < temp->size())
 					for (i32 j = hypo->at(counter).x; j <= temp->at(counter).x; j++)
-						_Amap.Render(j, i, color.ToCOLORREF());
+						_Amap.Render(j, i, color);
 			}
 			else {
 				if (counter < hypo->size() && counter < temp->size())
 					for (i32 j = temp->at(counter).x; j <= hypo->at(counter).x; j++)
-						_Amap.Render(j, i, color.ToCOLORREF());
+						_Amap.Render(j, i, color);
 			}
 			counter++;
 		}

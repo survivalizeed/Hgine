@@ -56,6 +56,10 @@ void sur::Object::Load()
 		size.x = *std::max_element(MaxX->begin(), MaxX->end());
 		size.y = y;
 		delete MaxX;
+		for (i32 i = 0; i < Colors->size(); ++i) {
+			sRGB tmp(GetRValue(Colors->at(i)), GetGValue(Colors->at(i)), GetBValue(Colors->at(i)));
+			Colors->at(i) = Color(tmp.r, tmp.g, tmp.b);
+		}
 	}
 	else if (_debug) {
 		std::string errstr = "Object path not found!\nPath given: ";
@@ -96,9 +100,11 @@ void sur::Object::Bind(bool Render, ColliderType collidertype)
 		return (position.x >= _window_size.x || position.y >= _window_size.y || 
 			position.x + size.x < 0 || position.y + size.y < 0) ? true : false;
 	};
-	auto TintIt = [&](Color color) -> DWORD
+	auto TintIt = [&](Color color) -> Color
 	{
-		sRGB tmp(color.GetRed(),color.GetGreen(),color.GetBlue());
+		assert(tint_by == sRGB(0,0,0), color);
+		sRGB tmp;
+		tmp.ToRGB(color);
 		tmp = tmp + tint_by;
 		if (tmp.r > 255) tmp.r = 255;
 		if (tmp.r < 0) tmp.r = 0;
@@ -106,8 +112,8 @@ void sur::Object::Bind(bool Render, ColliderType collidertype)
 		if (tmp.g < 0) tmp.g = 0;
 		if (tmp.b > 255) tmp.b = 255;
 		if (tmp.b < 0) tmp.b = 0;
-		Color c(tmp.b, tmp.g, tmp.r);	// red and blue are swaped ??? Idk why???
-		return c.ToCOLORREF();
+		Color c = Color(tmp.r, tmp.g, tmp.b);
+		return c;
 	};
 
 	if (OutOfScreenCheck()) return;
@@ -198,33 +204,19 @@ void sur::Object::Rotate(Vec2 origin, i32 Angle)
 
 void sur::Object::LSD()
 {
-	auto DwToRGB = [=](DWORD reef) -> sRGB {
-		return { GetRValue(reef),GetGValue(reef),GetBValue(reef) };
-	};
 	sRGB inc(0,0,0);
 	switch (sur::RandomRange(1, 6))
 	{
-	case 1:
-		inc(-1, 1, 1);
-		break;
-	case 2:
-		inc(1, -1, 1);
-		break;
-	case 3:
-		inc(1, 1, -1);
-		break;
-	case 4:
-		inc(-1, -1, -1);
-		break;
-	case 5:
-		inc(-1, -1, 1);
-		break;
-	case 6:
-		inc(1, -1, -1);
-		break;
+	case 1: inc(-1, 1, 1); break;
+	case 2: inc(1, -1, 1); break;
+	case 3: inc(1, 1, -1); break;
+	case 4: inc(-1, -1, -1); break;
+	case 5: inc(-1, -1, 1); break;
+	case 6: inc(1, -1, -1); break;
 	}
-	for (i32 i = 0; i < Colors->size(); ++i) {	
-		sRGB tmp = tmp + DwToRGB(Colors->at(i).ToCOLORREF());
+	for (i32 i = 0; i < Colors->size(); ++i) {
+		sRGB tmp;
+		tmp.ToRGB(Colors->at(i));
 		tmp = tmp + inc;
 		Colors->at(i) = Color(tmp.r, tmp.g, tmp.b);
 		tmp = inc;

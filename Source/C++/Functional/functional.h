@@ -20,7 +20,7 @@ namespace sur {
 	*/
 	void Sound(const char* path, u32 params, i32 volume);
 
-	//Slow. Use it wisely :)
+	//Not thaaaat fast :)
 	i32 RandomRange(i32 min, i32 max);
 
 	//Cast the object to a (sur::Master*). Make sure it inheritates from the Master class
@@ -30,7 +30,7 @@ namespace sur {
 	i64 GetMilliseconds();
 
 	inline void SetPixel(Vec2 position, Color color, i32 CollisionId = 0, i32 TriggerId = 0) {
-		_Amap.Render(position, color.ToCOLORREF());
+		_Amap.Render(position, color);
 		if (CollisionId != 0)
 			_Amap.Collider(position, CollisionId);
 		if(CollisionId != 0)

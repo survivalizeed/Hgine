@@ -16,33 +16,24 @@ using sur::Instancer::Types;
 int main() {
 	lua_State* LC = Start();
 
-	sur::Render renderer(Color(100, 107, 47),false,1);
+	sur::Render renderer(Color(0, 0, 0),true,1);
 	renderer.DebugConsole(_debug);
 	renderer.FPS();
-	i32 ti = 0;
-
-	sur::Instancer::Add(new sur::Object(_resource_path + "survivalizeed.hgineres", { 100,100 }, "sur", 1), Types::Object);
+	
+	sur::ParticlesSetting set;
+	for (int i = 20; i < 255; i++) {
+		set.colors.push_back(Color(255, i, 0));
+	}
+	set.emission = 5000;
+	set.emission_point_min(250, 250);
+	set.emission_point_max(250, 250);
+	set.direction(0, 0);
+	set.noise_factor = 2;
+	
+	sur::Particles a(&set);
 	for (;;) {
 		renderer.ClearScreenBuffer();
-		sur::Instancer::Get<sur::Object>("sur")->Bind(true, ColliderType::None);
-		if (_input.keyboard.Key(Keys::W)) {
-			sur::Instancer::Get<sur::Object>("sur")->Move({ 0,-1 }, true);
-		}
-		if (_input.keyboard.Key(Keys::A)) {
-			sur::Instancer::Get<sur::Object>("sur")->Move({ -1,0 }, true);
-		}
-		if (_input.keyboard.Key(Keys::S)) {
-			sur::Instancer::Get<sur::Object>("sur")->Move({ 0,1 }, true);
-		}
-		if (_input.keyboard.Key(Keys::D)) {
-			sur::Instancer::Get<sur::Object>("sur")->Move({ 1,0 }, true);
-		}
-		if (_input.keyboard.Key(Keys::G)) {
-			sur::Instancer::Get<sur::Object>("sur")->Tint({ --ti,ti,ti });
-		}
-		if (_input.keyboard.Key(Keys::H)) {
-			sur::Instancer::Get<sur::Object>("sur")->Tint({ ++ti,ti,ti });
-		}
+		a.Bind(true);
 		renderer.RenderScreenBuffer();
 	}
 }
