@@ -32,6 +32,7 @@ int main() {
 	sur::Particles a(&set);
 
 	sur::Vec2f dir;
+	
 	for (;;) {
 		renderer.ClearScreenBuffer();
 		a.Bind(true);	
