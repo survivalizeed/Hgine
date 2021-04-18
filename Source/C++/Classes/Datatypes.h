@@ -135,7 +135,13 @@ namespace sur {
 		Vec2 max, min, emission_point_min, emission_point_max;
 		i32 emission, noise_factor;
 		std::vector<Color> colors;
-		Vec2f direction;
+
+		ParticlesSetting() = default;
+
+		//Update to take max and min if their time of usage has come
+		ParticlesSetting(Vec2 emission_point_min, Vec2 emission_point_max, i32 emission, i32 noise_factor)
+			: emission_point_max(emission_point_max), emission_point_min(emission_point_min),
+			  emission(emission), noise_factor(noise_factor){}
 	};
 }
 //

@@ -10,6 +10,7 @@
 #pragma warning(disable: 26451)
 #pragma warning(disable: 26495)
 #pragma warning(disable: 4003)
+#pragma warning(disable: 4715)
 
 #include <Windows.h>
 #include <gdiplus.h>

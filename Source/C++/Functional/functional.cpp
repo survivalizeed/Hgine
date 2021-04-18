@@ -52,6 +52,24 @@ void sur::MoveTowards(Master* current, Master* target, f32 speed, const Axis& ax
 	current->Move(direction * speed, detect);
 }
 
+sur::Vec2f sur::Direction(Vec2 first, Vec2 second)
+{
+	bool xz = false, yz = false;
+	Vec2f direction(first - second);	
+	if (direction.x == 0) {
+		direction.x = 1;
+		xz = true;
+	}
+	if (direction.y == 0) {
+		direction.y = 1;
+		yz = true;
+	}
+	direction.normalize();
+	if (xz) direction.x = 0;
+	if (yz) direction.y = 0;
+	return direction;
+}
+
 i64 sur::GetMilliseconds()
 {
 	using namespace std::chrono;

@@ -278,12 +278,16 @@ namespace sur {
 		
 		bool doonce = false;
 		std::vector<Particle>* Coords = new std::vector<Particle>;
+		std::vector<Vec2>* Offsets = new std::vector<Vec2>;
 		ParticlesSetting* settings;
 	
+
 	public:
-		Particles(ParticlesSetting* settings) : settings(settings) {}
+		Particles(ParticlesSetting* settings);
 
 		void Bind(bool Render);
+
+		void Move(sur::Vec2f direction) cpar(Master::Move(direction,false))
 	};
 	//
 	//	Triggers

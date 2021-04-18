@@ -26,6 +26,8 @@ namespace sur {
 	//Cast the object to a (sur::Master*). Make sure it inheritates from the Master class
 	void MoveTowards(Master* const current, Master* const target, f32 speed, const Axis& axis, bool detect);
 
+	Vec2f Direction(Vec2 first, Vec2 second);
+
 	//To wait one second, just store the value of the first call and compare in an if, if it is value + 1000.
 	i64 GetMilliseconds();
 
