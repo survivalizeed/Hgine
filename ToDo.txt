@@ -32,3 +32,4 @@ Rotation and movement together are buggy
 Fix those annoying RGB and Tint bugs. Understand what the fck windows wants with all those typedefs |DONE|
 Faster random number generator. Maybe Xoshiro256+?
 Instancer support for particle systems
+unique move queue for every particle
