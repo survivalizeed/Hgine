@@ -271,7 +271,6 @@ namespace sur {
 	// 
 	class Particles : public Master {
 	private:
-		friend class Particle;
 
 		struct Particle : public Master{
 			Vec2 pos;

@@ -28,16 +28,15 @@ int main() {
 	set.emission = 50000;
 	set.emission_point_min(250, 250);
 	set.emission_point_max(250, 250);
-	set.noise_factor = 2;
+	set.noise_factor = 1;
 	set.block_directions.push_back(Direction::None);
 	sur::Particles a(&set);
 
-	i8 toggle = 0;
 	for (;;) {
 		renderer.ClearScreenBuffer();
 		a.Bind(true);
 		if(_input.mouse.RClick())
-			a.MoveTowards(_input.mouse.Position(),3);
+			a.MoveTowards(_input.mouse.Position(),6);
 		set.middle = a.GetPosition();
 		if (_input.keyboard.Key(Keys::A)) {
 			sur::Vec2f dir(sur::Direction(_input.mouse.Position(), a.GetPosition()));
@@ -52,6 +51,13 @@ int main() {
 			set.max_distance_to_middle++;
 		if (_input.keyboard.Key(Keys::S))
 			set.max_distance_to_middle--;
+		if (_input.keyboard.Key(Keys::G))
+			set.noise_factor++;
+		if (_input.keyboard.Key(Keys::H))
+			if (set.noise_factor <= 0)
+				set.noise_factor = 0;
+			else
+				set.noise_factor--;
 		renderer.RenderScreenBuffer();
 	}
 }
