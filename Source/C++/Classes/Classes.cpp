@@ -115,8 +115,7 @@ void sur::Master::MoveInject(i32 index, i32 CurMove)
 
 sur::Vec2 sur::Master::MovQueue(Vec2f direction)
 {
-	//counterneg = {-nan(ind),-nan(ind)}??? Error!
-	
+
 	if(direction.x > 0)
 		counterpos.x += direction.x;
 	else 

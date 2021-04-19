@@ -21,7 +21,11 @@ namespace sur {
 	void Sound(const char* path, u32 params, i32 volume);
 
 	//Not thaaaat fast :)
-	i32 RandomRange(i32 min, i32 max);
+	inline i32 RandomRange(i32 min, i32 max) {
+		static bool once = false;
+		if (!once) { srand((u32)time(0)); once = true; }
+		return (min >= 0) ? rand() % (max - min + 1) + min : rand() % (max + min + 1) - min;
+	}
 
 	//Cast the object to a (sur::Master*). Make sure it inheritates from the Master class
 	void MoveTowards(Master* const current, Master* const target, f32 speed, const Axis& axis, bool detect);

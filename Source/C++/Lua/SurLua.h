@@ -88,6 +88,21 @@ namespace lua {
 		return "nil";
 	}
 
+	std::string LuaCallFunctionVoid(lua_State* L, const char* Name) {
+		lua_getglobal(L, Name);
+		if (lua_isfunction(L, -1)) {
+			lua_pcall(L, 0, 1, 0);
+			return lua_tostring(L, -1);
+		}
+	}
+
+	void LuaCallVoidFunctionVoid(lua_State* L, const char* Name) {
+		lua_getglobal(L, Name);
+		if (lua_isfunction(L, -1)) {
+			lua_pcall(L, 0, 0, 0);
+		}
+	}
+
 	std::string CallTableFunction(lua_State* L, const char* TName, const char* FName, const std::vector<std::string> params = { "" }) {
 		lua_getglobal(L, TName);
 		if (lua_istable(L, -1)) {

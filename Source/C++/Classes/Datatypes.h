@@ -25,6 +25,21 @@ constexpr int Second = 1000;
 constexpr int Minute = 60000;
 constexpr f32 PI = 3.1415926f;
 
+
+// Colliders
+enum class ColliderType {
+	Static, Filled, Outline, None
+};
+
+// Describes the axis something can move on
+enum class Axis {
+	X, Y, Both
+};
+
+enum class Direction {
+	Up, Down, Left, Right, None
+};
+
 namespace sur {
 	//
 	// struct 
@@ -73,12 +88,6 @@ namespace sur {
 		inline void invert() { x *= -1; y *= -1; }
 		inline f32 magnitude() { return (f32)sqrt(pow(x, 2) + pow(y, 2)); }
 		inline void absolute() { (void)abs(x); (void)abs(y); }
-		inline f32 angleToXaxis() {
-			if (y >= 0)
-				return acos(x / magnitude());
-			else
-				return acos(x / magnitude());
-		}
 		
 		inline void operator ()(i32 x, i32 y) { this->x = x; this->y = y; }
 		inline void operator ()(const Vec2& vector2d) { x = vector2d.x; y = vector2d.y; }
@@ -132,10 +141,12 @@ namespace sur {
 	};
 
 	struct ParticlesSetting {
-		Vec2 max, min, emission_point_min, emission_point_max;
+		
 		i32 emission, noise_factor;
+		f32 max_distance_to_middle = 0;
+		std::vector<Direction> block_directions;
+		Vec2 emission_point_min, emission_point_max, middle;
 		std::vector<Color> colors;
-
 		ParticlesSetting() = default;
 
 		//Update to take max and min if their time of usage has come
@@ -156,17 +167,6 @@ namespace Keys {
 		U = 0x55, V = 0x56, W = 0x57, X = 0x58, Y = 0x59, Z = 0x5A, SPACE = 0x20
 	};
 }
-
-// Colliders
-enum class ColliderType {
-	Static, Filled, Outline, None
-};
-
-// Describes the axis something can move on
-enum class Axis {
-	X, Y, Both
-};
-
 
 // Template stuff
 template <typename CallBackType>

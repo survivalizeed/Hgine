@@ -43,9 +43,9 @@ namespace sur {
 		
 		virtual void MoveInject(i32 index, i32 CurMove); // useless
 
+	public:
 		Vec2 MovQueue(Vec2f direction);	// Handles floats and does nothing until a floating number becomes an integer
 
-	public:
 		bool parentmem;
 
 		enum class Type {
@@ -271,19 +271,24 @@ namespace sur {
 	// 
 	class Particles : public Master {
 	private:
-		struct Particle {
+		friend class Particle;
+
+		struct Particle : public Master{
 			Vec2 pos;
+			
 			Color color;
+			Particle() = default;
+			Particle(Vec2 pos, Color color) : pos(pos), color(color){}
 		};
 		
-		bool doonce = false;
 		std::vector<Particle>* Coords = new std::vector<Particle>;
 		std::vector<Vec2>* Offsets = new std::vector<Vec2>;
 		ParticlesSetting* settings;
 	
-
 	public:
 		Particles(ParticlesSetting* settings);
+
+		void MoveTowards(sur::Vec2 position, f32 speed);
 
 		void Bind(bool Render);
 

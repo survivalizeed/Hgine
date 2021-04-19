@@ -22,29 +22,36 @@ int main() {
 	
 	sur::ParticlesSetting set;
 	for (int i = 20; i < 255; i++) {
-		set.colors.push_back(Color(i / 2, i, 255));
+		set.colors.push_back(Color(i/ 2, i, 255 ));
 	}
+	set.max_distance_to_middle = 200;
 	set.emission = 50000;
 	set.emission_point_min(250, 250);
 	set.emission_point_max(250, 250);
 	set.noise_factor = 2;
-	
+	set.block_directions.push_back(Direction::None);
 	sur::Particles a(&set);
 
-	sur::Vec2f dir;
-	
+	i8 toggle = 0;
 	for (;;) {
 		renderer.ClearScreenBuffer();
-		a.Bind(true);	
+		a.Bind(true);
+		if(_input.mouse.RClick())
+			a.MoveTowards(_input.mouse.Position(),3);
+		set.middle = a.GetPosition();
 		if (_input.keyboard.Key(Keys::A)) {
-			dir(sur::Direction(_input.mouse.Position(), a.GetPosition()));
+			sur::Vec2f dir(sur::Direction(_input.mouse.Position(), a.GetPosition()));
 			a.Move(dir * 2);
 		}
 		if (_input.keyboard.Key(Keys::D)) {
-			dir(sur::Direction(_input.mouse.Position(), a.GetPosition()));
+			sur::Vec2f dir(sur::Direction(_input.mouse.Position(), a.GetPosition()));
 			dir.invert();
 			a.Move(dir * 2);
 		}			
+		if (_input.keyboard.Key(Keys::W))
+			set.max_distance_to_middle++;
+		if (_input.keyboard.Key(Keys::S))
+			set.max_distance_to_middle--;
 		renderer.RenderScreenBuffer();
 	}
 }
