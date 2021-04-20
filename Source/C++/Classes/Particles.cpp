@@ -51,10 +51,10 @@ void sur::Particles::MoveTowards(sur::Vec2 position, f32 speed)
 {
 	i32 supportedThreads = std::thread::hardware_concurrency() == 0 ? 2 : std::thread::hardware_concurrency();
 	const i32 minDataPerThread = 1000;
-	i32 maxAmountOfThread = (Offsets->size() + minDataPerThread - 1) / minDataPerThread;
+	i32 maxAmountOfThread = ((i32)Offsets->size() + minDataPerThread - 1) / minDataPerThread;
 	i32 amountOfThreads = supportedThreads > maxAmountOfThread ? maxAmountOfThread : supportedThreads;
 
-	i32 dataPerThread = Offsets->size() / amountOfThreads;
+	i32 dataPerThread = (i32)Offsets->size() / amountOfThreads;
 
 	std::vector<std::thread> threads(amountOfThreads - 1); // Da main Thread noch genutzt wird
 
@@ -62,7 +62,7 @@ void sur::Particles::MoveTowards(sur::Vec2 position, f32 speed)
 		bool toggle = false;
 		for (i32 i = start; i < end; ++i) { 
 			Vec2f dir(sur::Direction(position, Coords->at(i).pos + this->GetPosition() + Offsets->at(i)));	
-			Vec2 move = Coords->at(i).MovQueue(dir * sur::RandomRange(speed / 2, speed));
+			Vec2 move = Coords->at(i).MovQueue(dir * (f32)sur::RandomRange((i32)speed / 2, (i32)speed));
 			toggle = true;
 			if (move.x == 0 && move.y == 0) continue;
 			Offsets->at(i) = Offsets->at(i) + move;
@@ -73,7 +73,7 @@ void sur::Particles::MoveTowards(sur::Vec2 position, f32 speed)
 	}
 	
 	i32 startOffset = dataPerThread * (amountOfThreads - 1);
-	calculate(startOffset, Coords->size());
+	calculate(startOffset, (i32)Coords->size());
 
 	for (i32 i = 0; i < amountOfThreads - 1; ++i) {
 		threads[i].join();

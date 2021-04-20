@@ -264,6 +264,8 @@ namespace sur {
 			Pass(r...);
 		}
 		
+		void SetPosition(i32 index, sur::Vec2 position);
+
 		void Bind(bool Render, bool Collider);
 	};
 	//
@@ -273,8 +275,7 @@ namespace sur {
 	private:
 
 		struct Particle : public Master{
-			Vec2 pos;
-			
+			Vec2 pos;		
 			Color color;
 			Particle() = default;
 			Particle(Vec2 pos, Color color) : pos(pos), color(color){}
@@ -291,7 +292,13 @@ namespace sur {
 
 		void Bind(bool Render);
 
-		void Move(sur::Vec2f direction) cpar(Master::Move(direction,false))
+		inline void Move(sur::Vec2f direction) cpar(Master::Move(direction,false))
+
+		inline void MoveAll(sur::Vec2f direction) {
+			Vec2 newdirection = MovQueue(direction);
+			settings->middle += newdirection;
+			position += newdirection;
+		}
 	};
 	//
 	//	Triggers
@@ -358,6 +365,9 @@ namespace sur {
 		};
 		struct Keyboard {
 			bool Key(Keys::Keys key) const;
+			bool KeyDown(Keys::Keys key);
+		private:
+			Keys::Keys pressed;
 		};
 		Mouse mouse;
 		Keyboard keyboard;

@@ -1,4 +1,5 @@
 
+
 #include "Functional/includes.h"
 #include "Functional/functional.h"
 #include "Lua/SurLua.h"
@@ -10,8 +11,6 @@ extern sur::Input _input;
 
 using sur::Instancer::Types;
 
-// The object id always needs to be different because otherwise it will call the 
-// callback of the first object it finds -> include hash algorithm ?
 
 int main() {
 	lua_State* LC = Start();
@@ -19,45 +18,20 @@ int main() {
 	sur::Render renderer(Color(0, 0, 0),true,1);
 	renderer.DebugConsole(_debug);
 	renderer.FPS();
-	
-	sur::ParticlesSetting set;
-	for (int i = 20; i < 255; i++) {
-		set.colors.push_back(Color(i/ 2, i, 255 ));
-	}
-	set.max_distance_to_middle = 200;
-	set.emission = 50000;
-	set.emission_point_min(250, 250);
-	set.emission_point_max(250, 250);
-	set.noise_factor = 1;
-	set.block_directions.push_back(Direction::None);
-	sur::Particles a(&set);
+
+	i32 yPosTube = _window_size.y - 227;
+
+	sur::Instancer::Add(new sur::Object(_resource_path + "Tube.hgineres", { 0, 0 }, "TubeUp", 1), Types::Object);
+	sur::Instancer::Add(new sur::Object(_resource_path + "Tubeflip.hgineres", { 0, 0 }, "TubeDown", 1), Types::Object);
+	sur::Instancer::Add(new sur::Object(_resource_path + "Flappy.hgineres", { 0, 0 }, "Player", 1), Types::Object);
 
 	for (;;) {
 		renderer.ClearScreenBuffer();
-		a.Bind(true);
-		if(_input.mouse.RClick())
-			a.MoveTowards(_input.mouse.Position(),6);
-		set.middle = a.GetPosition();
-		if (_input.keyboard.Key(Keys::A)) {
-			sur::Vec2f dir(sur::Direction(_input.mouse.Position(), a.GetPosition()));
-			a.Move(dir * 2);
-		}
-		if (_input.keyboard.Key(Keys::D)) {
-			sur::Vec2f dir(sur::Direction(_input.mouse.Position(), a.GetPosition()));
-			dir.invert();
-			a.Move(dir * 2);
-		}			
-		if (_input.keyboard.Key(Keys::W))
-			set.max_distance_to_middle++;
-		if (_input.keyboard.Key(Keys::S))
-			set.max_distance_to_middle--;
-		if (_input.keyboard.Key(Keys::G))
-			set.noise_factor++;
-		if (_input.keyboard.Key(Keys::H))
-			if (set.noise_factor <= 0)
-				set.noise_factor = 0;
-			else
-				set.noise_factor--;
+		using namespace sur::Instancer;
+
+		Add(new sur::Object(Get<sur::Object>("TubeUp"), { _window_size.x, 0},"TubeUp1",1),Types::Object);
+		Add(new sur::Object(Get<sur::Object>("TubeUp"), { _window_size.x, 0 }, "TubeUp2", 1), Types::Object);
+
 		renderer.RenderScreenBuffer();
 	}
 }

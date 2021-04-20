@@ -194,8 +194,7 @@ void sur::Master::Move(sur::Vec2f direction, bool detect)
 		}
 		return;
 	}
-	position.x += newdirection.x;
-	position.y += newdirection.y;
+	position += newdirection;
 }
 //
 //	Render
@@ -325,11 +324,28 @@ sur::Line::Line(Vec2 start, Vec2 end, Color color, const std::string& name, i32 
 void sur::Line::Bind(bool Render, bool Collider)
 {
 	Vec2 end = this->end;
-	Vec2 start = this-> start;
-	if (start.x == end.x) start.x--;
-	if (this->start.y > this->end.y && this->start.x > this->end.x) {
+	Vec2 start = this->start;
+	if (this->start.y > this->end.y || this->start.x > this->end.x) {
 		std::swap(start.y, end.y);
 		std::swap(start.x, end.x);
+	}
+	if (start.x == end.x) {
+		for (i32 i = start.y; i < end.y; ++i) {
+			if (Render)
+				_Amap.Render(start.x, i, color);
+			if (Collider)
+				_Amap.Collider(start.x, i, id);
+		}
+		return;
+	}
+	if (start.y == end.y) {
+		for (i32 i = start.x; i < end.x; ++i) {
+			if (Render)
+				_Amap.Render(i, start.y, color);
+			if (Collider)
+				_Amap.Collider(i, start.y, id);
+		}
+		return;
 	}
 	i32 Dx, Dy;
 	f32 RunsThrough;
@@ -421,6 +437,20 @@ void sur::Shape::Gen()
 	}
 }
 
+void sur::Shape::SetPosition(i32 index, sur::Vec2 position) {
+	assert(index > lines->size() + 1 || index < 1);
+	if (index == 1) {
+		lines->at(index - 1)->Start(position);
+		return;
+	}
+	if (index == lines->size() + 1) {
+		lines->at(index - 2)->End(position);
+		return;
+	}
+	lines->at(index - 1)->Start(position);
+	lines->at(index - 2)->End(position);
+}
+
 void sur::Shape::Bind(bool Render, bool Collider)
 {
 	for (auto&& it : *lines)
@@ -440,6 +470,7 @@ sur::Vec2 sur::Input::Mouse::Position() const
 		return { 0,0 };
 	if (point.x > _window_size.x - 1 || point.y > _window_size.y - 1)
 		return { _window_size.x - 1, _window_size.y - 1};
+	point.y = _window_size.y - point.y;
 	return{ point.x, point.y };
 }
 
@@ -463,6 +494,21 @@ bool sur::Input::Keyboard::Key(Keys::Keys key) const
 	if (GetAsyncKeyState(key))
 		return true;
 	return false;
+}
+
+bool sur::Input::Keyboard::KeyDown(Keys::Keys key) 
+{	
+	if (GetAsyncKeyState(key)) {
+		if (pressed != key) {
+			pressed = key;
+			return true;
+		}
+		return false;
+	}
+	else {
+		pressed = Keys::Keys::None;
+		return false;
+	}
 }
 //
 //	Map_Analyses

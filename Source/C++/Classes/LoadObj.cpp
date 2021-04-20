@@ -59,6 +59,10 @@ void sur::Object::Load()
 		for (i32 i = 0; i < Colors->size(); ++i) {
 			sRGB tmp(GetRValue(Colors->at(i)), GetGValue(Colors->at(i)), GetBValue(Colors->at(i)));
 			Colors->at(i) = Color(tmp.r, tmp.g, tmp.b);
+		}	
+		i32 maxY = *std::max_element(YCoords->begin(), YCoords->end());
+		for (auto&& iter : *YCoords) {
+			iter = maxY - iter;
 		}
 	}
 	else if (_debug) {

@@ -49,13 +49,13 @@ std::vector<sur::Vec2>* sur::Triangle::LineVector::getother()
 	return nullptr;
 }
 
-void sur::Triangle::Line(Vec2 start, Vec2 end, std::vector<Vec2>* line,bool Render, bool Collider)
+void sur::Triangle::Line(Vec2 start, Vec2 end, std::vector<Vec2>* line, bool Render, bool Collider)
 {
-	if (start.x == end.x) start.x--;
-	if (start.y > end.y && start.x > end.x) {
+	if (start.y > end.y || start.x > end.x) {
 		std::swap(start.y, end.y);
 		std::swap(start.x, end.x);
 	}
+	if (start.x == end.x) start.x--;
 	i32 Dx, Dy;
 	f32 RunsThrough;
 	Dx = end.x - start.x;
