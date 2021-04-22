@@ -120,6 +120,50 @@ namespace sur {
 		}
 		operator Vec2f() { return { (f32)x,(f32)y }; }
 	};
+
+	struct Mat2x2 {
+		sur::Vec2 v1,v2;
+
+		Mat2x2() = default;
+
+		// { a | b }
+		// { c | d }
+		Mat2x2(i32 a, i32 b, i32 c, i32 d) {
+			v1.x = a; v2.x = b; v1.y = c; v2.y = d;
+		}
+
+		Mat2x2(const Mat2x2& other) { 
+			v1 = other.v1; v2 = other.v2;
+		}
+
+
+		inline Vec2 mulitplyWithVector(const Vec2& other) {
+			return { v1.x * other.x + v2.x * other.y, v1.y * other.x + v2.y * other.y };
+		}
+		inline void multiplyWithMatrix(const Mat2x2& other) {
+			sur::Vec2 tmp1 = mulitplyWithVector({ other.v1.x,other.v1.y });
+			sur::Vec2 tmp2 = mulitplyWithVector({ other.v2.x, other.v2.y });
+			v1 = tmp1; v2 = tmp2;
+		}
+
+		// { a | b }
+		// { c | d }
+		inline void operator()(i32 a, i32 b, i32 c, i32 d) {
+			v1.x = a; v2.x = a; v1.y = c; v2.y = d;
+		}
+
+		inline i32 operator ()(i32 which, i32 index) {
+			if (which == 0) if (index == 0) return v1.x;
+			if (index == 1) return v1.y;
+			if (which == 1) if (index == 0)	return v2.x;
+			if (index == 1) return v2.y;
+		}
+		friend std::ostream& operator<<(std::ostream& os,const Mat2x2& mat) {
+			os << "{ " << mat.v1.x << " " << mat.v2.x << " }" << "\n"
+				<< "{ " << mat.v1.y << " " << mat.v2.y << " }";
+			return os;
+		}
+	};
 	//
 	// Map pointer for Rendering, Collision and Trigger detection
 	//

@@ -1,5 +1,3 @@
-
-
 #include "Functional/includes.h"
 #include "Functional/functional.h"
 #include "Lua/SurLua.h"
@@ -18,23 +16,27 @@ int main() {
 	sur::Render renderer(Color(0, 0, 0),true,1);
 	renderer.DebugConsole(true);
 	renderer.FPS();
-	
-	sur::Mat2x2 a(1, 0,		// A matrix you can play with ;)
-				  0, 1);
+
+	i32 yPosTube = _window_size.y - 227;
+
+	sur::Instancer::Add(new sur::Object(_resource_path + "Tube.hgineres", { 0, 0 }, "TubeUp", 1), Types::Object);
+	sur::Instancer::Add(new sur::Object(_resource_path + "Tubeflip.hgineres", { 0, 0 }, "TubeDown", 1), Types::Object);
+	sur::Instancer::Add(new sur::Object(_resource_path + "Flappy.hgineres", { 0, 0 }, "Player", 1), Types::Object);
+
 
 	for (;;) {
 		renderer.ClearScreenBuffer();
-		for (i32 i = 0; i < 50; ++i) {
-			for (i32 j = 0; j < 50; ++j) {
-				_Amap.Render(a.mulitplyWithVector({ j, i }), Color(125, 125, 0));
-			}
-		}
+		
+		using namespace sur::Instancer;
+
+		Add(new sur::Object(Get<sur::Object>("TubeUp"), { _window_size.x, 0},"TubeUp1",1),Types::Object);
+		Add(new sur::Object(Get<sur::Object>("TubeUp"), { _window_size.x, 0 }, "TubeUp2", 1), Types::Object);
 
 		renderer.RenderScreenBuffer();
 	}
 }
 
-lua_State* Start() {
+lua_State* Start(){
 	lua_State* L = lua::LoadFile("F:\\C++\\Hgine\\Hgine\\Source\\Lua\\config.lua");
 	_debug = stoi(lua::GetTableContent(L, "configuration", "debug_mode"));
 

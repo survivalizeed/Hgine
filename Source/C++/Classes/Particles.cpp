@@ -56,7 +56,7 @@ void sur::Particles::MoveTowards(sur::Vec2 position, f32 speed)
 
 	i32 dataPerThread = (i32)Offsets->size() / amountOfThreads;
 
-	std::vector<std::thread> threads(amountOfThreads - 1); // Da main Thread noch genutzt wird
+	std::vector<std::thread> threads(amountOfThreads - 1); // - 1, because main thread will be used too
 
 	auto calculate = [&](i32 start, i32 end) {
 		bool toggle = false;

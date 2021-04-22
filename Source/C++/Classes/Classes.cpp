@@ -438,6 +438,7 @@ void sur::Shape::Gen()
 }
 
 void sur::Shape::SetPosition(i32 index, sur::Vec2 position) {
+	++index;
 	assert(index > lines->size() + 1 || index < 1);
 	if (index == 1) {
 		lines->at(index - 1)->Start(position);

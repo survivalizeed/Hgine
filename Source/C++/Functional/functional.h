@@ -44,7 +44,7 @@ namespace sur {
 	}
 
 	template<Axis axis>
-	auto Distance(Master* const a, Master* const b) {
+	auto Distance(const Master* const a, const Master* const b) {
 		assert(a->GetName() == "invalid" || b->GetName() == "invalid", 999999999);
 		if constexpr (axis == Axis::X) {
 			return abs(a->GetPosition().x - b->GetPosition().x);

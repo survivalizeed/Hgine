@@ -229,9 +229,9 @@ namespace sur {
 
 		inline void SetPosition(i32 which, sur::Vec2 pos) {
 			switch (which) {
-			case 1: p1 = pos; return;
-			case 2: p2 = pos; return;
-			case 3: p3 = pos; return;}
+			case 0: p1 = pos; return;
+			case 1: p2 = pos; return;
+			case 2: p3 = pos; return;}
 		}
 
 		void Bind(bool Render, bool Collider);
