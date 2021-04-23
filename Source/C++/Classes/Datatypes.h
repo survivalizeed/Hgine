@@ -149,7 +149,7 @@ namespace sur {
 		// { a | b }
 		// { c | d }
 		inline void operator()(i32 a, i32 b, i32 c, i32 d) {
-			v1.x = a; v2.x = a; v1.y = c; v2.y = d;
+			v1.x = a; v2.x = b; v1.y = c; v2.y = d;
 		}
 
 		inline i32 operator ()(i32 which, i32 index) {

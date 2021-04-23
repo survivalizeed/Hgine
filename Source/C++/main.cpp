@@ -19,17 +19,29 @@ int main() {
 	renderer.DebugConsole(true);
 	renderer.FPS();
 	
-	sur::Mat2x2 a(1, 0,		// A matrix you can play with ;)
-				  0, 1);
+	sur::Object b(_resource_path + "bottle.hgineres", { 100, 100 }, "hallo", 12);
 
+	sur::Rectangle r({ 400,400 }, { 100,100 }, Color(124, 52, 255), "R", 1,false);
+
+	b.matrix(0, -1,
+		     1, 0);
 	for (;;) {
 		renderer.ClearScreenBuffer();
-		for (i32 i = 0; i < 50; ++i) {
-			for (i32 j = 0; j < 50; ++j) {
-				_Amap.Render(a.mulitplyWithVector({ j, i }), Color(125, 125, 0));
-			}
+		r.Bind(true, true);
+		b.Bind(true, ColliderType::Outline);
+		
+		if (_input.keyboard.Key(Keys::A)) {
+			r.Move({ -1,0 }, true);
 		}
-
+		if (_input.keyboard.Key(Keys::D)) {
+			r.Move({ 1,0 }, true);
+		}
+		if (_input.keyboard.Key(Keys::W)) {
+			r.Move({ 0,1 }, true);
+		}
+		if (_input.keyboard.Key(Keys::S)) {
+			r.Move({ 0,-1 }, true);
+		}
 		renderer.RenderScreenBuffer();
 	}
 }

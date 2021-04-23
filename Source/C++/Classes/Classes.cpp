@@ -25,9 +25,7 @@ sur::CollisionPackage CheckCollision(sur::Master* object, const sur::Vec2& pos, 
 		if (!neg) {
 			for (; i <= dir; ++i)
 				for (i32 j = 0; j < identitys.size(); ++j)
-						if (_debug)
-							_Amap.Render(pos.x + i, pos.y, Color(255, 0, 0));
-						else if (_Amap.Collider(pos.x + i, pos.y) == identitys[j] && object->id != identitys[j]) {
+						if (_Amap.Collider(pos.x + i, pos.y) == identitys[j] && object->id != identitys[j]) {
 							for (i32 k = 0; k < object->ignore.size(); ++k) {
 								if (object->ignore[k] == identitys[j])
 									return { nullptr, (i16)dir };
@@ -39,9 +37,7 @@ sur::CollisionPackage CheckCollision(sur::Master* object, const sur::Vec2& pos, 
 		dir *= -1;
 		for (; i <= dir; ++i)
 			for (i32 j = 0; j < identitys.size(); ++j)		
-					if (_debug)
-						_Amap.Render(pos.x - i, pos.y, Color(255, 0, 0));
-					else if (_Amap.Collider(pos.x - i, pos.y) == identitys[j] && object->id != identitys[j]) {
+					if (_Amap.Collider(pos.x - i, pos.y) == identitys[j] && object->id != identitys[j]) {
 						for (i32 k = 0; k < object->ignore.size(); ++k) {
 							if (object->ignore[k] == identitys[j])
 								return { nullptr, (i16)dir };
@@ -54,9 +50,7 @@ sur::CollisionPackage CheckCollision(sur::Master* object, const sur::Vec2& pos, 
 		if (!neg) {
 			for (; i <= dir; ++i)
 				for (i32 j = 0; j < identitys.size(); ++j)
-						if (_debug)
-							_Amap.Render(pos.x, pos.y + i, Color(255, 0, 0));
-						else if (_Amap.Collider(pos.x, pos.y + i) == identitys[j] && object->id != identitys[j]) {
+						if (_Amap.Collider(pos.x, pos.y + i) == identitys[j] && object->id != identitys[j]) {
 							for (i32 k = 0; k < object->ignore.size(); ++k) {
 								if (object->ignore[k] == identitys[j])
 									return { nullptr, (i16)dir };
@@ -68,9 +62,7 @@ sur::CollisionPackage CheckCollision(sur::Master* object, const sur::Vec2& pos, 
 		dir *= -1;
 		for (; i <= dir; ++i)		//do this for all other code blocks
 			for (i32 j = 0; j < identitys.size(); ++j)
-				if (_debug)
-					_Amap.Render(pos.x, pos.y - i, Color(255, 0, 0));
-				else if (_Amap.Collider(pos.x, pos.y - i) == identitys[j] && object->id != identitys[j]) {
+				if (_Amap.Collider(pos.x, pos.y - i) == identitys[j] && object->id != identitys[j]) {
 					for (i32 k = 0; k < object->ignore.size(); ++k) {
 						if (object->ignore[k] == identitys[j])
 							return { nullptr, (i16)dir };

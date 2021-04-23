@@ -127,30 +127,31 @@ namespace sur {
 	// LoadObj.cpp
 	class Object : public Master {
 	protected:
+		bool rotatecpy = false;
 		i32 x = 0;
 		i32 y = 0;
 		i32 previous_angle;
-		bool rotatecpy = false;
 		std::string path;		
 		sRGB tint_by;
-
+		
 		std::vector<i32>* XCoordsO = new std::vector<i32>;
 		std::vector<i32>* YCoordsO = new std::vector<i32>;
 		std::vector<Color>* ColorsO = new std::vector<Color>;
 		
+		std::vector<i32>* XCoords = XCoordsO;
+		std::vector<i32>* YCoords = YCoordsO;
+		std::vector<Color>* Colors = ColorsO;
+
 		std::vector<i32>* XCoordsC = nullptr;
 		std::vector<i32>* YCoordsC = nullptr;
 		std::vector<Color>* ColorsC = nullptr;
 
-		std::vector<i32>* XCoords = XCoordsO;
-		std::vector<i32>* YCoords = YCoordsO;
-		std::vector<Color>* Colors = ColorsO;
-		
 		std::vector<i32>* MaxX = new std::vector<i32>;
 
 		void Load();
 
 	public:
+		Mat2x2 matrix;
 
 		Object(const std::string& path, sur::Vec2 position, const std::string& name, i32 id, const std::vector<int>& ignoreids = {0},
 			cb_ptr<Master*> callback = nullptr);

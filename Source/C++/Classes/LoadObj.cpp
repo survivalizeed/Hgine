@@ -79,6 +79,7 @@ sur::Object::Object(const std::string& path, Vec2 position, const std::string& n
 	: path(path), Master(name, id, position,callback)
 {
 	parentmem = false;
+	matrix(1, 0, 0, 1);
 	ignore = ignoreids;
 	type = Type::Object;
 	identitys.push_back(id);
@@ -91,6 +92,7 @@ sur::Object::Object(const Object* const obj, Vec2 position, const std::string& n
 	: XCoords(obj->XCoords), YCoords(obj->YCoords), Colors(obj->Colors), Master(name,id,position, callback)
 {
 	parentmem = true;
+	matrix(1, 0, 0, 1);
 	ignore = ignoreids;
 	type = Type::Object;
 	size = obj->size;
@@ -124,59 +126,49 @@ void sur::Object::Bind(bool Render, ColliderType collidertype)
 
 	if (collidertype == ColliderType::None && Render) {
 		for (i32 i = 0; i < YCoords->size(); i++) {
-				_Amap.Render(XCoords->at(i) + position.x, YCoords->at(i) + position.y, TintIt(Colors->at(i)));
+			_Amap.Render(matrix.mulitplyWithVector({ XCoords->at(i), YCoords->at(i) }) + position,
+					TintIt(Colors->at(i)));
 		}
 	}
 	if (collidertype == ColliderType::Static) {
 		for (i32 i = 0; i < YCoords->size(); i++) {
-				if (_debug)
-					_Amap.Render(XCoords->at(i) + position.x, YCoords->at(i) + position.y, Color(255, 255, 255));
-				else if (Render)
-					_Amap.Render(XCoords->at(i) + position.x, YCoords->at(i) + position.y, TintIt(Colors->at(i)));
-				_Amap.Collider(XCoords->at(i) - CO + position.x, YCoords->at(i) - CO + position.y, id);
+				if (Render)
+					_Amap.Render(matrix.mulitplyWithVector({ XCoords->at(i), YCoords->at(i) }) + position,
+						TintIt(Colors->at(i)));
+				_Amap.Collider(matrix.mulitplyWithVector({ XCoords->at(i), YCoords->at(i) }) + position, id);
 		}
 		return;
 	}
 	if (collidertype == ColliderType::Outline) {	// Outlined Collider -> Good for Objects form outside.
 		if(Render)
 			for (i32 i = 0; i < YCoords->size(); i++)
-					_Amap.Render(XCoords->at(i) + position.x, YCoords->at(i) + position.y, TintIt(Colors->at(i)));
-			for (i32 i = position.x; i < size.x + position.x; i++) {
-				if (_debug)
-					_Amap.Render(i, position.y, Color(255, 255, 255));
-				_Amap.Collider(i - CO, position.y - CO, id);
+				_Amap.Render(matrix.mulitplyWithVector({ XCoords->at(i), YCoords->at(i) }) + position,
+					TintIt(Colors->at(i)));
+			for (i32 i = 0; i < size.x; i++) {
+				_Amap.Collider(matrix.mulitplyWithVector({i, 0 }) + position, id);
 			}
-			for (i32 i = position.y; i < size.y + position.y; i++) {
-				if (_debug)
-					_Amap.Render(position.x, i, Color(255, 255, 255));
-				_Amap.Collider(position.x - CO, i - CO, id);
+			for (i32 i = 0; i < size.y; i++) {
+				_Amap.Collider(matrix.mulitplyWithVector({ 0, i }) + position, id);
 			}
-			for (i32 i = position.x; i < size.x + position.x; i++) {
-				if (_debug)
-					_Amap.Render(i, size.y + position.y, Color(255, 255, 255));
-				_Amap.Collider(i - CO, size.y - CO + position.y, id);
+			for (i32 i = 0; i < size.x; i++) {
+				_Amap.Collider(matrix.mulitplyWithVector({ i, size.y }) + position, id);
 			}
-			for (i32 i = position.y; i < size.y + position.y; i++) {
-				if (_debug)
-					_Amap.Render(size.x + position.x, i, Color(255, 255, 255));
-				_Amap.Collider(size.x - CO + position.x, i - CO, id);
+			for (i32 i = 0; i < size.y; i++) {
+				_Amap.Collider(matrix.mulitplyWithVector({ size.x, i }) + position, id);
 			}
 		return;
 	}
 	if (collidertype == ColliderType::Filled) {
 		if(Render)
 			for (i32 i = 0; i < YCoords->size(); i++)
-					_Amap.Render(XCoords->at(i) + position.x, YCoords->at(i) + position.y, TintIt(Colors->at(i)));
-			for (i32 a = position.y; a < position.y + size.y; a++)
-				for (i32 b = position.x; b < position.x + size.x; b++)
-					if (_debug)
-						_Amap.Render(b, a, Color(255, 255, 255));
-					else
-						_Amap.Collider(b - CO, a - CO, id);
+				_Amap.Render(matrix.mulitplyWithVector({ XCoords->at(i), YCoords->at(i) }) + Vec2(position.x, position.y),
+					TintIt(Colors->at(i)));
+			for (i32 a = 0; a < size.y; a++)
+				for (i32 b = 0; b < size.x; b++)
+					_Amap.Collider(matrix.mulitplyWithVector({ b, a }) + position, id);
 		return;
 	}
 }
-
 
 void sur::Object::Rotate(Vec2 origin, i32 Angle)
 { 
