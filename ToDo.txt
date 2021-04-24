@@ -34,3 +34,4 @@ Faster random number generator. Maybe Xoshiro256+?
 Instancer support for particle systems
 multithreading for particles |DONE|
 Matrix modified objects out of screen fix 
+New collision objects glitch through
