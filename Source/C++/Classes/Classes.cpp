@@ -188,6 +188,105 @@ void sur::Master::Move(sur::Vec2f direction, bool detect)
 	}
 	position += newdirection;
 }
+
+void sur::Master::MoveBeta(sur::Vec2f direction, bool detect)
+{
+	Vec2 newdirection = MovQueue(direction);
+	assert(newdirection == Vec2(0, 0) || this->GetName() == "invalid");
+
+	if (!detect) position += newdirection;
+
+	bool dirXpos = (newdirection.x >= 0) ? true : false;
+
+	bool dirYpos = (newdirection.y >= 0) ? true : false;
+
+	i32 contentX = 0, contentY = 0;
+
+	if (dirXpos) {
+	jmp0:
+		for (i32 i = 0; i < CollisionPos.size(); ++i) {
+			 contentX = _Amap.Collider(CollisionPos.at(i).x + newdirection.x, CollisionPos.at(i).y);
+			for (i32 j = 0; j < ignore.size(); ++j)
+				if (contentX == ignore.at(j))
+					contentX = 0;	//So it ignores the collision
+			if (contentX != 0 && contentX != this->id) {
+				--newdirection.x;
+				if (newdirection.x == 0) break;
+				goto jmp0;
+			}
+		}
+	}
+	else {
+	jmp1:
+		for (i32 i = 0; i < CollisionPos.size(); ++i) {
+			contentX = _Amap.Collider(CollisionPos.at(i).x + newdirection.x, CollisionPos.at(i).y);
+			for (i32 j = 0; j < ignore.size(); ++j)
+				if (contentX == ignore.at(j))
+					contentX = 0;	//So it ignores the collision
+			if (contentX != 0 && contentX != this->id) {
+				++newdirection.x;
+				if (newdirection.x == 0) break;
+				goto jmp1;
+			}
+		}
+	}
+	if (dirYpos) {
+	jmp2:
+		for (i32 i = 0; i < CollisionPos.size(); ++i) {
+			contentY = _Amap.Collider(CollisionPos.at(i).x, CollisionPos.at(i).y + newdirection.y);
+			for (i32 j = 0; j < ignore.size(); ++j)
+				if (contentY == ignore.at(j))
+					contentY = 0;	//So it ignores the collision
+			if (contentY != 0 && contentY != this->id) {
+				--newdirection.y;
+				if (newdirection.y == 0) break;
+				goto jmp2;
+			}
+		}
+	}
+	else {
+	jmp3:
+		for (i32 i = 0; i < CollisionPos.size(); ++i) {
+			contentY = _Amap.Collider(CollisionPos.at(i).x, CollisionPos.at(i).y + newdirection.y);
+			for (i32 j = 0; j < ignore.size(); ++j)
+				if (contentY == ignore.at(j))
+					contentY = 0;	//So it ignores the collision
+			if (contentY != 0 && contentY != this->id) {
+				++newdirection.y;
+				if (newdirection.y == 0) break;
+				goto jmp3;
+			}
+		}
+	}
+
+	{
+		i32 iX = 0,iY = 0;
+		for (i32 i = 0; i < identitys.size(); ++i) {
+			if (contentX == identitys[i]) {
+				iX = i;
+			}
+		}
+		for (i32 i = 0; i < identitys.size(); ++i) {
+			if (contentY == identitys[i]) {
+				iY = i;
+			}
+		}
+		if (iX != 0 && contentX != this->id) {
+			if (callback != nullptr)
+				callback(this, (Master*)ptrs[iX]);
+			if (static_cast<Master*>(ptrs[iX])->callback != nullptr)
+				static_cast<Master*>(ptrs[iX])->callback((Master*)ptrs[iX], this);
+		}
+		if (iY != 0 && contentY != this->id) {
+			if (callback != nullptr)
+				callback(this, (Master*)ptrs[iY]);
+			if (static_cast<Master*>(ptrs[iY])->callback != nullptr)
+				static_cast<Master*>(ptrs[iY])->callback((Master*)ptrs[iY], this);
+		}
+	}
+	position += newdirection;
+}
+
 //
 //	Render
 //
@@ -279,20 +378,39 @@ sur::Rectangle::Rectangle(Vec2 position, Vec2 size, Color color, const std::stri
 	ptrs.push_back(this);
 }
 
-void sur::Rectangle::Bind(bool Render,bool Collider)
+void sur::Rectangle::Bind(bool Render, bool Collider)
 {
 	auto OutOfScreenCheck = [&]() -> bool {
 		return (position.x >= _window_size.x || position.y >= _window_size.y ||
 			position.x + size.x < 0 || position.y + size.y < 0) ? true : false;
 	};
-	if (OutOfScreenCheck()) return;
-	for (i32 i = position.y; i < position.y + size.y; i++)
-		for (i32 j = position.x; j < position.x + size.x; j++) {
-			if (Render)
-				_Amap.Render(j, i, color);
-			if (Collider)
-				_Amap.Collider(j - CO, i - CO, id);
-		}
+	//if (OutOfScreenCheck()) return;
+	if (Render)
+		for (i32 i = 0; i < size.y; i++)
+			for (i32 j = 0; j < size.x; j++)
+				_Amap.Render(matrix.mulitplyWithVector({ j, i }) + position, color);
+	if (!Collider) return;
+	CollisionPos.clear();
+	for (i32 i = 0; i < size.x; i++) {
+		sur::Vec2 tmp(matrix.mulitplyWithVector({ i, 0 }) + position);
+		CollisionPos.push_back(tmp);
+		_Amap.Collider(tmp, id);
+	}
+	for (i32 i = 0; i < size.y; i++) {
+		sur::Vec2 tmp(matrix.mulitplyWithVector({ 0, i }) + position);
+		CollisionPos.push_back(tmp);
+		_Amap.Collider(tmp, id);
+	}
+	for (i32 i = 0; i < size.x; i++) {
+		sur::Vec2 tmp(matrix.mulitplyWithVector({ i, size.y }) + position);
+		CollisionPos.push_back(tmp);
+		_Amap.Collider(tmp, id);
+	}
+	for (i32 i = 0; i < size.y; i++) {
+		sur::Vec2 tmp(matrix.mulitplyWithVector({ size.x, i }) + position);
+		CollisionPos.push_back(tmp);
+		_Amap.Collider(tmp, id);
+	}
 }
 
 void sur::Rectangle::Rotate(sur::Vec2 origin, i32 Angle)

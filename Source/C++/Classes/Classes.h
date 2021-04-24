@@ -30,6 +30,8 @@ namespace sur {
 
 		std::vector<CollisionPackage>* packs = new std::vector<CollisionPackage>;	// Will be used by all objects -> ok, because it will get cleared each time
 		
+		std::vector<sur::Vec2> CollisionPos;
+
 		Master(const std::string& name, i32 id, cb_ptr<Master*> callback = nullptr)
 			: name(name), id(id), callback(callback) {}		//Line, Triangle
 
@@ -45,6 +47,8 @@ namespace sur {
 
 	public:
 		Vec2 MovQueue(Vec2f direction);	// Handles floats and does nothing until a floating number becomes an integer
+
+		Mat2x2 matrix = { 1, 0, 0,1 };
 
 		bool parentmem;
 
@@ -71,11 +75,13 @@ namespace sur {
 
 		virtual inline void SetPosition(sur::Vec2 position) { this->position = position; }
 
-		virtual inline sur::Vec2 GetOrigin() const { return GetPosition() + GetSize() / 2; }
+		inline sur::Vec2 GetOrigin() const { return GetPosition() + GetSize() / 2; }
 
 		inline bool State() const { return active; }
 
 		virtual void Move(sur::Vec2f direction, bool detect);
+
+		virtual void MoveBeta(sur::Vec2f direction, bool detect);
 	};
 	//
 	//	Render class
@@ -146,12 +152,9 @@ namespace sur {
 		std::vector<i32>* YCoordsC = nullptr;
 		std::vector<Color>* ColorsC = nullptr;
 
-		std::vector<i32>* MaxX = new std::vector<i32>;
-
 		void Load();
 
 	public:
-		Mat2x2 matrix;
 
 		Object(const std::string& path, sur::Vec2 position, const std::string& name, i32 id, const std::vector<int>& ignoreids = {0},
 			cb_ptr<Master*> callback = nullptr);

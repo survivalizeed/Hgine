@@ -105,7 +105,7 @@ namespace sur {
 		
 		inline Vec2 operator +=(const Vec2& other) { return { x += other.x, y += other.y }; }
 		inline Vec2 operator -=(const Vec2& other) { return { x -= other.x, y -= other.y }; }
-
+		
 		inline Vec2 operator --() { return { x - 1, y - 1 }; }
 		inline Vec2 operator ++() { return { x + 1, y + 1 }; }		
 		inline bool operator ==(const Vec2& other) const { return (x == other.x && y == other.y) ? true : false; }

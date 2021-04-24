@@ -27,32 +27,25 @@ namespace analyses {
 
 		//Set
 		inline void operator ()(i32 x, i32 y, T what) {
-			//if (typeid(T) == typeid(DWORD)) {
-			//	y = sizeSep.y - y;
-			//	y--;
-			//}
 			if (x < 0 || y < 0 || x > _window_size.x - 1|| y > _window_size.y - 1) return;
 			arr[x + sizeSep.x * y] = what;
 		}
 
 		inline void operator ()(sur::Vec2 pos, T what) {
-			//if (typeid(T) == typeid(DWORD)) {
-			//	pos.y = sizeSep.y - pos.y;
-			//	pos.y--;
-			//}
 			if (pos.x < 0 || pos.y < 0 || pos.x > _window_size.x - 1 || pos.y > _window_size.y - 1) return;
 			arr[pos.x + sizeSep.x * pos.y] = what;
 		}
 
 		//Get
 		inline T operator ()(i32 x, i32 y) {
-			if (typeid(T) == typeid(DWORD)) {
-				y = sizeSep.y - (y);
-			}
 			if (x < 0 || y < 0 || x > _window_size.x - 1|| y > _window_size.y - 1) return 0;
 			return arr[x + sizeSep.x * y];
 		}
 
+		inline T operator ()(sur::Vec2 pos) {
+			if (pos.x < 0 || pos.y < 0 || pos.x > _window_size.x - 1 || pos.y > _window_size.y - 1) return 0;
+			return arr[pos.x + sizeSep.x * pos.y];
+		}
 
 
 

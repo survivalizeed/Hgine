@@ -16,6 +16,7 @@ void sur::Object::Load()
 	std::string ColorRef = "";
 	std::ifstream file(path);
 	if (file) {
+		std::vector<i32>* MaxX = new std::vector<i32>;
 		std::ostringstream ss;
 		ss << file.rdbuf();
 		Data = ss.str();
@@ -79,7 +80,6 @@ sur::Object::Object(const std::string& path, Vec2 position, const std::string& n
 	: path(path), Master(name, id, position,callback)
 {
 	parentmem = false;
-	matrix(1, 0, 0, 1);
 	ignore = ignoreids;
 	type = Type::Object;
 	identitys.push_back(id);
@@ -92,7 +92,6 @@ sur::Object::Object(const Object* const obj, Vec2 position, const std::string& n
 	: XCoords(obj->XCoords), YCoords(obj->YCoords), Colors(obj->Colors), Master(name,id,position, callback)
 {
 	parentmem = true;
-	matrix(1, 0, 0, 1);
 	ignore = ignoreids;
 	type = Type::Object;
 	size = obj->size;
@@ -124,6 +123,8 @@ void sur::Object::Bind(bool Render, ColliderType collidertype)
 
 	if (OutOfScreenCheck()) return;
 
+	CollisionPos.clear();
+
 	if (collidertype == ColliderType::None && Render) {
 		for (i32 i = 0; i < YCoords->size(); i++) {
 			_Amap.Render(matrix.mulitplyWithVector({ XCoords->at(i), YCoords->at(i) }) + position,
@@ -145,16 +146,28 @@ void sur::Object::Bind(bool Render, ColliderType collidertype)
 				_Amap.Render(matrix.mulitplyWithVector({ XCoords->at(i), YCoords->at(i) }) + position,
 					TintIt(Colors->at(i)));
 			for (i32 i = 0; i < size.x; i++) {
-				_Amap.Collider(matrix.mulitplyWithVector({i, 0 }) + position, id);
+				sur::Vec2 tmp(matrix.mulitplyWithVector({ i, 0 }) + position);
+				CollisionPos.push_back(tmp);
+				_Amap.Render(tmp, Color(255,0,0));
+				_Amap.Collider(tmp, id);
 			}
 			for (i32 i = 0; i < size.y; i++) {
-				_Amap.Collider(matrix.mulitplyWithVector({ 0, i }) + position, id);
+				sur::Vec2 tmp(matrix.mulitplyWithVector({ 0, i }) + position);
+				CollisionPos.push_back(tmp);
+				_Amap.Render(tmp, Color(255, 0, 0));
+				_Amap.Collider(tmp, id);
 			}
 			for (i32 i = 0; i < size.x; i++) {
-				_Amap.Collider(matrix.mulitplyWithVector({ i, size.y }) + position, id);
+				sur::Vec2 tmp(matrix.mulitplyWithVector({ i, size.y }) + position);
+				CollisionPos.push_back(tmp);
+				_Amap.Render(tmp, Color(255, 0, 0));
+				_Amap.Collider(tmp, id);
 			}
 			for (i32 i = 0; i < size.y; i++) {
-				_Amap.Collider(matrix.mulitplyWithVector({ size.x, i }) + position, id);
+				sur::Vec2 tmp(matrix.mulitplyWithVector({ size.x, i }) + position);
+				CollisionPos.push_back(tmp);
+				_Amap.Render(tmp, Color(255, 0, 0));
+				_Amap.Collider(tmp, id);
 			}
 		return;
 	}
