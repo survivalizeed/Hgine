@@ -35,3 +35,4 @@ Instancer support for particle systems
 multithreading for particles |DONE|
 Matrix modified objects out of screen fix 
 New collision objects glitch through
+if Down and left are pressed with new collison, bugs through objects
