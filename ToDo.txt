@@ -33,3 +33,4 @@ Fix those annoying RGB and Tint bugs. Understand what the fck windows wants with
 Faster random number generator. Maybe Xoshiro256+?
 Instancer support for particle systems
 multithreading for particles |DONE|
+Matrix modified objects out of screen fix 
