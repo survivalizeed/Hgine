@@ -284,7 +284,7 @@ void sur::Master::MoveBeta(sur::Vec2f direction, bool detect)
 				static_cast<Master*>(ptrs[iY])->callback((Master*)ptrs[iY], this);
 		}
 	}
-	position += newdirection;
+	MoveBetaInject(newdirection);
 }
 
 //
@@ -292,10 +292,11 @@ void sur::Master::MoveBeta(sur::Vec2f direction, bool detect)
 //
 void sur::Render::ClearScreenBuffer()
 {
-	if(FillBackground)
-		std::fill(_map.RenderMap, _map.RenderMap + _window_size.x * _window_size.y, bg);	
-	std::fill(_map.ColliderMap, _map.ColliderMap + _window_size.x * _window_size.y, 0);
-	std::fill(_map.TriggerMap, _map.TriggerMap + _window_size.x * _window_size.y, 0);
+	if (FillBackground)
+		memset(_map.RenderMap, bg, sizeof(Color) * (_window_size.x * _window_size.y));
+		//std::fill(_map.RenderMap, _map.RenderMap + _window_size.x * _window_size.y, bg);	
+	//std::fill(_map.ColliderMap, _map.ColliderMap + _window_size.x * _window_size.y, 0);
+	//std::fill(_map.TriggerMap, _map.TriggerMap + _window_size.x * _window_size.y, 0);
 }
 
 void sur::Render::RenderScreenBuffer()
@@ -384,32 +385,36 @@ void sur::Rectangle::Bind(bool Render, bool Collider)
 		return (position.x >= _window_size.x || position.y >= _window_size.y ||
 			position.x + size.x < 0 || position.y + size.y < 0) ? true : false;
 	};
-	//if (OutOfScreenCheck()) return;
+	//if (OutOfScreenCheck()) return;	//needs a fix
 	if (Render)
 		for (i32 i = 0; i < size.y; i++)
 			for (i32 j = 0; j < size.x; j++)
-				_Amap.Render(matrix.mulitplyWithVector({ j, i }) + position, color);
+				_Amap.Render(matrix.mulitplyWithVector(Vec2(j, i )) + position, color);
 	if (!Collider) return;
 	CollisionPos.clear();
 	for (i32 i = 0; i < size.x; i++) {
-		sur::Vec2 tmp(matrix.mulitplyWithVector({ i, 0 }) + position);
-		CollisionPos.push_back(tmp);
-		_Amap.Collider(tmp, id);
+		{
+			sur::Vec2 tmp(matrix.mulitplyWithVector(Vec2(i, 0 )) + position);
+			CollisionPos.push_back(tmp);
+			_Amap.Collider(tmp, id);
+		}
+		{
+			sur::Vec2 tmp(matrix.mulitplyWithVector(Vec2(i, size.y )) + position);
+			CollisionPos.push_back(tmp);
+			_Amap.Collider(tmp, id);
+		}
 	}
 	for (i32 i = 0; i < size.y; i++) {
-		sur::Vec2 tmp(matrix.mulitplyWithVector({ 0, i }) + position);
-		CollisionPos.push_back(tmp);
-		_Amap.Collider(tmp, id);
-	}
-	for (i32 i = 0; i < size.x; i++) {
-		sur::Vec2 tmp(matrix.mulitplyWithVector({ i, size.y }) + position);
-		CollisionPos.push_back(tmp);
-		_Amap.Collider(tmp, id);
-	}
-	for (i32 i = 0; i < size.y; i++) {
-		sur::Vec2 tmp(matrix.mulitplyWithVector({ size.x, i }) + position);
-		CollisionPos.push_back(tmp);
-		_Amap.Collider(tmp, id);
+		{
+			sur::Vec2 tmp(matrix.mulitplyWithVector(Vec2(0, i )) + position);
+			CollisionPos.push_back(tmp);
+			_Amap.Collider(tmp, id);
+		}
+		{
+			sur::Vec2 tmp(matrix.mulitplyWithVector(Vec2(size.x, i )) + position);
+			CollisionPos.push_back(tmp);
+			_Amap.Collider(tmp, id);
+		}
 	}
 }
 
@@ -433,6 +438,14 @@ sur::Line::Line(Vec2 start, Vec2 end, Color color, const std::string& name, i32 
 
 void sur::Line::Bind(bool Render, bool Collider)
 {
+	auto WriteCollision = [=](i32 x, i32 y) {
+		if (Collider) {
+			CollisionPos.push_back({ x,y });
+			_Amap.Collider(x, y, id);
+		}
+	};
+	if (Collider) CollisionPos.clear();
+
 	Vec2 end = this->end;
 	Vec2 start = this->start;
 	if (this->start.y > this->end.y || this->start.x > this->end.x) {
@@ -443,8 +456,7 @@ void sur::Line::Bind(bool Render, bool Collider)
 		for (i32 i = start.y; i < end.y; ++i) {
 			if (Render)
 				_Amap.Render(start.x, i, color);
-			if (Collider)
-				_Amap.Collider(start.x, i, id);
+			WriteCollision(start.x, i);
 		}
 		return;
 	}
@@ -452,8 +464,7 @@ void sur::Line::Bind(bool Render, bool Collider)
 		for (i32 i = start.x; i < end.x; ++i) {
 			if (Render)
 				_Amap.Render(i, start.y, color);
-			if (Collider)
-				_Amap.Collider(i, start.y, id);
+			WriteCollision(i, start.y);
 		}
 		return;
 	}
@@ -469,14 +480,12 @@ void sur::Line::Bind(bool Render, bool Collider)
 		for (i32 i = start.x; i <= end.x; i++) {
 			if(Render)
 				_Amap.Render(i, tempy, color);
-			if(Collider)
-				_Amap.Collider(i - CO, tempy - CO, id);	
+			WriteCollision(i, tempy);
 			while (counter >= countcounter) {
 				tempy++;
 				if (Render)
 					_Amap.Render(i, tempy, color);
-				if (Collider)
-					_Amap.Collider(i - CO, tempy - CO, id);
+				WriteCollision(i, tempy);
 				countcounter++;
 			}
 			counter += RunsThrough;
@@ -491,14 +500,12 @@ void sur::Line::Bind(bool Render, bool Collider)
 		for (i32 i = start.x; i <= end.x; i++) {
 			if (Render)
 				_Amap.Render(i, tempy, color);
-			if (Collider)
-				_Amap.Collider(i - CO, tempy - CO, id);
+			WriteCollision(i, tempy);
 			while (counter >= countcounter) {
 				tempy--;
 				if (Render)
 					_Amap.Render(i, tempy, color);
-				if (Collider)
-					_Amap.Collider(i - CO, tempy - CO, id);
+				WriteCollision(i, tempy);
 				countcounter++;
 			}
 			runned = true;	
@@ -511,14 +518,12 @@ void sur::Line::Bind(bool Render, bool Collider)
 			for (i32 i = start.y; i <= end.y; i++) {
 				if (Render)
 					_Amap.Render(tempx, i, color);
-				if(Collider)
-					_Amap.Collider(tempx - CO, i - CO, id);
+				WriteCollision(tempx,i);
 				while (counter >= countcounter) {
 					tempx--;
 					if (Render)
 						_Amap.Render(tempx, i, color);
-					if (Collider)
-						_Amap.Collider(tempx - CO, i - CO, id);
+					WriteCollision(tempx, i);
 					countcounter++;
 				}
 				counter += RunsThrough;
@@ -543,7 +548,7 @@ sur::Shape::Shape(Color color, const std::string& name, i32 id, const std::vecto
 void sur::Shape::Gen()
 {
 	for (i32 i = 0; i < vec->size() - 1; ++i) {
-		lines->push_back(new Line(vec->at(i), vec->at(i + 1), color, "ShapeLine" + std::to_string(i), id, ignore));
+		lines->push_back(new Line(vec->at(i), vec->at(i + 1), color, name + "ShapeLine" + std::to_string(i), id, ignore));
 	}
 }
 
@@ -631,7 +636,7 @@ void sur::Map_Analyses::operator()(Maps map, Vec2 size)
 	Render(map.RenderMap, size);
 }
 
-void sur::Map_Analyses::operator()(i32* cptr, i32* tptr, DWORD* rptr, sur::Vec2 size)
+void sur::Map_Analyses::operator()(i32* cptr, i32* tptr, Color* rptr, sur::Vec2 size)
 {
 	Collider(cptr, size);
 	Trigger(tptr, size);

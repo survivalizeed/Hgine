@@ -1,4 +1,4 @@
-window_size_overall = 500	--Because window needs to be quad
+window_size_overall = 750	--Because window needs to be quad
 
 configuration = {
 	debug_mode = 0,

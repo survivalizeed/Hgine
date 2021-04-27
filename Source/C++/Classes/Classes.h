@@ -45,10 +45,11 @@ namespace sur {
 		
 		virtual void MoveInject(i32 index, i32 CurMove); // useless
 
+		virtual inline void MoveBetaInject(const Vec2& direction) { position += direction; }
 	public:
 		Vec2 MovQueue(Vec2f direction);	// Handles floats and does nothing until a floating number becomes an integer
 
-		Mat2x2 matrix = { 1, 0, 0,1 };
+		Mat2x2 matrix = { 1, 0, 0,1 };	//standard so it won't modify anything
 
 		bool parentmem;
 
@@ -165,6 +166,8 @@ namespace sur {
 		void Bind(bool Render, ColliderType collidertype);
 
 		void Rotate(sur::Vec2 origin, i32 Angle);
+
+		inline void Scale(sur::Vec2f scale = { 1.f,1.f }) { matrix(scale.x, 0, 0, scale.y); }
 
 		void LSD();
 
@@ -381,9 +384,9 @@ namespace sur {
 	// Classes.cpp
 	struct Map_Analyses {
 		analyses::Array<i32> Collider, Trigger;
-		analyses::Array<DWORD> Render;
+		analyses::Array<Color> Render;
 		void operator ()(sur::Maps map, sur::Vec2 size);		
-		void operator ()(i32* cptr, i32* tptr, DWORD* rptr, sur::Vec2 size);
+		void operator ()(i32* cptr, i32* tptr, Color* rptr, sur::Vec2 size);
 	};
 	
 	struct CollisionPackage {

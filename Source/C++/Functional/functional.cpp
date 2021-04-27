@@ -10,7 +10,7 @@ sur::Maps sur::Initialize()
 {
 	eassert(_window_size.x == 0 || _window_size.y == 0, "_window_size not initialized");
 	return { new i32[_window_size.x * _window_size.y],new i32[_window_size.x * _window_size.y], 
-	new DWORD[_window_size.x * _window_size.y] };
+	new Color[_window_size.x * _window_size.y] };
 }
 
 

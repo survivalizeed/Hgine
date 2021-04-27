@@ -4,20 +4,20 @@
 
 #include "../Functional/includes.h"
 
-typedef int8_t i8;
-typedef	int16_t i16;
+typedef signed char i8;
+typedef	signed short i16;
 typedef int i32;
 typedef	long int i64;
 
-typedef uint8_t u8;
-typedef uint16_t u16;
+typedef unsigned char u8;
+typedef unsigned short u16;
 typedef	unsigned int u32;
 typedef unsigned long int u64;
 
 typedef float f32;
 typedef double f64;
 
-typedef DWORD Color;
+typedef unsigned int Color;
 
 typedef const int size;
 
@@ -47,6 +47,7 @@ namespace sur {
 	//
 	// Vec2 -> i32
 	//
+
 	struct Vec2f {
 		f32 x, y;
 
@@ -59,7 +60,7 @@ namespace sur {
 
 		inline f32 magnitude() { return (f32)sqrt(pow(x, 2) + pow(y, 2)); }
 		inline void invert() { x *= -1.f; y *= -1.f; }
-		inline void normalize() { float mag = magnitude();  x /= mag; y /= mag; }
+		inline void normalize() { f32 mag = magnitude();  x /= mag; y /= mag; }
 
 		inline void operator ()(f32 x, f32 y) { this->x = x; this->y = y; }
 		inline void operator ()(const Vec2f& vector2d) { x = vector2d.x; y = vector2d.y; }
@@ -118,17 +119,20 @@ namespace sur {
 			os << "X: " << vector2d.x << " Y: " << vector2d.y;
 			return os;
 		}
-		operator Vec2f() { return { (f32)x,(f32)y }; }
+		operator Vec2f() {
+			return { (f32)x, (f32)y };
+		}
 	};
 
+
 	struct Mat2x2 {
-		sur::Vec2 v1,v2;
+		sur::Vec2f v1,v2;
 
 		Mat2x2() = default;
 
 		// { a | b }
 		// { c | d }
-		Mat2x2(i32 a, i32 b, i32 c, i32 d) {
+		Mat2x2(f32 a, f32 b, f32 c, f32 d) {
 			v1.x = a; v2.x = b; v1.y = c; v2.y = d;
 		}
 
@@ -137,22 +141,23 @@ namespace sur {
 		}
 
 
-		inline Vec2 mulitplyWithVector(const Vec2& other) {
-			return { v1.x * other.x + v2.x * other.y, v1.y * other.x + v2.y * other.y };
+		inline Vec2 mulitplyWithVector(const Vec2f& other) {
+			return { (i32)(v1.x * other.x + v2.x * other.y),(i32)(v1.y * other.x + v2.y * other.y)};
 		}
+
 		inline void multiplyWithMatrix(const Mat2x2& other) {
-			sur::Vec2 tmp1 = mulitplyWithVector({ other.v1.x,other.v1.y });
-			sur::Vec2 tmp2 = mulitplyWithVector({ other.v2.x, other.v2.y });
+			sur::Vec2f tmp1 = mulitplyWithVector({ other.v1.x,other.v1.y });
+			sur::Vec2f tmp2 = mulitplyWithVector({ other.v2.x, other.v2.y });
 			v1 = tmp1; v2 = tmp2;
 		}
 
 		// { a | b }
 		// { c | d }
-		inline void operator()(i32 a, i32 b, i32 c, i32 d) {
+		inline void operator()(f32 a, f32 b, f32 c, f32 d) {
 			v1.x = a; v2.x = b; v1.y = c; v2.y = d;
 		}
 
-		inline i32 operator ()(i32 which, i32 index) {
+		inline f32 operator ()(i32 which, i32 index) {
 			if (which == 0) if (index == 0) return v1.x;
 			if (index == 1) return v1.y;
 			if (which == 1) if (index == 0)	return v2.x;
@@ -169,7 +174,7 @@ namespace sur {
 	//
 	struct Maps {
 		i32* ColliderMap, * TriggerMap;
-		DWORD* RenderMap;
+		Color* RenderMap;
 	};
 
 	struct sRGB {	//sRGB because RGB is already taken ;)

@@ -15,34 +15,45 @@ using sur::Instancer::Types;
 int main() {
 	lua_State* LC = Start();
 
-	sur::Render renderer(Color(0, 0, 0),true,1);
+	sur::Render renderer(Color(0, 0, 0),true,0);
 	renderer.DebugConsole(true);
 	renderer.FPS();
-	
-	sur::Object b(_resource_path + "bottle.hgineres", { 200, 200 }, "hallo", 12);
 
-	sur::Rectangle r({ 0,0 }, { 100,100 }, Color(124, 52, 255), "R", 34, false);
-	
-	b.matrix(1,-1,
-		     0, 1);
+	sur::Object a(_resource_path + "player.hgineres", { 50, 50 }, "hallo", 12);
 
+	for (int i = 0; i < 10; i++) {
+		sur::Instancer::Add(new sur::Object(&a, { i * 10, i * 10 }, "helo" + std::to_string(i), 1), Types::Object);
+	}
+
+	f32 inc = 1.f;
+	f32 incy = 1.f;
+
+	u64 milliseconds = 0;
 	for (;;) {
 		renderer.ClearScreenBuffer();
-		r.Bind(true, true);
-		b.Bind(true, ColliderType::Outline);
-		
-		if (_input.keyboard.Key(Keys::A)) {
-			r.Move({ -3,0 }, true);
+		a.Bind(true, ColliderType::Outline);
+		if (sur::GetMilliseconds() - milliseconds > Second / 100) {
+			
+			a.MoveBeta({ 1.f,0.f }, false);
+			milliseconds = sur::GetMilliseconds();
 		}
-		if (_input.keyboard.Key(Keys::D)) {
-			r.Move({ 3,0 }, true);
-		}
-		if (_input.keyboard.Key(Keys::W)) {
-			r.Move({ 0,3 }, true);
-		}
-		if (_input.keyboard.Key(Keys::S)) {
-			r.Move({ 0,-3 }, true);
-		}
+		//for (int i = 0; i < 2; i++) {
+		//	sur::Instancer::Get<sur::Object>("helo" + std::to_string(i))->Bind(true, ColliderType::Outline);
+		//}
+		//a.Bind(true, ColliderType::Outline);
+		//a.Scale({ inc,incy });
+		//if (_input.keyboard.Key(Keys::A)) {
+		//	inc -= 0.01f;
+		//}
+		//if (_input.keyboard.Key(Keys::D)) {
+		//	inc += 0.01f;
+		//}
+		//if (_input.keyboard.Key(Keys::W)) {
+		//	incy += 0.01f;
+		//}
+		//if (_input.keyboard.Key(Keys::S)) {
+		//	incy -= 0.01f;
+		//}
 		renderer.RenderScreenBuffer();
 	}
 }
