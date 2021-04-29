@@ -43,6 +43,8 @@ return rt
 
 #define cpar(x) {x;}
 
+#define _milliseconds(x) x
+#define _seconds(x) x * 1000
 
 using namespace std::this_thread;
 using namespace std::chrono;

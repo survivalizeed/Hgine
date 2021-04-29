@@ -1,4 +1,4 @@
-
+// SpaceShooter demo -> paste this into the main
 
 #include "Functional/includes.h"
 #include "Functional/functional.h"
@@ -11,49 +11,40 @@ extern sur::Input _input;
 
 using sur::Instancer::Types;
 
+// The object id always needs to be different because otherwise it will call the 
+// callback of the first object it finds -> include hash algorithm ?
 
 int main() {
 	lua_State* LC = Start();
 
-	sur::Render renderer(Color(0, 0, 0),true,0);
-	renderer.DebugConsole(true);
+	sur::Render renderer(Color(100, 107, 47), true,0);
+	renderer.DebugConsole(_debug);
 	renderer.FPS();
 
-	sur::Object a(_resource_path + "player.hgineres", { 50, 50 }, "hallo", 12);
+	//sur::Object a(_resource_path + "player.hgineres", { 10,10 }, "pp", 12);
 
-	for (int i = 0; i < 10; i++) {
-		sur::Instancer::Add(new sur::Object(&a, { i * 10, i * 10 }, "helo" + std::to_string(i), 1), Types::Object);
-	}
-
-	f32 inc = 1.f;
-	f32 incy = 1.f;
-
-	u64 milliseconds = 0;
+	sur::Triangle a({ 20,20 }, { 100,100 }, { 100,0 }, Color(255, 0, 0), "Tri", 1);
+	sur::Triangle b({ 200,200 }, { 300,200 }, { 200,300 }, Color(255, 0, 0), "Tri", 2);
+	//sur::Line a({ 20,20 }, { 100,100 }, Color(255, 0, 0), "t", 1);
+	//sur::Line b({ 100,200 }, { 100,100 }, Color(255, 0, 0), "t", 2);
+	b.matrix(1, 3, 0, 1);
 	for (;;) {
-		renderer.ClearScreenBuffer();
-		a.Bind(true, ColliderType::Outline);
-		if (sur::GetMilliseconds() - milliseconds > Second / 100) {
-			
-			a.MoveBeta({ 1.f,0.f }, false);
-			milliseconds = sur::GetMilliseconds();
+		renderer.ClearScreenBuffer();	
+		b.Bind(true, true);
+		a.Bind(true, true);
+		
+		if (_input.keyboard.Key(Keys::W)){
+			a.Move({ 0,1 }, true);
 		}
-		//for (int i = 0; i < 2; i++) {
-		//	sur::Instancer::Get<sur::Object>("helo" + std::to_string(i))->Bind(true, ColliderType::Outline);
-		//}
-		//a.Bind(true, ColliderType::Outline);
-		//a.Scale({ inc,incy });
-		//if (_input.keyboard.Key(Keys::A)) {
-		//	inc -= 0.01f;
-		//}
-		//if (_input.keyboard.Key(Keys::D)) {
-		//	inc += 0.01f;
-		//}
-		//if (_input.keyboard.Key(Keys::W)) {
-		//	incy += 0.01f;
-		//}
-		//if (_input.keyboard.Key(Keys::S)) {
-		//	incy -= 0.01f;
-		//}
+		if (_input.keyboard.Key(Keys::A)){
+			a.Move({ -1,0 }, true);
+		}
+		if (_input.keyboard.Key(Keys::S)){
+			a.Move({ 0,-1 }, true);
+		}
+		if (_input.keyboard.Key(Keys::D)){
+			a.Move({ 1,0 }, true);
+		}
 		renderer.RenderScreenBuffer();
 	}
 }

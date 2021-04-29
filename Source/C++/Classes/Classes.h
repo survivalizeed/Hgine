@@ -11,7 +11,6 @@ namespace sur {
 	//
 	//	Classes
 	//
-	struct CollisionPackage;
 	//
 	//	Master: Defines the standard attributes of an object
 	// Classes.cpp
@@ -28,7 +27,6 @@ namespace sur {
 		Vec2 position;
 		Vec2 size;
 
-		std::vector<CollisionPackage>* packs = new std::vector<CollisionPackage>;	// Will be used by all objects -> ok, because it will get cleared each time
 		
 		std::vector<sur::Vec2> CollisionPos;
 
@@ -42,10 +40,8 @@ namespace sur {
 			: name(name), id(id), position(position), size(size), callback(callback) {}		//Rectangle
 
 		Vec2 rot(Vec2 pos, Vec2 origin, i32 Angle);	// The actual rotation math
-		
-		virtual void MoveInject(i32 index, i32 CurMove); // useless
 
-		virtual inline void MoveBetaInject(const Vec2& direction) { position += direction; }
+		virtual inline void MoveInject(const Vec2& direction) { position += direction; }
 	public:
 		Vec2 MovQueue(Vec2f direction);	// Handles floats and does nothing until a floating number becomes an integer
 
@@ -81,8 +77,6 @@ namespace sur {
 		inline bool State() const { return active; }
 
 		virtual void Move(sur::Vec2f direction, bool detect);
-
-		virtual void MoveBeta(sur::Vec2f direction, bool detect);
 	};
 	//
 	//	Render class
@@ -90,7 +84,7 @@ namespace sur {
 	class Render {
 	private:
 		bool thread = false;
-		i32 frameCounter = 0;
+		volatile u32 frameCounter = 0;
 		i32 Wait;
 		HDC dc;
 		Color bg;
@@ -188,6 +182,8 @@ namespace sur {
 		sur::Vec2 end;
 		Color color;
 		size_t lenght = 0;
+		
+		inline void MoveInject(const Vec2& direction) override { start += direction; end += direction;}
 	public:
 
 		Line(sur::Vec2 start, sur::Vec2 end, Color color, const std::string& name, i32 id, const std::vector<int>& ignoreids = {0},
@@ -227,7 +223,11 @@ namespace sur {
 
 		void Fill(LineVector& linevector);
 
-		void MoveInject(i32 index, i32 CurMove) override;
+		inline void MoveInject(const Vec2& direction) override {
+			p1 += direction; 
+			p2 += direction;
+			p3 += direction;
+		}
 
 	public:
 

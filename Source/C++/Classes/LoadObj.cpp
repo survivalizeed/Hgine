@@ -148,25 +148,29 @@ void sur::Object::Bind(bool Render, ColliderType collidertype)
 			for (i32 i = 0; i < size.x; i++) {
 				sur::Vec2 tmp(matrix.mulitplyWithVector(Vec2(i, 0 )) + position);
 				CollisionPos.push_back(tmp);
-				_Amap.Render(tmp, Color(255,0,0));
+				if(_debug)
+					_Amap.Render(tmp, Color(255,0,0));
 				_Amap.Collider(tmp, id);
 			}
 			for (i32 i = 0; i < size.y; i++) {
 				sur::Vec2 tmp(matrix.mulitplyWithVector(Vec2(0, i )) + position);
 				CollisionPos.push_back(tmp);
-				_Amap.Render(tmp, Color(255, 0, 0));
+				if (_debug)
+					_Amap.Render(tmp, Color(255, 0, 0));
 				_Amap.Collider(tmp, id);
 			}
 			for (i32 i = 0; i < size.x; i++) {
 				sur::Vec2 tmp(matrix.mulitplyWithVector(Vec2(i, size.y )) + position);
 				CollisionPos.push_back(tmp);
-				_Amap.Render(tmp, Color(255, 0, 0));
+				if (_debug)
+					_Amap.Render(tmp, Color(255, 0, 0));
 				_Amap.Collider(tmp, id);
 			}
 			for (i32 i = 0; i < size.y; i++) {
 				sur::Vec2 tmp(matrix.mulitplyWithVector(Vec2(size.x, i )) + position);
 				CollisionPos.push_back(tmp);
-				_Amap.Render(tmp, Color(255, 0, 0));
+				if (_debug)
+					_Amap.Render(tmp, Color(255, 0, 0));
 				_Amap.Collider(tmp, id);
 			}
 		return;

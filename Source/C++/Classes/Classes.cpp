@@ -11,71 +11,6 @@ extern sur::Map_Analyses _Amap;
 extern std::vector<i32> trigger_identitys;
 extern std::vector<void*> trigger_ptrs;
 
-sur::CollisionPackage CheckCollision(sur::Master* object, const sur::Vec2& pos, i32 dir, const Axis& axis)
-{
-	using sur::Master;
-	i16 i = 1;
-	bool neg = false;
-	if (dir < 0)
-		neg = true;
-
-	switch (axis)
-	{
-	case Axis::X:
-		if (!neg) {
-			for (; i <= dir; ++i)
-				for (i32 j = 0; j < identitys.size(); ++j)
-						if (_Amap.Collider(pos.x + i, pos.y) == identitys[j] && object->id != identitys[j]) {
-							for (i32 k = 0; k < object->ignore.size(); ++k) {
-								if (object->ignore[k] == identitys[j])
-									return { nullptr, (i16)dir };
-							}
-							return { (Master*)ptrs[j], --i };
-						}
-			return { nullptr, (i16)dir };
-		}
-		dir *= -1;
-		for (; i <= dir; ++i)
-			for (i32 j = 0; j < identitys.size(); ++j)		
-					if (_Amap.Collider(pos.x - i, pos.y) == identitys[j] && object->id != identitys[j]) {
-						for (i32 k = 0; k < object->ignore.size(); ++k) {
-							if (object->ignore[k] == identitys[j])
-								return { nullptr, (i16)dir };
-						}
-						return { (Master*)ptrs[j], --i };
-					}
-		return { nullptr, (i16)dir };
-
-	case Axis::Y:
-		if (!neg) {
-			for (; i <= dir; ++i)
-				for (i32 j = 0; j < identitys.size(); ++j)
-						if (_Amap.Collider(pos.x, pos.y + i) == identitys[j] && object->id != identitys[j]) {
-							for (i32 k = 0; k < object->ignore.size(); ++k) {
-								if (object->ignore[k] == identitys[j])
-									return { nullptr, (i16)dir };
-							}
-							return { (Master*)ptrs[j], --i };
-						}
-			return { nullptr, (i16)dir };
-		}
-		dir *= -1;
-		for (; i <= dir; ++i)		//do this for all other code blocks
-			for (i32 j = 0; j < identitys.size(); ++j)
-				if (_Amap.Collider(pos.x, pos.y - i) == identitys[j] && object->id != identitys[j]) {
-					for (i32 k = 0; k < object->ignore.size(); ++k) {
-						if (object->ignore[k] == identitys[j])
-							return { nullptr, (i16)dir };
-					}
-					return { (Master*)ptrs[j], --i };
-				}	
-		return { nullptr, (i16)dir };
-
-	case Axis::Both:
-		Error("Both axes are not valid. Change either to X or Y");
-	}
-}
-
 //
 //	Master
 //
@@ -86,28 +21,8 @@ sur::Vec2 sur::Master::rot(Vec2 pos, Vec2 origin, i32 Angle)
 		(i32)(dist.x * sin(Angle * PI / 180) + dist.y * cos(Angle * PI / 180))) + origin;
 }
 
-void sur::Master::MoveInject(i32 index, i32 CurMove)
-{
-	switch (index)
-	{
-	case 1:
-		position.y -= CurMove;
-		break;
-	case 2:
-		position.x += CurMove;
-		break;
-	case 3:
-		position.y += CurMove;
-		break;
-	case 4:
-		position.x -= CurMove;
-		break;
-	}
-}
-
 sur::Vec2 sur::Master::MovQueue(Vec2f direction)
 {
-
 	if(direction.x > 0)
 		counterpos.x += direction.x;
 	else 
@@ -138,63 +53,110 @@ sur::Vec2 sur::Master::MovQueue(Vec2f direction)
 	return { (i32)direction.x , (i32)direction.y};
 }
 
-void sur::Master::Move(sur::Vec2f direction, bool detect)
-{
-	auto cbcall = [&]() -> i32 {
-		std::sort(packs->begin(), packs->end(), [](const auto& f, const auto& s)
-			{
-				return f.steps < s.steps;
-			});
-		assert(packs->size() < 1, 0);
-		CollisionPackage cp = packs->at(0);
-		if (cp.ptr != nullptr) {
-			if (callback != nullptr)
-				callback(this, cp.ptr);
-			if (cp.ptr->callback != nullptr)
-				cp.ptr->callback(cp.ptr, this);
-		}
-		i32 steps = packs->at(0).steps;
-		packs->clear();
-		return steps;
-	};
+
+//void sur::Master::Move(sur::Vec2f direction, bool detect)
+//{
+//	Vec2 newdirection = MovQueue(direction);
+//	assert(newdirection == Vec2(0, 0) || this->GetName() == "invalid");
+//
+//	if (!detect) position += newdirection;
+//
+//	bool dirXpos = (newdirection.x >= 0) ? true : false;
+//
+//	bool dirYpos = (newdirection.y >= 0) ? true : false;
+//
+//	i32 contentX = 0, contentY = 0;
+//
+//	if (dirXpos) {
+//	jmp0:
+//		for (i32 i = 0; i < CollisionPos.size(); ++i) {
+//			 contentX = _Amap.Collider(CollisionPos.at(i).x + newdirection.x, CollisionPos.at(i).y);
+//			for (i32 j = 0; j < ignore.size(); ++j)
+//				if (contentX == ignore.at(j))
+//					contentX = 0;	//So it ignores the collision
+//			if (contentX != 0 && contentX != this->id) {
+//				--newdirection.x;
+//				if (newdirection.x == 0) break;
+//				goto jmp0;
+//			}
+//		}
+//	}
+//	else {
+//	jmp1:
+//		for (i32 i = 0; i < CollisionPos.size(); ++i) {
+//			contentX = _Amap.Collider(CollisionPos.at(i).x + newdirection.x, CollisionPos.at(i).y);
+//			for (i32 j = 0; j < ignore.size(); ++j)
+//				if (contentX == ignore.at(j))
+//					contentX = 0;	//So it ignores the collision
+//			if (contentX != 0 && contentX != this->id) {
+//				++newdirection.x;
+//				if (newdirection.x == 0) break;
+//				goto jmp1;
+//			}
+//		}
+//	}
+//	if (dirYpos) {
+//	jmp2:
+//		for (i32 i = 0; i < CollisionPos.size(); ++i) {
+//			contentY = _Amap.Collider(CollisionPos.at(i).x, CollisionPos.at(i).y + newdirection.y);
+//			for (i32 j = 0; j < ignore.size(); ++j)
+//				if (contentY == ignore.at(j))
+//					contentY = 0;	//So it ignores the collision
+//			if (contentY != 0 && contentY != this->id) {
+//				--newdirection.y;
+//				if (newdirection.y == 0) break;
+//				goto jmp2;
+//			}
+//		}
+//	}
+//	else {
+//	jmp3:
+//		for (i32 i = 0; i < CollisionPos.size(); ++i) {
+//			contentY = _Amap.Collider(CollisionPos.at(i).x, CollisionPos.at(i).y + newdirection.y);
+//			for (i32 j = 0; j < ignore.size(); ++j)
+//				if (contentY == ignore.at(j))
+//					contentY = 0;	//So it ignores the collision
+//			if (contentY != 0 && contentY != this->id) {
+//				++newdirection.y;
+//				if (newdirection.y == 0) break;
+//				goto jmp3;
+//			}
+//		}
+//	}
+//
+//	{
+//		i32 iX = 0,iY = 0;
+//		for (i32 i = 0; i < identitys.size(); ++i) {
+//			if (contentX == identitys[i]) {
+//				iX = i;
+//			}
+//		}
+//		for (i32 i = 0; i < identitys.size(); ++i) {
+//			if (contentY == identitys[i]) {
+//				iY = i;
+//			}
+//		}
+//		if (iX != 0 && contentX != this->id) {
+//			if (callback != nullptr)
+//				callback(this, (Master*)ptrs[iX]);
+//			if (static_cast<Master*>(ptrs[iX])->callback != nullptr)
+//				static_cast<Master*>(ptrs[iX])->callback((Master*)ptrs[iX], this);
+//		}
+//		if (iY != 0 && contentY != this->id) {
+//			if (callback != nullptr)
+//				callback(this, (Master*)ptrs[iY]);
+//			if (static_cast<Master*>(ptrs[iY])->callback != nullptr)
+//				static_cast<Master*>(ptrs[iY])->callback((Master*)ptrs[iY], this);
+//		}
+//	}
+//	MoveInject(newdirection);
+//}
+
+void sur::Master::Move(sur::Vec2f direction, bool detect) {
 	Vec2 newdirection = MovQueue(direction);
 	assert(newdirection == Vec2(0, 0) || this->GetName() == "invalid");
-	if (detect) {
-		if (newdirection.x > 0) {
-			for (i32 i = position.y; i < position.y + size.y; ++i) {
-				packs->push_back(CheckCollision(this, Vec2(position.x + size.x, i), newdirection.x, Axis::X));
-			}
-			position.x += cbcall();
-		}
-		if (newdirection.x < 0) {
-			for (i32 i = position.y; i < position.y + size.y; ++i) {
-				packs->push_back(CheckCollision(this, Vec2(position.x, i), newdirection.x, Axis::X));
-			}
-			position.x -= cbcall();
-		}
-		if (newdirection.y > 0) {
-			for (i32 i = position.x; i < position.x + size.x; ++i) {
-				packs->push_back(CheckCollision(this, Vec2(i, position.y + size.y), newdirection.y, Axis::Y));
-			}
-			position.y += cbcall();
-		}
-		if (newdirection.y < 0) {
-			for (i32 i = position.x; i < position.x + size.x; ++i) {
-				packs->push_back(CheckCollision(this, Vec2(i, position.y), newdirection.y, Axis::Y));
-			}
-			position.y -= cbcall();
-		}
-		return;
-	}
-	position += newdirection;
-}
 
-void sur::Master::MoveBeta(sur::Vec2f direction, bool detect)
-{
-	Vec2 newdirection = MovQueue(direction);
-	assert(newdirection == Vec2(0, 0) || this->GetName() == "invalid");
-
-	if (!detect) position += newdirection;
+	if (!detect) { position += newdirection; return; }
 
 	bool dirXpos = (newdirection.x >= 0) ? true : false;
 
@@ -202,65 +164,69 @@ void sur::Master::MoveBeta(sur::Vec2f direction, bool detect)
 
 	i32 contentX = 0, contentY = 0;
 
-	if (dirXpos) {
-	jmp0:
-		for (i32 i = 0; i < CollisionPos.size(); ++i) {
-			 contentX = _Amap.Collider(CollisionPos.at(i).x + newdirection.x, CollisionPos.at(i).y);
-			for (i32 j = 0; j < ignore.size(); ++j)
-				if (contentX == ignore.at(j))
-					contentX = 0;	//So it ignores the collision
-			if (contentX != 0 && contentX != this->id) {
-				--newdirection.x;
-				if (newdirection.x == 0) break;
-				goto jmp0;
+	if (dirXpos) {	
+		for (i32 c = 1; c <= newdirection.x; ++c) {
+			for (i32 i = 0; i < CollisionPos.size(); ++i) {
+				contentX = _Amap.Collider(CollisionPos.at(i).x + c, CollisionPos.at(i).y);
+				for (i32 j = 0; j < ignore.size(); ++j)
+					if (contentX == ignore.at(j))
+						contentX = 0;	//So it ignores the collision
+				if (contentX != 0 && contentX != this->id) {
+					newdirection.x = --c;
+					goto jmp0;
+				}
 			}
 		}
+	jmp0:;
 	}
 	else {
-	jmp1:
-		for (i32 i = 0; i < CollisionPos.size(); ++i) {
-			contentX = _Amap.Collider(CollisionPos.at(i).x + newdirection.x, CollisionPos.at(i).y);
-			for (i32 j = 0; j < ignore.size(); ++j)
-				if (contentX == ignore.at(j))
-					contentX = 0;	//So it ignores the collision
-			if (contentX != 0 && contentX != this->id) {
-				++newdirection.x;
-				if (newdirection.x == 0) break;
-				goto jmp1;
+		for (i32 c = -1; c >= newdirection.x; --c) {
+			for (i32 i = 0; i < CollisionPos.size(); ++i) {
+				contentX = _Amap.Collider(CollisionPos.at(i).x + c, CollisionPos.at(i).y);
+				for (i32 j = 0; j < ignore.size(); ++j)
+					if (contentX == ignore.at(j))
+						contentX = 0;	//So it ignores the collision
+				if (contentX != 0 && contentX != this->id) {
+					newdirection.x = ++c;
+					goto jmp1;
+				}
 			}
 		}
+	jmp1:;
 	}
 	if (dirYpos) {
-	jmp2:
-		for (i32 i = 0; i < CollisionPos.size(); ++i) {
-			contentY = _Amap.Collider(CollisionPos.at(i).x, CollisionPos.at(i).y + newdirection.y);
-			for (i32 j = 0; j < ignore.size(); ++j)
-				if (contentY == ignore.at(j))
-					contentY = 0;	//So it ignores the collision
-			if (contentY != 0 && contentY != this->id) {
-				--newdirection.y;
-				if (newdirection.y == 0) break;
-				goto jmp2;
+		for (i32 c = 1; c <= newdirection.y; ++c) {
+			for (i32 i = 0; i < CollisionPos.size(); ++i) {
+				contentY = _Amap.Collider(CollisionPos.at(i).x, CollisionPos.at(i).y + c);
+				for (i32 j = 0; j < ignore.size(); ++j)
+					if (contentY == ignore.at(j))
+						contentY = 0;	//So it ignores the collision
+				if (contentY != 0 && contentY != this->id) {
+					newdirection.y = --c;
+					goto jmp2;
+				}
 			}
 		}
+	jmp2:;
 	}
 	else {
-	jmp3:
-		for (i32 i = 0; i < CollisionPos.size(); ++i) {
-			contentY = _Amap.Collider(CollisionPos.at(i).x, CollisionPos.at(i).y + newdirection.y);
-			for (i32 j = 0; j < ignore.size(); ++j)
-				if (contentY == ignore.at(j))
-					contentY = 0;	//So it ignores the collision
-			if (contentY != 0 && contentY != this->id) {
-				++newdirection.y;
-				if (newdirection.y == 0) break;
-				goto jmp3;
+		for (i32 c = -1; c >= newdirection.y; --c) {
+			for (i32 i = 0; i < CollisionPos.size(); ++i) {
+				contentY = _Amap.Collider(CollisionPos.at(i).x, CollisionPos.at(i).y + c);
+				for (i32 j = 0; j < ignore.size(); ++j)
+					if (contentY == ignore.at(j))
+						contentY = 0;	//So it ignores the collision
+				if (contentY != 0 && contentY != this->id) {
+					newdirection.y = ++c;
+					goto jmp3;
+				}
 			}
 		}
+	jmp3:;
 	}
 
 	{
-		i32 iX = 0,iY = 0;
+		i32 iX = 0, iY = 0;
 		for (i32 i = 0; i < identitys.size(); ++i) {
 			if (contentX == identitys[i]) {
 				iX = i;
@@ -284,7 +250,7 @@ void sur::Master::MoveBeta(sur::Vec2f direction, bool detect)
 				static_cast<Master*>(ptrs[iY])->callback((Master*)ptrs[iY], this);
 		}
 	}
-	MoveBetaInject(newdirection);
+	MoveInject(newdirection);
 }
 
 //
@@ -293,10 +259,9 @@ void sur::Master::MoveBeta(sur::Vec2f direction, bool detect)
 void sur::Render::ClearScreenBuffer()
 {
 	if (FillBackground)
-		memset(_map.RenderMap, bg, sizeof(Color) * (_window_size.x * _window_size.y));
-		//std::fill(_map.RenderMap, _map.RenderMap + _window_size.x * _window_size.y, bg);	
-	//std::fill(_map.ColliderMap, _map.ColliderMap + _window_size.x * _window_size.y, 0);
-	//std::fill(_map.TriggerMap, _map.TriggerMap + _window_size.x * _window_size.y, 0);
+		memset(_map.RenderMap, bg, sizeof(Color) * (_window_size.x * _window_size.y));	
+	memset(_map.ColliderMap, 0, sizeof(Color) * (_window_size.x * _window_size.y));
+	memset(_map.TriggerMap, 0, sizeof(Color) * (_window_size.x * _window_size.y));
 }
 
 void sur::Render::RenderScreenBuffer()
@@ -438,33 +403,33 @@ sur::Line::Line(Vec2 start, Vec2 end, Color color, const std::string& name, i32 
 
 void sur::Line::Bind(bool Render, bool Collider)
 {
-	auto WriteCollision = [=](i32 x, i32 y) {
+	auto Write = [=](i32 x, i32 y) {
+		sur::Vec2 tmp = matrix.mulitplyWithVector({ (f32)(x - position.x), (f32)(y - position.y) }) + position;
+		if (Render) {
+			_Amap.Render(tmp, color);
+		}
 		if (Collider) {
-			CollisionPos.push_back({ x,y });
-			_Amap.Collider(x, y, id);
+			CollisionPos.push_back(tmp);
+			_Amap.Collider(tmp, id);
 		}
 	};
 	if (Collider) CollisionPos.clear();
-
 	Vec2 end = this->end;
 	Vec2 start = this->start;
 	if (this->start.y > this->end.y || this->start.x > this->end.x) {
 		std::swap(start.y, end.y);
 		std::swap(start.x, end.x);
 	}
+	position = { start.x,start.y };
 	if (start.x == end.x) {
 		for (i32 i = start.y; i < end.y; ++i) {
-			if (Render)
-				_Amap.Render(start.x, i, color);
-			WriteCollision(start.x, i);
+			Write(start.x, i);
 		}
 		return;
 	}
 	if (start.y == end.y) {
 		for (i32 i = start.x; i < end.x; ++i) {
-			if (Render)
-				_Amap.Render(i, start.y, color);
-			WriteCollision(i, start.y);
+			Write(i, start.y);
 		}
 		return;
 	}
@@ -478,14 +443,10 @@ void sur::Line::Bind(bool Render, bool Collider)
 		f32 counter = 0.0f;
 		i32 countcounter = 1;
 		for (i32 i = start.x; i <= end.x; i++) {
-			if(Render)
-				_Amap.Render(i, tempy, color);
-			WriteCollision(i, tempy);
+			Write(i, tempy);
 			while (counter >= countcounter) {
 				tempy++;
-				if (Render)
-					_Amap.Render(i, tempy, color);
-				WriteCollision(i, tempy);
+				Write(i, tempy);
 				countcounter++;
 			}
 			counter += RunsThrough;
@@ -498,14 +459,10 @@ void sur::Line::Bind(bool Render, bool Collider)
 		i32 countcounter = 1;
 		bool runned = false;
 		for (i32 i = start.x; i <= end.x; i++) {
-			if (Render)
-				_Amap.Render(i, tempy, color);
-			WriteCollision(i, tempy);
+			Write(i, tempy);
 			while (counter >= countcounter) {
 				tempy--;
-				if (Render)
-					_Amap.Render(i, tempy, color);
-				WriteCollision(i, tempy);
+				Write(i, tempy);
 				countcounter++;
 			}
 			runned = true;	
@@ -516,14 +473,10 @@ void sur::Line::Bind(bool Render, bool Collider)
 			RunsThrough *= -1;
 			i32 tempx = start.x;
 			for (i32 i = start.y; i <= end.y; i++) {
-				if (Render)
-					_Amap.Render(tempx, i, color);
-				WriteCollision(tempx,i);
+				Write(tempx,i);
 				while (counter >= countcounter) {
 					tempx--;
-					if (Render)
-						_Amap.Render(tempx, i, color);
-					WriteCollision(tempx, i);
+					Write(tempx, i);
 					countcounter++;
 				}
 				counter += RunsThrough;

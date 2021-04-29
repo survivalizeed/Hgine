@@ -1,0 +1,143 @@
+void sur::Master::Move(sur::Vec2f direction, bool detect)
+{
+	auto cbcall = [&]() -> i32 {
+		std::sort(packs->begin(), packs->end(), [](const auto& f, const auto& s)
+			{
+				return f.steps < s.steps;
+			});
+		assert(packs->size() < 1, 0);
+		CollisionPackage cp = packs->at(0);
+		if (cp.ptr != nullptr) {
+			if (callback != nullptr)
+				callback(this, cp.ptr);
+			if (cp.ptr->callback != nullptr)
+				cp.ptr->callback(cp.ptr, this);
+		}
+		i32 steps = packs->at(0).steps;
+		packs->clear();
+		return steps;
+	};
+	Vec2 newdirection = MovQueue(direction);
+	assert(newdirection == Vec2(0, 0) || this->GetName() == "invalid");
+	if (detect) {
+		if (newdirection.x > 0) {
+			for (i32 i = position.y; i < position.y + size.y; ++i) {
+				packs->push_back(CheckCollision(this, Vec2(position.x + size.x, i), newdirection.x, Axis::X));
+			}
+			position.x += cbcall();
+		}
+		if (newdirection.x < 0) {
+			for (i32 i = position.y; i < position.y + size.y; ++i) {
+				packs->push_back(CheckCollision(this, Vec2(position.x, i), newdirection.x, Axis::X));
+			}
+			position.x -= cbcall();
+		}
+		if (newdirection.y > 0) {
+			for (i32 i = position.x; i < position.x + size.x; ++i) {
+				packs->push_back(CheckCollision(this, Vec2(i, position.y + size.y), newdirection.y, Axis::Y));
+			}
+			position.y += cbcall();
+		}
+		if (newdirection.y < 0) {
+			for (i32 i = position.x; i < position.x + size.x; ++i) {
+				packs->push_back(CheckCollision(this, Vec2(i, position.y), newdirection.y, Axis::Y));
+			}
+			position.y -= cbcall();
+		}
+		return;
+	}
+	position += newdirection;
+}
+
+void sur::Master::MoveInject(i32 index, i32 CurMove)
+{
+	switch (index)
+	{
+	case 1:
+		position.y -= CurMove;
+		break;
+	case 2:
+		position.x += CurMove;
+		break;
+	case 3:
+		position.y += CurMove;
+		break;
+	case 4:
+		position.x -= CurMove;
+		break;
+	}
+}
+
+
+sur::CollisionPackage CheckCollision(sur::Master* object, const sur::Vec2& pos, i32 dir, const Axis& axis)
+{
+	using sur::Master;
+	i16 i = 1;
+	bool neg = false;
+	if (dir < 0)
+		neg = true;
+
+	switch (axis)
+	{
+	case Axis::X:
+		if (!neg) {
+			for (; i <= dir; ++i)
+				for (i32 j = 0; j < identitys.size(); ++j)
+						if (_Amap.Collider(pos.x + i, pos.y) == identitys[j] && object->id != identitys[j]) {
+							for (i32 k = 0; k < object->ignore.size(); ++k) {
+								if (object->ignore[k] == identitys[j])
+									return { nullptr, (i16)dir };
+							}
+							return { (Master*)ptrs[j], --i };
+						}
+			return { nullptr, (i16)dir };
+		}
+		dir *= -1;
+		for (; i <= dir; ++i)
+			for (i32 j = 0; j < identitys.size(); ++j)		
+					if (_Amap.Collider(pos.x - i, pos.y) == identitys[j] && object->id != identitys[j]) {
+						for (i32 k = 0; k < object->ignore.size(); ++k) {
+							if (object->ignore[k] == identitys[j])
+								return { nullptr, (i16)dir };
+						}
+						return { (Master*)ptrs[j], --i };
+					}
+		return { nullptr, (i16)dir };
+
+	case Axis::Y:
+		if (!neg) {
+			for (; i <= dir; ++i)
+				for (i32 j = 0; j < identitys.size(); ++j)
+						if (_Amap.Collider(pos.x, pos.y + i) == identitys[j] && object->id != identitys[j]) {
+							for (i32 k = 0; k < object->ignore.size(); ++k) {
+								if (object->ignore[k] == identitys[j])
+									return { nullptr, (i16)dir };
+							}
+							return { (Master*)ptrs[j], --i };
+						}
+			return { nullptr, (i16)dir };
+		}
+		dir *= -1;
+		for (; i <= dir; ++i)		//do this for all other code blocks
+			for (i32 j = 0; j < identitys.size(); ++j)
+				if (_Amap.Collider(pos.x, pos.y - i) == identitys[j] && object->id != identitys[j]) {
+					for (i32 k = 0; k < object->ignore.size(); ++k) {
+						if (object->ignore[k] == identitys[j])
+							return { nullptr, (i16)dir };
+					}
+					return { (Master*)ptrs[j], --i };
+				}	
+		return { nullptr, (i16)dir };
+
+	case Axis::Both:
+		Error("Both axes are not valid. Change either to X or Y");
+	}
+}
+
+
+// Header:
+
+//predef: struct CollisionPackage
+
+
+std::vector<CollisionPackage>* packs = new std::vector<CollisionPackage>;	// Will be used by all objects -> ok, because it will get cleared each time

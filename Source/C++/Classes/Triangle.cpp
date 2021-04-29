@@ -51,11 +51,22 @@ std::vector<sur::Vec2>* sur::Triangle::LineVector::getother()
 
 void sur::Triangle::Line(Vec2 start, Vec2 end, std::vector<Vec2>* line, bool Render, bool Collider)
 {
+	auto Write = [=](i32 x, i32 y) {
+		sur::Vec2 tmp = matrix.mulitplyWithVector({ (f32)(x - position.x), (f32)(y - position.y) }) + position;
+		if (Render) {
+			_Amap.Render(tmp, color);
+		}
+		if (Collider) {
+			CollisionPos.push_back(tmp);
+			_Amap.Collider(tmp, id);
+		}
+	};
 	if (start.y > end.y || start.x > end.x) {
 		std::swap(start.y, end.y);
 		std::swap(start.x, end.x);
 	}
 	if (start.x == end.x) start.x--;
+	position = { start.x, start.y };
 	i32 Dx, Dy;
 	f32 RunsThrough;
 	Dx = end.x - start.x;
@@ -67,17 +78,11 @@ void sur::Triangle::Line(Vec2 start, Vec2 end, std::vector<Vec2>* line, bool Ren
 		f32 counter = 0.0f;
 		i32 countcounter = 1;
 		for (i32 i = start.x; i <= end.x; i++) {
-			if(Render)
-				_Amap.Render(i, tempy, color);
-			if (Collider)
-				_Amap.Collider(i, tempy, id);	
+			Write(i, tempy);
 			while (counter >= countcounter) {
 				tempy++;
 				line->push_back({ i,tempy });
-				if (Render)
-					_Amap.Render(i, tempy, color);
-				if (Collider)
-					_Amap.Collider(i, tempy, id);		
+				Write(i, tempy);
 				countcounter++;
 			}
 			counter += RunsThrough;
@@ -90,17 +95,11 @@ void sur::Triangle::Line(Vec2 start, Vec2 end, std::vector<Vec2>* line, bool Ren
 		i32 countcounter = 1;
 		bool runned = false;
 		for (i32 i = start.x; i <= end.x; i++) {
-			if (Render)
-				_Amap.Render(i, tempy, color);
-			if (Collider)
-				_Amap.Collider(i, tempy, id);	
+			Write(i, tempy);
 			while (counter >= countcounter) {
 				tempy--;
 				line->push_back({ i,tempy });
-				if (Render)
-					_Amap.Render(i, tempy, color);
-				if (Collider)
-					_Amap.Collider(i, tempy, id);			
+				Write(i, tempy);
 				countcounter++;
 			}
 			runned = true;
@@ -112,16 +111,10 @@ void sur::Triangle::Line(Vec2 start, Vec2 end, std::vector<Vec2>* line, bool Ren
 			i32 tempx = start.x;
 			for (i32 i = start.y; i <= end.y; i++) {
 				line->push_back({ tempx,i });
-				if (Render)
-					_Amap.Render(tempx, i, color);
-				if (Collider)
-					_Amap.Collider(tempx, i, id);		
+				Write(tempx,i);
 				while (counter >= countcounter) {
 					tempx--;
-					if (Render)
-						_Amap.Render(tempx, i, color);
-					if (Collider)
-						_Amap.Collider(tempx, i, id);	
+					Write(tempx, i);
 					countcounter++;
 				}
 				counter += RunsThrough;
@@ -209,37 +202,11 @@ sur::Triangle::Triangle(Vec2 p1, Vec2 p2, Vec2 p3, Color color, const std::strin
 
 void sur::Triangle::Bind(bool Render, bool Collider)
 {
+	if (Collider) CollisionPos.clear();
 	Line(p1, p2, linevector.Line1,Render,Collider);
 	Line(p2, p3, linevector.Line2,Render,Collider);
 	Line(p3, p1, linevector.Line3,Render,Collider);
 	if(Render)
 		Fill(linevector);
 	linevector.clear();
-}
-
-void sur::Triangle::MoveInject(i32 index, i32 CurMove)
-{
-	switch (index)
-	{
-	case 1:
-		p1.y -= CurMove;
-		p2.y -= CurMove;
-		p3.y -= CurMove;
-		break;
-	case 2:
-		p1.x += CurMove;
-		p2.x += CurMove;
-		p3.x += CurMove;
-		break;
-	case 3:
-		p1.y += CurMove;
-		p2.y += CurMove;
-		p3.y += CurMove;
-		break;
-	case 4:
-		p1.x -= CurMove;
-		p2.x -= CurMove;
-		p3.x -= CurMove;
-		break;
-	}
 }
