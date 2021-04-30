@@ -1,17 +1,17 @@
 Camera movement |Done|
-Movement with and without collider for every object
-Collisions for line
+Movement with and without collider for every object |DONE|
+Collisions for line |DONE|
 Line outside of screen fix |DONE|
-Upload HGINERES editor & fix bugs |(DONE)|
+Upload HGINERES editor & fix bugs |DONE|
 Triggers |(DONE)|
 Create runtime object handler |DONE|
 Fix Lua... |DONE|
 Custom collider creator??? Using Lua???
 Sound manager |DONE|
 Fastcheck for outside of screen |DONE|
-Target FPS / stable FPS <- if second param in render constructor isn't 0 it limits it to 60 FPS???
-Fix only Quad window |DONE|
-Collisions for Triangle
+Target FPS / stable FPS <- if second param in render constructor isn't 0 it limits it to 60 FPS??? |Just use sur::GetMilliseconds()|
+Fix only Quad window 
+Collisions for Triangle |DONE|
 Triangle out of screen fix |DONE|
 If window is not Quad, out of bounds not working correctly
 Activate and unactivate Objects through the Instancer |DONE|
@@ -19,20 +19,21 @@ Calculate Collisions / Rebind after Movement
 Use Asio as P2P
 Animations using preloaded images and change them
 Memshare for Objects |DONE|
-Wire colliders for Rectangles
+Wire colliders for Rectangles |DONE|
 Tint for objects |DONE|
 The object id always needs to be different because otherwise it will call the callback of the first object it finds -> include hash algorithm ?
 Take input only if window is in focus
-Game Freeze functionality
+Game Freeze functionality -> Use the chrono library
 Hold type of object by enum in Master class -> cast in callback |DONE|
 Rotation for all Objects
 Rotation for Camera
 Fix Collision ignore layer for right left and down |DONE|
 Rotation and movement together are buggy
 Fix those annoying RGB and Tint bugs. Understand what the fck windows wants with all those typedefs |DONE|
-Faster random number generator. Maybe Xoshiro256+?
+Faster random number generator. Maybe Xoshiro256+? |Not going to happen|
 Instancer support for particle systems
 multithreading for particles |DONE|
 Matrix modified objects out of screen fix 
-New collision objects glitch through
-if Down and left are pressed with new collison, bugs through objects
+New collision objects glitch through |DONE|
+if down and left are pressed with new collison, bugs through objects |DONE|
+Matrix for Triangle and Line buggy
