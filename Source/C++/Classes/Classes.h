@@ -178,6 +178,12 @@ namespace sur {
 	// Classes.cpp
 	class Line : public Master {
 	private:
+		//Deleted functions
+		inline sur::Vec2 GetPosition() = delete;
+		inline sur::Vec2 GetSize() = delete;
+		inline sur::Vec2 GetOrigin() = delete;
+
+	private:
 		sur::Vec2 start;
 		sur::Vec2 end;
 		Color color;
@@ -189,9 +195,13 @@ namespace sur {
 		Line(sur::Vec2 start, sur::Vec2 end, Color color, const std::string& name, i32 id, const std::vector<int>& ignoreids = {0},
 			cb_ptr<Master*> callback = nullptr);
 
+		inline void Start(sur::Vec2 start) { this->start = start; }
+
 		inline void End(sur::Vec2 end) { this->end = end; }
 
-		inline void Start(sur::Vec2 start) { this->start = start; }
+		inline sur::Vec2 GetStart() const { return start; }
+
+		inline sur::Vec2 GetEnd() const { return end; }
 
 		inline void SetColor(Color color) { this->color = color; }
 
@@ -248,6 +258,16 @@ namespace sur {
 	// Classes.cpp
 	class Shape : public Master {
 	private:
+		//Deleted attributes
+		using Master::ignore;
+		using Master::matrix;
+		
+		//Deleted functions
+		inline sur::Vec2 GetPosition() = delete;
+		inline sur::Vec2 GetSize() = delete;
+		inline sur::Vec2 GetOrigin() = delete;
+
+	private:
 		Color color;
 		std::vector<sur::Vec2>* vec = new std::vector<sur::Vec2>;
 		std::vector<sur::Line*>* lines = new std::vector<sur::Line*>;
@@ -259,7 +279,7 @@ namespace sur {
 			vec->push_back((sur::Vec2)r);
 			Gen();
 		}
-
+		
 	public:
 		Shape(Color color, const std::string& name, i32 id, const std::vector<int>& ignoreids = {0},
 			cb_ptr<Master*> callback = nullptr);
@@ -274,6 +294,8 @@ namespace sur {
 		void SetPosition(i32 index, sur::Vec2 position);
 
 		void Bind(bool Render, bool Collider);
+
+		void Move(sur::Vec2f direction);
 	};
 	//
 	//	Particle system
@@ -295,12 +317,16 @@ namespace sur {
 	public:
 		Particles(ParticlesSetting* settings);
 
+		//Moves every particle to the desired position.
+		//Be careful it is very performance heavy!
 		void MoveTowards(sur::Vec2 position, f32 speed);
 
 		void Bind(bool Render);
 
+		//Only moves the particles
 		inline void Move(sur::Vec2f direction) cpar(Master::Move(direction,false))
 
+		//Moves the particles, the middle and everything else
 		inline void MoveAll(sur::Vec2f direction) {
 			Vec2 newdirection = MovQueue(direction);
 			settings->middle += newdirection;

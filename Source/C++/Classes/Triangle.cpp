@@ -52,13 +52,12 @@ std::vector<sur::Vec2>* sur::Triangle::LineVector::getother()
 void sur::Triangle::Line(Vec2 start, Vec2 end, std::vector<Vec2>* line, bool Render, bool Collider)
 {
 	auto Write = [=](i32 x, i32 y) {
-		sur::Vec2 tmp = matrix.mulitplyWithVector({ (f32)(x - position.x), (f32)(y - position.y) }) + position;
 		if (Render) {
-			_Amap.Render(tmp, color);
+			_Amap.Render({ x,y }, color);
 		}
 		if (Collider) {
-			CollisionPos.push_back(tmp);
-			_Amap.Collider(tmp, id);
+			CollisionPos.push_back({ x,y });
+			_Amap.Collider({ x,y }, id);
 		}
 	};
 	if (start.y > end.y || start.x > end.x) {
@@ -66,13 +65,13 @@ void sur::Triangle::Line(Vec2 start, Vec2 end, std::vector<Vec2>* line, bool Ren
 		std::swap(start.x, end.x);
 	}
 	if (start.x == end.x) start.x--;
+	else line->push_back(start);
 	position = { start.x, start.y };
 	i32 Dx, Dy;
 	f32 RunsThrough;
 	Dx = end.x - start.x;
 	Dy = end.y - start.y;
 	RunsThrough = (f32)Dy / (f32)Dx;
-	line->push_back(start);
 	if (RunsThrough >= 0) {
 		i32 tempy = start.y;
 		f32 counter = 0.0f;

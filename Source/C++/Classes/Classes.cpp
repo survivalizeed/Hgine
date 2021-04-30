@@ -325,7 +325,7 @@ void sur::Camera::Move(Vec2f direction)
 		restricted::triangles->at(i)->Move(direction, false);
 	}
 	for (i32 i = 0; i < restricted::shapes->size(); i++) {
-		restricted::shapes->at(i)->Move(direction, false);
+		restricted::shapes->at(i)->Move(direction);
 	}
 	for (i32 i = 0; i < restricted::trigger_rectangles->size(); i++) {
 		restricted::trigger_rectangles->at(i)->Move(direction);
@@ -350,7 +350,7 @@ void sur::Rectangle::Bind(bool Render, bool Collider)
 		return (position.x >= _window_size.x || position.y >= _window_size.y ||
 			position.x + size.x < 0 || position.y + size.y < 0) ? true : false;
 	};
-	//if (OutOfScreenCheck()) return;	//needs a fix
+	if (OutOfScreenCheck()) return;	//needs a fix
 	if (Render)
 		for (i32 i = 0; i < size.y; i++)
 			for (i32 j = 0; j < size.x; j++)
@@ -404,13 +404,12 @@ sur::Line::Line(Vec2 start, Vec2 end, Color color, const std::string& name, i32 
 void sur::Line::Bind(bool Render, bool Collider)
 {
 	auto Write = [=](i32 x, i32 y) {
-		sur::Vec2 tmp = matrix.mulitplyWithVector({ (f32)(x - position.x), (f32)(y - position.y) }) + position;
 		if (Render) {
-			_Amap.Render(tmp, color);
+			_Amap.Render({ x,y }, color);
 		}
 		if (Collider) {
-			CollisionPos.push_back(tmp);
-			_Amap.Collider(tmp, id);
+			CollisionPos.push_back({ x,y });
+			_Amap.Collider({ x,y }, id);
 		}
 	};
 	if (Collider) CollisionPos.clear();
@@ -420,7 +419,8 @@ void sur::Line::Bind(bool Render, bool Collider)
 		std::swap(start.y, end.y);
 		std::swap(start.x, end.x);
 	}
-	position = { start.x,start.y };
+	start = matrix.mulitplyWithVector(start);	// Beta
+	end = matrix.mulitplyWithVector(end);	// Beta
 	if (start.x == end.x) {
 		for (i32 i = start.y; i < end.y; ++i) {
 			Write(start.x, i);
@@ -524,6 +524,16 @@ void sur::Shape::Bind(bool Render, bool Collider)
 {
 	for (auto&& it : *lines)
 		it->Bind(Render,Collider);
+}
+
+void sur::Shape::Move(sur::Vec2f direction)
+{
+	Vec2 newdirection = MovQueue(direction);
+	assert(newdirection == Vec2(0, 0) || this->GetName() == "invalid");
+	for (auto&& it : *lines) {
+		it->Start(it->GetStart() + newdirection);
+		it->End(it->GetEnd() + newdirection);
+	}
 }
 //
 //	Input

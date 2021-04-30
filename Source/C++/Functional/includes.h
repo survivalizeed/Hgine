@@ -45,6 +45,7 @@ return rt
 
 #define _milliseconds(x) x
 #define _seconds(x) x * 1000
+#define _minutes(x) x * 60000
 
 using namespace std::this_thread;
 using namespace std::chrono;

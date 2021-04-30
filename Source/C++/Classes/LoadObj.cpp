@@ -121,7 +121,7 @@ void sur::Object::Bind(bool Render, ColliderType collidertype)
 		return c;
 	};
 
-	if (OutOfScreenCheck()) return;
+	if (OutOfScreenCheck()) return; //Needs fix
 
 	CollisionPos.clear();
 

@@ -23,27 +23,31 @@ int main() {
 
 	//sur::Object a(_resource_path + "player.hgineres", { 10,10 }, "pp", 12);
 
-	sur::Triangle a({ 20,20 }, { 100,100 }, { 100,0 }, Color(255, 0, 0), "Tri", 1);
-	sur::Triangle b({ 200,200 }, { 300,200 }, { 200,300 }, Color(255, 0, 0), "Tri", 2);
+	//sur::Triangle a({ 20,20 }, { 100,100 }, { 100,0 }, Color(255, 0, 0), "Tri", 1);
+	//sur::Triangle b({ 200,200 }, { 300,200 }, { 200,300 }, Color(255, 0, 0), "Tri", 2);
 	//sur::Line a({ 20,20 }, { 100,100 }, Color(255, 0, 0), "t", 1);
 	//sur::Line b({ 100,200 }, { 100,100 }, Color(255, 0, 0), "t", 2);
-	b.matrix(1, 3, 0, 1);
+	sur::Shape a(Color(25, 234, 22), "adf", 2);
+	a.Pass(sur::Vec2(10, 10), sur::Vec2(50, 80), sur::Vec2(100, 300), sur::Vec2(30, 100));
+
 	for (;;) {
 		renderer.ClearScreenBuffer();	
-		b.Bind(true, true);
 		a.Bind(true, true);
 		
 		if (_input.keyboard.Key(Keys::W)){
-			a.Move({ 0,1 }, true);
+			a.Move({ 0,1 });
 		}
 		if (_input.keyboard.Key(Keys::A)){
-			a.Move({ -1,0 }, true);
+			a.Move({ -1,0 });
 		}
 		if (_input.keyboard.Key(Keys::S)){
-			a.Move({ 0,-1 }, true);
+			a.Move({ 0,-1 });
 		}
 		if (_input.keyboard.Key(Keys::D)){
-			a.Move({ 1,0 }, true);
+			a.Move({ 1,0 });
+		}
+		if (_input.mouse.RClick()) {
+			a.SetPosition(3, _input.mouse.Position());
 		}
 		renderer.RenderScreenBuffer();
 	}
