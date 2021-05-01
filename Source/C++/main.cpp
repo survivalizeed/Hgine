@@ -22,8 +22,9 @@ int main() {
 	i64 snap = sur::GetMilliseconds();
 
 	sur::Vec3f origin(200, 200, 200);
-
-	std::array<sur::Vec3f, 12> points;
+	
+	//I know the drawing is not really optimized but was too lazy and this works really well ;)
+	std::array<sur::Vec3f, 16> points;
 	points[0] = { 150,150,150 };
 	points[1] = { 250,150,150 };
 	points[2] = { 250,250,150 };
@@ -38,6 +39,10 @@ int main() {
 
 	points[10] = { 150,250,250 };
 	points[11] = { 150,250,150 };
+	points[12] = { 250,250,150 };
+	points[13] = { 250,250,250 };
+	points[14] = { 250,150,250 };
+	points[15] = { 250,150,150 };
 
 	std::vector<sur::Vec3f> ps;
 	for (;;) {
