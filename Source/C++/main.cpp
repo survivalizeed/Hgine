@@ -1,7 +1,6 @@
-// SpaceShooter demo -> paste this into the main
-
 #include "Functional/includes.h"
 #include "Functional/functional.h"
+#include "Functional/TemporaryObjects.h"
 #include "Lua/SurLua.h"
 
 lua_State* Start();
@@ -11,43 +10,55 @@ extern sur::Input _input;
 
 using sur::Instancer::Types;
 
-// The object id always needs to be different because otherwise it will call the 
-// callback of the first object it finds -> include hash algorithm ?
 
 int main() {
 	lua_State* LC = Start();
-
-	sur::Render renderer(Color(100, 107, 47), true,0);
+	sur::Render renderer(Color(50, 50, 50), true,0);
 	renderer.DebugConsole(_debug);
 	renderer.FPS();
 
-	//sur::Object a(_resource_path + "player.hgineres", { 10,10 }, "pp", 12);
+	i32 angle = 0;
 
-	//sur::Triangle a({ 20,20 }, { 100,100 }, { 100,0 }, Color(255, 0, 0), "Tri", 1);
-	//sur::Triangle b({ 200,200 }, { 300,200 }, { 200,300 }, Color(255, 0, 0), "Tri", 2);
-	//sur::Line a({ 20,20 }, { 100,100 }, Color(255, 0, 0), "t", 1);
-	//sur::Line b({ 100,200 }, { 100,100 }, Color(255, 0, 0), "t", 2);
-	sur::Shape a(Color(25, 234, 22), "adf", 2);
-	a.Pass(sur::Vec2(10, 10), sur::Vec2(50, 80), sur::Vec2(100, 300), sur::Vec2(30, 100));
+	i64 snap = sur::GetMilliseconds();
 
+	sur::Vec3f origin(200, 200, 200);
+
+	std::array<sur::Vec3f, 10> points;
+	points[0] = { 150,150,150 };
+	points[1] = { 250,150,150 };
+	points[2] = { 250,250,150 };
+	points[3] = { 150,250,150 };
+	points[4] = { 150,150,150 };
+	
+	points[5] = { 150,150,250 };
+	points[6] = { 250,150,250 };
+	points[7] = { 250,250,250 };
+	points[8] = { 150,250,250 };
+	points[9] = { 150,150,250 };
+
+	points[8] = { 150,250,250 };
+	points[9] = { 150,250,150 };
+
+	std::vector<sur::Vec3f> ps;
 	for (;;) {
 		renderer.ClearScreenBuffer();	
-		a.Bind(true, true);
 		
-		if (_input.keyboard.Key(Keys::W)){
-			a.Move({ 0,1 });
+		for (auto&& iter : points) {			
+			sur::Vec3f tmp(iter);
+			tmp = sur::RotateX(tmp, origin, angle);
+			tmp = sur::RotateY(tmp, origin, angle);
+			tmp = sur::RotateZ(tmp, origin, angle);
+			ps.push_back(tmp);
 		}
-		if (_input.keyboard.Key(Keys::A)){
-			a.Move({ -1,0 });
+
+		for (i32 i = 0; i < ps.size() - 1; ++i) {
+			sur::TMP::Line(ps[i].toVec2(), ps[i + 1].toVec2(), Color(0, 255, 0));
 		}
-		if (_input.keyboard.Key(Keys::S)){
-			a.Move({ 0,-1 });
-		}
-		if (_input.keyboard.Key(Keys::D)){
-			a.Move({ 1,0 });
-		}
-		if (_input.mouse.RClick()) {
-			a.SetPosition(3, _input.mouse.Position());
+		ps.clear();
+
+		if (sur::GetMilliseconds() - snap >= _milliseconds(10)) {
+			angle += 1;
+			snap = sur::GetMilliseconds();
 		}
 		renderer.RenderScreenBuffer();
 	}

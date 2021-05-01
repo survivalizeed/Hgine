@@ -1,6 +1,7 @@
 
 
 #pragma once
+
 #include "includes.h"
 
 extern sur::Map_Analyses _Amap;
