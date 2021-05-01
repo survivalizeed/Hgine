@@ -140,7 +140,9 @@ void sur::Triangle::Fill(LineVector& linevector)
 	hypo = linevector.get(maxv);
 	other = linevector.getother();
 	temp = linevector.getother();
-	
+
+	assert(hypo->size() < 1 || other->size() < 1 || temp->size() < 1);
+
 	if (hypo->at(0).y > hypo->at(hypo->size() - 1).y)
 		std::reverse(hypo->begin(), hypo->end());
 	if (other->at(0).y > other->at(other->size() - 1).y)

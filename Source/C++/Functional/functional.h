@@ -35,6 +35,12 @@ namespace sur {
 	//To wait one second, just store the value of the first call and compare in an if, if it is value + 1000.
 	i64 GetMilliseconds();
 
+	Vec3f RotateX(Vec3f vec, Vec3f origin, i32 angle);
+
+	Vec3f RotateY(Vec3f vec, Vec3f origin, i32 angle);
+
+	Vec3f RotateZ(Vec3f vec, Vec3f origin, i32 angle);
+
 	inline void SetPixel(Vec2 position, Color color, i32 CollisionId = 0, i32 TriggerId = 0) {
 		_Amap.Render(position, color);
 		if (CollisionId != 0)

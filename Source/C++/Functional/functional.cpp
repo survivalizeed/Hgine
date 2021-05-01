@@ -71,5 +71,41 @@ i64 sur::GetMilliseconds()
 	return (i64)duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
 }
 
+sur::Vec3f sur::RotateX(Vec3f vec, Vec3f origin, i32 angle)
+{
+	Vec3f tmpv(origin - vec);
+	Mat3x3 tmpm
+	(
+		1, 0, 0,
+		0, cos(angle * PI / 180), -sin(angle * PI / 180),
+		0, sin(angle * PI / 180), cos(angle * PI / 180)
+	);
+	return tmpm.multiplyWithVector(tmpv) + origin;
+}
+
+sur::Vec3f sur::RotateY(Vec3f vec, Vec3f origin, i32 angle)
+{
+	Vec3f tmpv(origin - vec);
+	Mat3x3 tmpm
+	(
+		cos(angle * PI / 180), 0, sin(angle * PI / 180),
+		0, 1, 0,
+		-sin(angle * PI / 180), 0, cos(angle * PI / 180)
+	);
+	return tmpm.multiplyWithVector(tmpv) + origin;
+}
+
+sur::Vec3f sur::RotateZ(Vec3f vec, Vec3f origin, i32 angle)
+{
+	Vec3f tmpv(origin - vec);
+	Mat3x3 tmpm
+	(
+		cos(angle * PI / 180), -sin(angle * PI / 180), 0,
+		sin(angle * PI / 180), cos(angle * PI / 180), 0,
+		0, 0, 1
+	);
+	return tmpm.multiplyWithVector(tmpv) + origin;
+}
+
 
 

@@ -126,7 +126,7 @@ namespace sur {
 
 
 	struct Mat2x2 {
-		sur::Vec2f v1,v2;
+		Vec2f v1,v2;
 
 		Mat2x2() = default;
 
@@ -169,6 +169,64 @@ namespace sur {
 			return os;
 		}
 	};
+
+	struct Vec3f {
+		f32 x, y, z;
+
+		Vec3f() = default;
+
+		Vec3f(f32 x, f32 y, f32 z) : x(x), y(y), z(z) {}
+
+		Vec3f(const Vec3f& other) : x(other.x), y(other.y), z(other.z){}
+
+		inline Vec2 toVec2() { return{ (i32)x,(i32)y }; }
+
+		inline void operator ()(f32 x, f32 y, f32 z) { this->x = x; this->y = y; this->z = z;}
+		inline Vec3f operator +(const Vec3f& other) { return { x + other.x, y + other.y, z + other.z };}
+		inline Vec3f operator -(const Vec3f& other) { return { x - other.x, y - other.y, z - other.z };}
+		friend std::ostream& operator<<(std::ostream& os, const Vec3f& vector) {
+			os << "X: " << vector.x << " Y: " << vector.y << " Z: " << vector.z;
+			return os;
+		}
+	};
+
+	struct Mat3x3 {
+		Vec3f v1, v2, v3;
+
+		Mat3x3() = default;
+		
+		// { a | b | c }
+		// { d | e | f }
+		// { g | h | i }
+		Mat3x3(f32 a, f32 b, f32 c, f32 d, f32 e, f32 f, f32 g, f32 h, f32 i) : v1(a, d, g), v2(b, e, h), v3(c, f, i) {}
+
+		Mat3x3(const Mat3x3& other) : v1(other.v1), v2(other.v2), v3(other.v3) {}
+
+		// { a | b | c }
+		// { d | e | f }
+		// { g | h | i }
+		inline void operator ()(f32 a, f32 b, f32 c, f32 d, f32 e, f32 f, f32 g, f32 h, f32 i)
+		{
+			v1(a, d, g);
+			v2(b, e, h);
+			v3(c, f, i);
+		}
+
+		inline Vec3f multiplyWithVector(const Vec3f& vec) {
+			f32 xn, yn, zn;
+			xn = v1.x * vec.x + v2.x * vec.y + v3.x * vec.z;
+			yn = v1.y * vec.x + v2.y * vec.y + v3.y * vec.z;
+			zn = v1.z * vec.x + v2.z * vec.y + v3.z * vec.z;
+			return { xn,yn,zn };
+		}
+
+		friend std::ostream& operator<<(std::ostream& os, const Mat3x3& mat) {
+			os << "{ " << mat.v1.x << " " << mat.v2.x << " " << mat.v3.x << " }" << "\n"
+				<< "{ " << mat.v1.y << " " << mat.v2.y << " " << mat.v3.y << " }" << "\n"
+				<< "{ " << mat.v1.z << " " << mat.v2.z << " " << mat.v3.z << " }";
+			return os;
+		}
+	};
 	//
 	// Map pointer for Rendering, Collision and Trigger detection
 	//
@@ -195,7 +253,7 @@ namespace sur {
 		
 		i32 emission, noise_factor;
 		f32 max_distance_to_middle = 0;
-		std::vector<Direction> block_directions;
+		std::vector<Direction> block_directions;  // VS 2019 shows an error here for some reason. Just don't care :)
 		Vec2 emission_point_min, emission_point_max, middle;
 		std::vector<Color> colors;
 		ParticlesSetting() = default;

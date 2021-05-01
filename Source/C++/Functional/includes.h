@@ -26,6 +26,7 @@
 #include <fstream>
 #include <sstream>
 #include <type_traits>
+#include <array>
 
 #define l(x) std::cout << x << "\n"
 

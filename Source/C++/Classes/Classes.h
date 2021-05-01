@@ -115,6 +115,8 @@ namespace sur {
 	private:
 		Color color;
 	public:
+		//Only use this if you want an array
+		Rectangle() = default;
 
 		Rectangle(sur::Vec2 position, sur::Vec2 size, Color color, const std::string& name, i32 id, bool canrotate,
 			const std::vector<int>& ignoreids = {0}, cb_ptr<Master*> callback = nullptr);
@@ -150,6 +152,8 @@ namespace sur {
 		void Load();
 
 	public:
+		//Only use this if you want an array
+		Object() = default;
 
 		Object(const std::string& path, sur::Vec2 position, const std::string& name, i32 id, const std::vector<int>& ignoreids = {0},
 			cb_ptr<Master*> callback = nullptr);
@@ -191,6 +195,8 @@ namespace sur {
 		
 		inline void MoveInject(const Vec2& direction) override { start += direction; end += direction;}
 	public:
+		//Only use this if you want an array
+		Line() = default;
 
 		Line(sur::Vec2 start, sur::Vec2 end, Color color, const std::string& name, i32 id, const std::vector<int>& ignoreids = {0},
 			cb_ptr<Master*> callback = nullptr);
@@ -240,15 +246,23 @@ namespace sur {
 		}
 
 	public:
+		//Only use this if you want an array
+		Triangle() = default;
 
 		Triangle(sur::Vec2 p1, sur::Vec2 p2, sur::Vec2 p3, Color color, const std::string& name, i32 id, 
 			const std::vector<int>& ignoreids = {0}, cb_ptr<Master*> callback = nullptr);
 
 		inline void SetPosition(i32 which, sur::Vec2 pos) {
 			switch (which) {
-			case 0: p1 = pos; return;
-			case 1: p2 = pos; return;
-			case 2: p3 = pos; return;}
+			case 0: 
+				p1 = pos; 
+				return;
+			case 1: 
+				p2 = pos; 
+				return;
+			case 2: 
+				p3 = pos; 
+				return;}
 		}
 
 		void Bind(bool Render, bool Collider);
@@ -281,6 +295,9 @@ namespace sur {
 		}
 		
 	public:
+		//Only use this if you want an array
+		Shape() = default;
+
 		Shape(Color color, const std::string& name, i32 id, const std::vector<int>& ignoreids = {0},
 			cb_ptr<Master*> callback = nullptr);
 
@@ -315,6 +332,9 @@ namespace sur {
 		ParticlesSetting* settings;
 	
 	public:
+		
+		Particles() = default;
+
 		Particles(ParticlesSetting* settings);
 
 		//Moves every particle to the desired position.

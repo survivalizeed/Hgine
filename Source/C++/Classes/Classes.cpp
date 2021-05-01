@@ -14,11 +14,11 @@ extern std::vector<void*> trigger_ptrs;
 //
 //	Master
 //
-sur::Vec2 sur::Master::rot(Vec2 pos, Vec2 origin, i32 Angle)
+sur::Vec2 sur::Master::rot(Vec2 pos, Vec2 origin, i32 angle)
 {
 	sur::Vec2 dist(pos - origin);
-	return 	sur::Vec2((i32)(dist.x * cos(Angle * PI / 180) - dist.y * sin(Angle * PI / 180)),
-		(i32)(dist.x * sin(Angle * PI / 180) + dist.y * cos(Angle * PI / 180))) + origin;
+	return 	sur::Vec2((i32)(dist.x * cos(angle * PI / 180) - dist.y * sin(angle * PI / 180)),
+		(i32)(dist.x * sin(angle * PI / 180) + dist.y * cos(angle * PI / 180))) + origin;
 }
 
 sur::Vec2 sur::Master::MovQueue(Vec2f direction)
