@@ -23,7 +23,7 @@ int main() {
 
 	sur::Vec3f origin(200, 200, 200);
 
-	std::array<sur::Vec3f, 10> points;
+	std::array<sur::Vec3f, 12> points;
 	points[0] = { 150,150,150 };
 	points[1] = { 250,150,150 };
 	points[2] = { 250,250,150 };
@@ -36,8 +36,8 @@ int main() {
 	points[8] = { 150,250,250 };
 	points[9] = { 150,150,250 };
 
-	points[8] = { 150,250,250 };
-	points[9] = { 150,250,150 };
+	points[10] = { 150,250,250 };
+	points[11] = { 150,250,150 };
 
 	std::vector<sur::Vec3f> ps;
 	for (;;) {
