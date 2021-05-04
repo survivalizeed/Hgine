@@ -21,23 +21,51 @@ int main() {
 
 	i64 snap = sur::GetMilliseconds();
 
-	sur::Cuboid cuboid({ 200,200,200 }, { 300,200,200 }, { 300,300,200 }, { 200,300,200 },
-		{ 200,200,300 }, { 300,200,300 }, { 300,300,300 }, { 200,300,300 }, Color(255, 0, 0), { 250,250,250 });
+	sur::Vec3f origin(250, 250, 250);
+
+	std::array<sur::Vec3f, 16> points;
 	
-	sur::Cuboid cuboid2({ 100,100,100 }, { 200,100,100 }, { 200,200,100 }, { 100,200,100 },
-		{ 100,100,200 }, { 200,100,200 }, { 200,200,200 }, { 100,200,200 }, Color(0, 255, 0), { 150,150,150 });
+	//Filling with the points
+	{
+		points[0] = { 200,200,200 };
+		points[1] = { 300,200,200 };
+		points[2] = { 300,300,200 };
+		points[3] = { 200,300,200 };
+		points[4] = { 200,200,200 };
+
+		points[5] = { 200,200,300 };
+		points[6] = { 300,200,300 };
+		points[7] = { 300,300,300 };
+		points[8] = { 200,300,300 };
+		points[9] = { 200,200,300 };
+
+		points[10] = { 200,300,300 };
+		points[11] = { 200,300,200 };
+		points[12] = { 300,300,200 };
+		points[13] = { 300,300,300 };
+		points[14] = { 300,200,300 };
+		points[15] = { 300,200,200 };
+	}
+
+	std::vector<sur::Vec3f> ps;
+
 
 	for (;;) {
-		renderer.ClearScreenBuffer();
-		cuboid.Bind(true, 160);
-		cuboid.Rotate(Dimension::Z, angle);
-		cuboid.Rotate(Dimension::X, angle);
-		cuboid.Rotate(Dimension::Y, angle);
+		renderer.ClearScreenBuffer();	
+		
+		for (auto&& iter : points) {			
+			sur::Vec3f tmp(iter);
+			tmp = sur::RotateX(tmp, origin, angle);
+			tmp = sur::RotateY(tmp, origin, angle);
+			tmp = sur::RotateZ(tmp, origin, angle);
+			ps.push_back(tmp);
+		}
+		for (i32 i = 0; i < ps.size() - 1; ++i) {
+			sur::TMP::Line(ps[i].toVec2(), ps[i + 1].toVec2(), Color(sur::RandomRange(100,200), 
+				sur::RandomRange(100, 200), sur::RandomRange(100, 200)));
+		}
 
-		cuboid2.Bind(true, 160);
-		cuboid2.Rotate(Dimension::Z, angle);
-		cuboid2.Rotate(Dimension::X, angle);
-		cuboid2.Rotate(Dimension::Y, angle);
+		ps.clear();
 
 		if (sur::GetMilliseconds() - snap >= _milliseconds(10)) {
 			angle += 1;

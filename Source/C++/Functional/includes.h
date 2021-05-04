@@ -55,6 +55,7 @@ using namespace std::chrono;
 #include "../Classes/Datatypes.h"
 #include "../Classes/Array.h"
 #include "../Classes/Classes.h"
+#include "../Classes/3D_Objects.h"
 //#include "functional.h" <- included in main so I don't get linker errors
 
 constexpr i32 RO = 0;	//currently useless
