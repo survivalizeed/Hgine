@@ -38,3 +38,4 @@ New collision objects glitch through |DONE|
 if down and left are pressed with new collison, bugs through objects |DONE|
 Matrix for Triangle and Line buggy
 3d perspective z too big bug 
+hgineobj vector to std::array
