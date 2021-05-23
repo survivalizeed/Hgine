@@ -44,6 +44,10 @@ return rt
 
 #define cpar(x) {x;}
 
+//There are no errors in the code but the optimization could make some problems. Just use this if you are in Release mode.
+#define _OPTIMIZATION_PROTECTION if(other->id == 0) return;
+
+
 #define _milliseconds(x) x
 #define _seconds(x) x * 1000
 #define _minutes(x) x * 60000
@@ -52,16 +56,22 @@ using namespace std::this_thread;
 using namespace std::chrono;
 
 
+
+
+
 #include "../Classes/Datatypes.h"
+#include "CrossKnown.h"
 #include "../Classes/Array.h"
 #include "../Classes/Classes.h"
 #include "../Classes/3D_Objects.h"
+#include "../Lua/SurLua.h"
 //#include "functional.h" <- included in main so I don't get linker errors
 
 constexpr i32 RO = 0;	//currently useless
 constexpr i32 CO = 0;	//currently useless
 
 extern sur::Vec2 _window_size;
+extern sur::Vec2 _aspect;
 extern HWND _hwnd;
 extern HWND _consolehwnd;
 extern sur::Maps _map;

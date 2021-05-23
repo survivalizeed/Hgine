@@ -2,33 +2,35 @@
 
 #include "TemporaryObjects.h"
 
-void sur::TMP::Line(Vec2 start, Vec2 end, Color color) {
-	if (start.y > end.y || start.x > end.x) {
-		std::swap(start.y, end.y);
-		std::swap(start.x, end.x);
+void sur::TMP::Line(Vec2f start, Vec2f end, Color color) {
+	Vec2 startINT = ATS(start);
+	Vec2 endINT = ATS(end);
+	if (startINT.y > endINT.y || startINT.x > endINT.x) {
+		std::swap(startINT.y, endINT.y);
+		std::swap(startINT.x, endINT.x);
 	}
-	if (start.x == end.x) {
-		for (i32 i = start.y; i < end.y; ++i) {
-			_Amap.Render(start.x, i, color);
+	if (startINT.x == endINT.x) {
+		for (i32 i = startINT.y; i < endINT.y; ++i) {
+			_Amap.Render(startINT.x, i, color);
 		}
 		return;
 	}
-	if (start.y == end.y) {
-		for (i32 i = start.x; i < end.x; ++i) {
-			_Amap.Render(i, start.y, color);
+	if (startINT.y == endINT.y) {
+		for (i32 i = startINT.x; i < endINT.x; ++i) {
+			_Amap.Render(i, startINT.y, color);
 		}
 		return;
 	}
 	i32 Dx, Dy;
 	f32 RunsThrough;
-	Dx = end.x - start.x;
-	Dy = end.y - start.y;
+	Dx = endINT.x - startINT.x;
+	Dy = endINT.y - startINT.y;
 	RunsThrough = (f32)Dy / (f32)Dx;
 	if (RunsThrough >= 0) {
-		i32 tempy = start.y;
+		i32 tempy = startINT.y;
 		f32 counter = 0.0f;
 		i32 countcounter = 1;
-		for (i32 i = start.x; i <= end.x; i++) {
+		for (i32 i = startINT.x; i <= endINT.x; i++) {
 			_Amap.Render(i, tempy, color);
 			while (counter >= countcounter) {
 				tempy++;
@@ -40,11 +42,11 @@ void sur::TMP::Line(Vec2 start, Vec2 end, Color color) {
 	}
 	else {
 		RunsThrough *= -1;
-		i32 tempy = start.y;
+		i32 tempy = startINT.y;
 		f32 counter = 0.0f;
 		i32 countcounter = 1;
 		bool runned = false;
-		for (i32 i = start.x; i <= end.x; i++) {
+		for (i32 i = startINT.x; i <= endINT.x; i++) {
 			_Amap.Render(i, tempy, color);
 			while (counter >= countcounter) {
 				tempy--;
@@ -57,8 +59,8 @@ void sur::TMP::Line(Vec2 start, Vec2 end, Color color) {
 		if (!runned) {
 			RunsThrough = (f32)Dx / (f32)Dy;
 			RunsThrough *= -1;
-			i32 tempx = start.x;
-			for (i32 i = start.y; i <= end.y; i++) {
+			i32 tempx = startINT.x;
+			for (i32 i = startINT.y; i <= endINT.y; i++) {
 				_Amap.Render(tempx, i, color);
 				while (counter >= countcounter) {
 					tempx--;

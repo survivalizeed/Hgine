@@ -9,6 +9,8 @@ HWND _consolehwnd;
 
 sur::Vec2 _window_size;
 
+sur::Vec2 _aspect(1,1);
+
 sur::Maps _map;
 
 sur::Map_Analyses _Amap;

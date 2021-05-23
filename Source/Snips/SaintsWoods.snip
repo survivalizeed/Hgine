@@ -1,0 +1,82 @@
+#include "Functional/includes.h"
+#include "Functional/functional.h"
+#include "Functional/TemporaryObjects.h"
+
+extern lua_State* Start();
+extern sur::Map_Analyses _Amap;
+extern sur::Input _input;
+using sur::Instancer::Types;
+
+void Scroll(sur::Object& obj) {
+	sur::XYC buffer = obj.GetBuf();
+	auto Set = [=](sur::Vec2 pos, Color col) {
+		if (pos.x > _window_size.x) pos.x -= _window_size.x;
+		else if (pos.x < 0) pos.x += _window_size.x;
+		_map.RenderMap[pos.x + _window_size.x * pos.y] = col;
+	};
+	for (i32 i = 0; i < buffer.X->size(); ++i) {
+		Set(sur::Vec2(buffer.X->at(i), buffer.Y->at(i)) + ATS(obj.GetPosition()), buffer.C->at(i));
+	}
+}
+
+void Gravity(sur::Object& obj, f32* m) {
+	*m += 0.03f * (*m / 2.5f);
+	if (*m >= 5) *m = 5;
+	obj.Move({ 0,-(*m) }, true);
+}
+
+int main() {
+	lua_State* LC = Start();
+	sur::Render renderer(Color(0, 0, 0), false, 0);
+	renderer.DebugConsole(_debug);
+	renderer.FPS();
+	
+	static f32 grav = 1.1f;
+
+	sur::Object background(_resource_path + "background.hgineres", { -5,-5 }, "background", 0);
+	sur::Object dirt(_resource_path + "grass_platform.hgineres", { -2.1,-1 }, "platform1", 1, { 0 });
+	sur::Object dirt2(_resource_path + "grass_platform_fly.hgineres", { 0,-2 }, "platform2", 1, { 0 });
+
+	sur::Object player(_resource_path + "player.hgineres", { 0,0 }, "player", 2, { 0 }, 
+		[](sur::Master* current, sur::Master* other) {
+			_OPTIMIZATION_PROTECTION
+				grav = 1.1f;
+		}
+	);
+
+	sur::Line line({ -5,-5 }, { 5,-5 }, Color(255, 0, 0), "line", 3);
+
+	for (;;) {
+		renderer.ClearScreenBuffer();
+		{
+			Scroll(background);
+			dirt.Bind(true, ColliderType::Outline);
+			dirt2.Bind(true, ColliderType::Outline);
+			player.Bind(true, ColliderType::Outline);
+			line.Bind(false, true);
+		}
+		Gravity(player,&grav);
+		{
+			if (_input.keyboard.Key(Keys::W)) {
+				player.Move({ 0,1 }, true);
+			}
+			if (_input.keyboard.Key(Keys::A)) {
+				player.Move({ -1,0 }, true);
+			}
+			if (_input.keyboard.Key(Keys::S)) {
+				player.Move({ 0,-1 }, true);
+			}	
+			if (_input.keyboard.Key(Keys::D)) {
+				player.Move({ 1,0 }, true);
+			}
+			if (_input.keyboard.KeyDown(Keys::D)) {
+				player.FlipX(false);
+			}
+			if (_input.keyboard.KeyDown(Keys::A)) {
+				player.FlipX(true);
+			}	
+		}
+		renderer.RenderScreenBuffer();
+	}
+}
+

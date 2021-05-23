@@ -60,3 +60,41 @@
 		if (_input.keyboard.Key(Keys::S)) {
 			sur::Camera::Move({ 0, 1 });
 		}	
+
+
+
+
+
+
+
+		cuboid.Bind(true, 160);
+		cuboid.Rotate(Dimension::Z, angle);
+		cuboid.Rotate(Dimension::X, angle);
+		cuboid.Rotate(Dimension::Y, angle);
+		_Amap.Render(cuboid.origin.toVec2(), Color(255, 255, 255));
+
+		if (sur::GetMilliseconds() - snap >= _milliseconds(10)) {
+			if (_input.keyboard.Key(Keys::Q)) {
+				cuboid.Move({ 0,0,1 });
+			}
+			if (_input.keyboard.Key(Keys::E)) {
+				cuboid.Move({ 0,0,-1 });
+			}
+			if (_input.keyboard.Key(Keys::W)) {
+				cuboid.Move({ 0,1,0 });
+			}
+			if (_input.keyboard.Key(Keys::S)) {
+				cuboid.Move({ 0,-1,0 });
+			}
+			if (_input.keyboard.Key(Keys::A)) {	
+				cuboid.Move({ -1,0,0 });
+			}
+			if (_input.keyboard.Key(Keys::D)) {
+				cuboid.Move({ 1,0,0 });
+			}
+			if (_input.keyboard.Key(Keys::J)) {
+				cuboid.Rotate(Dimension::Z, ++angle);
+			}
+			//angle += 1;
+			snap = sur::GetMilliseconds();
+		}

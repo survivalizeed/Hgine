@@ -22,16 +22,12 @@ namespace sur {
 	void Sound(const char* path, u32 params, i32 volume);
 
 	//Not thaaaat fast :)
-	inline i32 RandomRange(i32 min, i32 max) {
-		static bool once = false;
-		if (!once) { srand((u32)time(0)); once = true; }
-		return (min >= 0) ? rand() % (max - min + 1) + min : rand() % (max + min + 1) - min;
-	}
+	i32 RandomRange(i32 min, i32 max);
 
 	//Cast the object to a (sur::Master*). Make sure it inheritates from the Master class
 	void MoveTowards(Master* const current, Master* const target, f32 speed, const Axis& axis, bool detect);
 
-	Vec2f Direction(Vec2 first, Vec2 second);
+	Vec2f Direction(Vec2f first, Vec2f second);
 
 	//To wait one second, just store the value of the first call and compare in an if, if it is value + 1000.
 	i64 GetMilliseconds();
@@ -42,13 +38,7 @@ namespace sur {
 
 	Vec3f RotateZ(Vec3f vec, Vec3f origin, i32 angle);
 
-	inline void SetPixel(Vec2 position, Color color, i32 CollisionId = 0, i32 TriggerId = 0) {
-		_Amap.Render(position, color);
-		if (CollisionId != 0)
-			_Amap.Collider(position, CollisionId);
-		if(CollisionId != 0)
-			_Amap.Trigger(position, TriggerId);
-	}
+	void SetPixel(Vec2f position, Color color, i32 CollisionId = 0, i32 TriggerId = 0);
 
 	template<Axis axis>
 	auto Distance(const Master* const a, const Master* const b) {
@@ -60,7 +50,7 @@ namespace sur {
 			return abs(a->GetPosition().y - b->GetPosition().y);
 		} 
 		if constexpr (axis == Axis::Both) {
-			return Vec2(a->GetPosition() - b->GetPosition()).absolute();
+			return Vec2f(a->GetPosition() - b->GetPosition()).absolute();
 		}
 	}
 

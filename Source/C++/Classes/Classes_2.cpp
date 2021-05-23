@@ -11,7 +11,7 @@ extern sur::Map_Analyses _Amap;
 //
 //	Trigger: Rectangle
 //
-sur::Triggers::Rectangle::Rectangle(Vec2 position, Vec2 size, const std::string& name, i32 id, const std::vector<int>& ignoreids,
+sur::Triggers::Rectangle::Rectangle(Vec2f position, Vec2f size, const std::string& name, i32 id, const std::vector<int>& ignoreids,
 	cb_ptr<Master*> callback)
 	: Master(name, id, position, size, callback)
 {

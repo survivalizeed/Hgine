@@ -33,8 +33,9 @@ exit(-1)
 #define _LUA_FUNC_(name) int _LUA_CALL_ name(lua_State* L){
 #define _LUA_END_(ret) return ret;}
 
-namespace lua {
-	lua_State* LoadFile(const std::string& Data) {
+
+struct lua {
+	static lua_State* LoadFile(const std::string& Data) {
 		lua_State* L = luaL_newstate();
 		luaL_openlibs(L);
 		if (luaL_dofile(L, Data.c_str()) != LUA_OK) {
@@ -42,7 +43,7 @@ namespace lua {
 		}
 		return L;
 	}
-	auto GetBasicTable(lua_State* L, const char* name, const std::vector<std::string>& list) {
+	static auto GetBasicTable(lua_State* L, const char* name, const std::vector<std::string>& list) {
 		std::vector<std::string> vec;
 		enum class type {
 			number, string
@@ -72,12 +73,12 @@ namespace lua {
 					vec.push_back(lua_tostring(L, -1));
 					lua_pop(L, 1);
 				}
-			}		
+			}
 		}
 		return vec;
 	}
 
-	std::string CallFunction(lua_State* L, const char* Name, const std::vector<std::string>& params = { "" }) {
+	static std::string CallFunction(lua_State* L, const char* Name, const std::vector<std::string>& params = { "" }) {
 		lua_getglobal(L, Name);
 		if (lua_isfunction(L, -1)) {
 			for (auto val : params)
@@ -88,7 +89,7 @@ namespace lua {
 		return "nil";
 	}
 
-	std::string LuaCallFunctionVoid(lua_State* L, const char* Name) {
+	static std::string LuaCallFunctionVoid(lua_State* L, const char* Name) {
 		lua_getglobal(L, Name);
 		if (lua_isfunction(L, -1)) {
 			lua_pcall(L, 0, 1, 0);
@@ -96,14 +97,14 @@ namespace lua {
 		}
 	}
 
-	void LuaCallVoidFunctionVoid(lua_State* L, const char* Name) {
+	static void LuaCallVoidFunctionVoid(lua_State* L, const char* Name) {
 		lua_getglobal(L, Name);
 		if (lua_isfunction(L, -1)) {
 			lua_pcall(L, 0, 0, 0);
 		}
 	}
 
-	std::string CallTableFunction(lua_State* L, const char* TName, const char* FName, const std::vector<std::string> params = { "" }) {
+	static std::string CallTableFunction(lua_State* L, const char* TName, const char* FName, const std::vector<std::string> params = { "" }) {
 		lua_getglobal(L, TName);
 		if (lua_istable(L, -1)) {
 			lua_pushstring(L, FName);
@@ -118,7 +119,7 @@ namespace lua {
 		return "nil";
 	}
 
-	std::string GetTableContent(lua_State* L, const char* TName, const char* Name) {
+	static std::string GetTableContent(lua_State* L, const char* TName, const char* Name) {
 		lua_getglobal(L, TName);
 		if (lua_istable(L, -1)) {
 			lua_pushstring(L, Name);
@@ -130,11 +131,11 @@ namespace lua {
 		return "nil";
 	}
 
-	std::string GetContent(lua_State* L, const char* Name) {
+	static std::string GetContent(lua_State* L, const char* Name) {
 		lua_getglobal(L, Name);
 		if (lua_isstring(L, -1) || lua_isnumber(L, -1) || lua_isboolean(L, -1)) {
 			return lua_tostring(L, -1);
 		}
 		return "nil";
 	}
-}
+};

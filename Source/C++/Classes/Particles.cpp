@@ -8,14 +8,14 @@ extern sur::Map_Analyses _Amap;
 sur::Particles::Particles(sur::ParticlesSetting* settings) 
 	: settings(settings)
 {
-	position = settings->emission_point_min;
+	position = ATS(settings->emission_point_min);
+	Vec2 tmp_emi_poi_max = ATS(settings->emission_point_max);
+	settings->middle(i32(position.x + 0.5f * (tmp_emi_poi_max.x - position.x)),
+		i32(position.y + 0.5f * (tmp_emi_poi_max.y - position.y)));
 	for (i32 i = 0; i < settings->emission; ++i) {
 		// Calculating every position - the min position. So the minimal is always (0,0).
-		Vec2 position(sur::RandomRange(settings->emission_point_min.x - settings->emission_point_min.x,
-			settings->emission_point_max.x - settings->emission_point_min.x),
-			sur::RandomRange(settings->emission_point_min.y - settings->emission_point_min.y,
-				settings->emission_point_max.y - settings->emission_point_min.y));
-
+		Vec2 position(sur::RandomRange(position.x - position.x, tmp_emi_poi_max.x - position.x),
+			sur::RandomRange(position.y - position.y, tmp_emi_poi_max.y - position.y));
 		Color color = settings->colors.at(sur::RandomRange(0, (i32)settings->colors.size() - 1));
 		Coords->push_back({ position,color });
 		Offsets->push_back({ 0,0 }); // To allocate the memory we will need later
@@ -47,10 +47,10 @@ void sur::Particles::Bind(bool Render)
 }
 
 
-void sur::Particles::MoveTowards(sur::Vec2 position, f32 speed)
+void sur::Particles::MoveTowards(Vec2f position, f32 speed)
 {
 	i32 supportedThreads = std::thread::hardware_concurrency() == 0 ? 2 : std::thread::hardware_concurrency();
-	const i32 minDataPerThread = 1000;
+	constexpr i32 minDataPerThread = 1000;
 	i32 maxAmountOfThread = ((i32)Offsets->size() + minDataPerThread - 1) / minDataPerThread;
 	i32 amountOfThreads = supportedThreads > maxAmountOfThread ? maxAmountOfThread : supportedThreads;
 
@@ -59,11 +59,9 @@ void sur::Particles::MoveTowards(sur::Vec2 position, f32 speed)
 	std::vector<std::thread> threads(amountOfThreads - 1); // - 1, because main thread will be used too
 
 	auto calculate = [&](i32 start, i32 end) {
-		bool toggle = false;
 		for (i32 i = start; i < end; ++i) { 
-			Vec2f dir(sur::Direction(position, Coords->at(i).pos + this->GetPosition() + Offsets->at(i)));	
-			Vec2 move = Coords->at(i).MovQueue(dir * (f32)sur::RandomRange((i32)speed / 2, (i32)speed));
-			toggle = true;
+			Vec2f dir(sur::Direction(ATS(position), Coords->at(i).pos + ATS(this->GetPosition()) + Offsets->at(i)));	
+			Vec2 move = Coords->at(i).MovQueue(dir * (f32)sur::RandomRange((i32)ceil(speed / 2), (i32)speed));
 			if (move.x == 0 && move.y == 0) continue;
 			Offsets->at(i) = Offsets->at(i) + move;
 		}

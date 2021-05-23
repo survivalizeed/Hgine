@@ -156,13 +156,13 @@ void sur::Master::Move(sur::Vec2f direction, bool detect) {
 	Vec2 newdirection = MovQueue(direction);
 	assert(newdirection == Vec2(0, 0) || this->GetName() == "invalid");
 
-	if (!detect) { position += newdirection; return; }
+	if (!detect) { MoveInject(newdirection); return; }
 
 	bool dirXpos = (newdirection.x >= 0) ? true : false;
 
 	bool dirYpos = (newdirection.y >= 0) ? true : false;
 
-	i32 contentX = 0, contentY = 0;
+	volatile i32 contentX = 0, contentY = 0;
 
 	if (dirXpos) {	
 		for (i32 c = 1; c <= newdirection.x; ++c) {
@@ -226,7 +226,7 @@ void sur::Master::Move(sur::Vec2f direction, bool detect) {
 	}
 
 	{
-		i32 iX = 0, iY = 0;
+		volatile i32 iX = 0, iY = 0;
 		for (i32 i = 0; i < identitys.size(); ++i) {
 			if (contentX == identitys[i]) {
 				iX = i;
@@ -237,7 +237,7 @@ void sur::Master::Move(sur::Vec2f direction, bool detect) {
 				iY = i;
 			}
 		}
-		if (iX != 0 && contentX != this->id) {
+		if (iX != 0 && contentX != this->id) {		
 			if (callback != nullptr)
 				callback(this, (Master*)ptrs[iX]);
 			if (static_cast<Master*>(ptrs[iX])->callback != nullptr)
@@ -334,7 +334,7 @@ void sur::Camera::Move(Vec2f direction)
 //
 //	Rectangle
 //
-sur::Rectangle::Rectangle(Vec2 position, Vec2 size, Color color, const std::string& name, i32 id, bool canrotate,
+sur::Rectangle::Rectangle(Vec2f position, Vec2f size, Color color, const std::string& name, i32 id, bool canrotate,
 	const std::vector<int>& ignoreids, cb_ptr<Master*> callback)
 	:color(color), Master(name,id, position, size, callback)
 {
@@ -352,32 +352,40 @@ void sur::Rectangle::Bind(bool Render, bool Collider)
 	};
 	if (OutOfScreenCheck()) return;	//needs a fix
 	if (Render)
-		for (i32 i = 0; i < size.y; i++)
-			for (i32 j = 0; j < size.x; j++)
-				_Amap.Render(matrix.mulitplyWithVector(Vec2(j, i )) + position, color);
+		for (i32 i = 0; i < size.y - position.y; i++)
+			for (i32 j = 0; j < size.x - position.x; j++)
+				_Amap.Render(matrix.multiplyWithVector(Vec2(j, i )) + position, color);
 	if (!Collider) return;
 	CollisionPos.clear();
-	for (i32 i = 0; i < size.x; i++) {
+	for (i32 i = 0; i < size.x - position.x; i++) {
 		{
-			sur::Vec2 tmp(matrix.mulitplyWithVector(Vec2(i, 0 )) + position);
+			sur::Vec2 tmp(matrix.multiplyWithVector(Vec2(i, 0 )) + position);
 			CollisionPos.push_back(tmp);
+			if (_debug)
+				_Amap.Render(tmp, Color(255, 0, 0));
 			_Amap.Collider(tmp, id);
 		}
 		{
-			sur::Vec2 tmp(matrix.mulitplyWithVector(Vec2(i, size.y )) + position);
+			sur::Vec2 tmp(matrix.multiplyWithVector(Vec2(i, size.y - position.y )) + position);
 			CollisionPos.push_back(tmp);
+			if(_debug)
+				_Amap.Render(tmp, Color(255,0,0));
 			_Amap.Collider(tmp, id);
 		}
 	}
-	for (i32 i = 0; i < size.y; i++) {
+	for (i32 i = 0; i < size.y - position.y; i++) {
 		{
-			sur::Vec2 tmp(matrix.mulitplyWithVector(Vec2(0, i )) + position);
+			sur::Vec2 tmp(matrix.multiplyWithVector(Vec2(0, i )) + position);
 			CollisionPos.push_back(tmp);
+			if (_debug)
+				_Amap.Render(tmp, Color(255, 0, 0));
 			_Amap.Collider(tmp, id);
 		}
 		{
-			sur::Vec2 tmp(matrix.mulitplyWithVector(Vec2(size.x, i )) + position);
+			sur::Vec2 tmp(matrix.multiplyWithVector(Vec2(size.x - position.x, i )) + position);
 			CollisionPos.push_back(tmp);
+			if (_debug)
+				_Amap.Render(tmp, Color(255, 0, 0));
 			_Amap.Collider(tmp, id);
 		}
 	}
@@ -391,9 +399,9 @@ void sur::Rectangle::Rotate(sur::Vec2 origin, i32 Angle)
 //
 //	Line
 //
-sur::Line::Line(Vec2 start, Vec2 end, Color color, const std::string& name, i32 id, const std::vector<int>& ignoreids,
+sur::Line::Line(Vec2f start, Vec2f end, Color color, const std::string& name, i32 id, const std::vector<int>& ignoreids,
 	cb_ptr<Master*> callback)
-	: start(start), end(end), color(color), Master(name, id, callback)
+	: start(ATS(start)), end(ATS(end)), color(color), Master(name, id, callback)
 {
 	ignore = ignoreids;
 	type = Type::Line;
@@ -419,8 +427,8 @@ void sur::Line::Bind(bool Render, bool Collider)
 		std::swap(start.y, end.y);
 		std::swap(start.x, end.x);
 	}
-	start = matrix.mulitplyWithVector(start);	// Beta
-	end = matrix.mulitplyWithVector(end);	// Beta
+	start = matrix.multiplyWithVector(start);	// Beta
+	end = matrix.multiplyWithVector(end);	// Beta
 	if (start.x == end.x) {
 		for (i32 i = start.y; i < end.y; ++i) {
 			Write(start.x, i);
@@ -505,19 +513,19 @@ void sur::Shape::Gen()
 	}
 }
 
-void sur::Shape::SetPosition(i32 index, sur::Vec2 position) {
+void sur::Shape::SetPosition(i32 index, Vec2f position) {
 	++index;
 	assert(index > lines->size() + 1 || index < 1);
 	if (index == 1) {
-		lines->at(index - 1)->Start(position);
+		lines->at(index - 1)->Start(ATS(position));
 		return;
 	}
 	if (index == lines->size() + 1) {
-		lines->at(index - 2)->End(position);
+		lines->at(index - 2)->End(ATS(position));
 		return;
 	}
-	lines->at(index - 1)->Start(position);
-	lines->at(index - 2)->End(position);
+	lines->at(index - 1)->Start(ATS(position));
+	lines->at(index - 2)->End(ATS(position));
 }
 
 void sur::Shape::Bind(bool Render, bool Collider)
@@ -540,7 +548,7 @@ void sur::Shape::Move(sur::Vec2f direction)
 //
 
 //	Mouse
-sur::Vec2 sur::Input::Mouse::Position() const
+sur::Vec2f sur::Input::Mouse::Position() const
 {
 	POINT point;
 	GetCursorPos(&point);
@@ -548,9 +556,9 @@ sur::Vec2 sur::Input::Mouse::Position() const
 	if (point.x < 0 || point.y < 0)
 		return { 0,0 };
 	if (point.x > _window_size.x - 1 || point.y > _window_size.y - 1)
-		return { _window_size.x - 1, _window_size.y - 1};
+		return STA(Vec2(_window_size.x - 1, _window_size.y - 1));
 	point.y = _window_size.y - point.y;
-	return{ point.x, point.y };
+	return STA(Vec2(point.x, point.y));
 }
 
 bool sur::Input::Mouse::LClick() const
@@ -575,17 +583,28 @@ bool sur::Input::Keyboard::Key(Keys::Keys key) const
 	return false;
 }
 
+
 bool sur::Input::Keyboard::KeyDown(Keys::Keys key) 
 {	
+	bool space = false;
+	if (key == Keys::Keys::SPACE)
+		space = true;
 	if (GetAsyncKeyState(key)) {
-		if (pressed != key) {
-			pressed = key;
+		if (space && pressed[26] != key) {
+			pressed[26] = key;
+			return true;
+		}
+		else if (pressed[(i32)key - 65] != key) {		//Some ASCII calculations
+			pressed[(i32)key - 65] = key;
 			return true;
 		}
 		return false;
 	}
 	else {
-		pressed = Keys::Keys::None;
+		if (space)
+			pressed[26] = Keys::Keys::None;
+		else
+			pressed[(i32)key - 65] = Keys::Keys::None;
 		return false;
 	}
 }

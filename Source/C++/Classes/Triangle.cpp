@@ -190,9 +190,9 @@ void sur::Triangle::Fill(LineVector& linevector)
 }
 
 
-sur::Triangle::Triangle(Vec2 p1, Vec2 p2, Vec2 p3, Color color, const std::string& name, i32 id, const std::vector<int>& ignoreids,
+sur::Triangle::Triangle(Vec2f p1, Vec2f p2, Vec2f p3, Color color, const std::string& name, i32 id, const std::vector<int>& ignoreids,
 	cb_ptr<Master*> callback)
-	: p1(p1), p2(p2), p3(p3), color(color), Master(name, id, callback) 
+	: p1(ATS(p1)), p2(ATS(p2)), p3(ATS(p3)), color(color), Master(name, id, callback) 
 {
 	ignore = ignoreids;
 	type = Type::Triangle;

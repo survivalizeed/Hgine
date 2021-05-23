@@ -17,13 +17,13 @@ typedef unsigned long int u64;
 typedef float f32;
 typedef double f64;
 
-typedef unsigned int Color;
+typedef u32 Color;
 
-typedef const int size;
+typedef const i32 size;
 
-constexpr int Second = 1000;
-constexpr int Minute = 60000;
-constexpr f32 PI = 3.1415926f;
+constexpr i32 Second = 1000;
+constexpr i32 Minute = 60000;
+constexpr f32 PI = 3.141f;
 
 
 // Colliders
@@ -53,8 +53,8 @@ namespace sur {
 	//
 
 	struct Vec2f {
+		
 		f32 x, y;
-
 
 		Vec2f() = default;
 
@@ -72,7 +72,11 @@ namespace sur {
 
 		inline Vec2f operator +(const Vec2f& other) const { return { x + other.x, y + other.y }; }
 		inline Vec2f operator -(const Vec2f& other) const { return { x - other.x, y - other.y }; }
-		inline Vec2f operator *(f32 value) const { return{ x * value, y * value }; }
+
+		inline Vec2f operator +(f32 value) const { return { x + value, y + value }; }
+		inline Vec2f operator -(f32 value) const { return { x - value, y - value }; }
+		inline Vec2f operator *(f32 value) const { return { x * value, y * value }; }
+		inline Vec2f operator /(f32 value) const { return { x / value, y / value }; }
 
 		friend std::ostream& operator<<(std::ostream& os, const Vec2f& vector2d) {
 			os << "X: " << vector2d.x << " Y: " << vector2d.y;
@@ -100,13 +104,13 @@ namespace sur {
 	
 		inline Vec2 operator +(const Vec2& other) const { return { x + other.x, y + other.y }; }
 		inline Vec2 operator -(const Vec2& other) const { return { x - other.x, y - other.y }; }
-		inline int operator *(const Vec2& other) const { return x * other.x + y * other.y; }
+		inline i32 operator *(const Vec2& other) const { return x * other.x + y * other.y; }
 		inline Vec2 operator /(const Vec2& other) const { return { x / other.x, y / other.y }; }		
 		
-		inline Vec2 operator +(int value) const { return { x + value, y + value }; }
-		inline Vec2 operator -(int value) const { return { x - value, y - value }; }
-		inline Vec2 operator *(int value) const { return { x * value, y * value }; }
-		inline Vec2 operator /(int value) const { return { x / value, y / value }; }
+		inline Vec2 operator +(i32 value) const { return { x + value, y + value }; }
+		inline Vec2 operator -(i32 value) const { return { x - value, y - value }; }
+		inline Vec2 operator *(i32 value) const { return { x * value, y * value }; }
+		inline Vec2 operator /(i32 value) const { return { x / value, y / value }; }
 		
 		inline Vec2 operator +=(const Vec2& other) { return { x += other.x, y += other.y }; }
 		inline Vec2 operator -=(const Vec2& other) { return { x -= other.x, y -= other.y }; }
@@ -145,13 +149,13 @@ namespace sur {
 		}
 
 
-		inline Vec2 mulitplyWithVector(const Vec2f& other) {
+		inline Vec2 multiplyWithVector(const Vec2f& other) {
 			return { (i32)(v1.x * other.x + v2.x * other.y),(i32)(v1.y * other.x + v2.y * other.y)};
 		}
 
 		inline void multiplyWithMatrix(const Mat2x2& other) {
-			sur::Vec2f tmp1 = mulitplyWithVector({ other.v1.x,other.v1.y });
-			sur::Vec2f tmp2 = mulitplyWithVector({ other.v2.x, other.v2.y });
+			sur::Vec2f tmp1 = multiplyWithVector({ other.v1.x,other.v1.y });
+			sur::Vec2f tmp2 = multiplyWithVector({ other.v2.x, other.v2.y });
 			v1 = tmp1; v2 = tmp2;
 		}
 
@@ -184,6 +188,8 @@ namespace sur {
 		Vec3f(const Vec3f& other) : x(other.x), y(other.y), z(other.z){}
 
 		inline Vec2 toVec2() { return{ (i32)x,(i32)y }; }
+
+		inline Vec2f toVec2f() { return{ (f32)x,(f32)y }; }
 
 		inline void operator ()(f32 x, f32 y, f32 z) { this->x = x; this->y = y; this->z = z;}
 		inline Vec3f operator +(const Vec3f& other) { return { x + other.x, y + other.y, z + other.z };}
@@ -231,6 +237,7 @@ namespace sur {
 			return os;
 		}
 	};
+
 	//
 	// Map pointer for Rendering, Collision and Trigger detection
 	//
@@ -253,28 +260,37 @@ namespace sur {
 		inline bool operator ==(const sRGB& other) { return (r == other.r && g == other.g && b == other.b) ? true : false; }
 	};
 
-	struct ParticlesSetting {
-		
+	struct XYC {
+		std::vector<i32>* X = nullptr;
+		std::vector<i32>* Y = nullptr;
+		std::vector<Color>* C = nullptr;
+	};
+
+	struct ParticlesSetting {	
 		i32 emission, noise_factor;
 		f32 max_distance_to_middle = 0;
 		std::vector<Direction> block_directions;  // VS 2019 shows an error here for some reason. Just don't care :)
-		Vec2 emission_point_min, emission_point_max, middle;
+		Vec2 middle;
+		Vec2f emission_point_min, emission_point_max;
 		std::vector<Color> colors;
-		ParticlesSetting() = default;
 
-		//Update to take max and min if their time of usage has come
-		ParticlesSetting(Vec2 emission_point_min, Vec2 emission_point_max, i32 emission, i32 noise_factor)
+		ParticlesSetting() = default;
+	
+		ParticlesSetting(Vec2f emission_point_min, Vec2f emission_point_max, i32 emission, i32 noise_factor, 
+			f32 max_distance_to_middle = 0.f, const std::vector<Color>& colors = {})
 			: emission_point_max(emission_point_max), emission_point_min(emission_point_min),
-			  emission(emission), noise_factor(noise_factor){}
+			  emission(emission), noise_factor(noise_factor), max_distance_to_middle(max_distance_to_middle), colors(colors){}
 	};
 }
+
+
 //
 // enum
 //
 
 // Input
 namespace Keys {
-	enum Keys : u32 {	//	<- No enum class because otherwise GetAsyncKeyState would't be able to read the key
+	enum Keys : u32 {	//	<- No enum class because otherwise GetAsyncKeyState wouldn't be able to read the key
 		None = 0,
 		A = 0x41, B = 0x42, C = 0x43, D = 0x44, E = 0x45, F = 0x46, G = 0x47, H = 0x48, I = 0x49, J = 0x4A,
 		K = 0x4B, L = 0x4C, M = 0x4D, N = 0x4E, O = 0x4F, P = 0x50, Q = 0x51, R = 0x52, S = 0x53, T = 0x54,
@@ -287,7 +303,7 @@ template <typename CallBackType>
 using cb_ptr = void(*)(CallBackType,CallBackType);
 
 template <typename T>
-inline constexpr bool is_Vec2 = std::_Is_any_of_v<std::remove_cv_t<T>, sur::Vec2>;
+inline constexpr bool is_Vec2 = std::_Is_any_of_v<std::remove_cv_t<T>, sur::Vec2f>;
 
 template <typename T>
 concept VEC = is_Vec2<T>;	// Made with a concept because the variadic functionality is only availabe in templates 

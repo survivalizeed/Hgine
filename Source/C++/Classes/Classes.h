@@ -10,7 +10,7 @@ extern HWND _hwnd;
 namespace sur {
 	//
 	//	Classes
-	//
+	//	 
 	//
 	//	Master: Defines the standard attributes of an object
 	// Classes.cpp
@@ -26,23 +26,23 @@ namespace sur {
 		std::string name;
 		Vec2 position;
 		Vec2 size;
-
 		
 		std::vector<sur::Vec2> CollisionPos;
 
 		Master(const std::string& name, i32 id, cb_ptr<Master*> callback = nullptr)
 			: name(name), id(id), callback(callback) {}		//Line, Triangle
 
-		Master(const std::string& name, i32 id, Vec2 position, cb_ptr<Master*> callback = nullptr)
-			: name(name), id(id), position(position), callback(callback) {}		//OBJ
+		Master(const std::string& name, i32 id, Vec2f position, cb_ptr<Master*> callback = nullptr)
+			: name(name), id(id), position(ATS(position)), callback(callback) {}		//OBJ
 
-		Master(const std::string& name, i32 id, Vec2 position, Vec2 size, cb_ptr<Master*> callback = nullptr)
-			: name(name), id(id), position(position), size(size), callback(callback) {}		//Rectangle
+		Master(const std::string& name, i32 id, Vec2f position, Vec2f size, cb_ptr<Master*> callback = nullptr)
+			: name(name), id(id), position(ATS(position)), size(ATS(size)), callback(callback) {}		//Rectangle
 
 		Vec2 rot(Vec2 pos, Vec2 origin, i32 Angle);	// The actual rotation math
 
 		virtual inline void MoveInject(const Vec2& direction) { position += direction; }
 	public:
+		//Only used by the engine itself. Never use this!
 		Vec2 MovQueue(Vec2f direction);	// Handles floats and does nothing until a floating number becomes an integer
 
 		Mat2x2 matrix = { 1, 0, 0,1 };	//standard so it won't modify anything
@@ -66,17 +66,17 @@ namespace sur {
 
 		inline const std::string& GetName() const { return name; }
 
-		virtual inline sur::Vec2 GetPosition() const { return position; }
+		virtual inline Vec2f GetPosition() const { return STA(position); }
 
-		virtual inline sur::Vec2 GetSize() const { return size; }
+		virtual inline Vec2f GetSize() const { return STA(size + position); }
 
-		virtual inline void SetPosition(sur::Vec2 position) { this->position = position; }
+		virtual inline void SetPosition(Vec2f position) { this->position = ATS(position); }
 
-		inline sur::Vec2 GetOrigin() const { return GetPosition() + GetSize() / 2; }
+		inline Vec2f GetOrigin() const { return GetPosition() + (GetSize() / 2); }
 
 		inline bool State() const { return active; }
 
-		virtual void Move(sur::Vec2f direction, bool detect);
+		virtual void Move(Vec2f direction, bool detect);
 	};
 	//
 	//	Render class
@@ -114,67 +114,70 @@ namespace sur {
 	class Rectangle : public Master {
 	private:
 		Color color;
+
+		inline void MoveInject(const Vec2& direction) override { position += direction; size += direction; }
 	public:
 		//Only use this if you want an array
 		Rectangle() = default;
 
-		Rectangle(sur::Vec2 position, sur::Vec2 size, Color color, const std::string& name, i32 id, bool canrotate,
+		Rectangle(Vec2f position, Vec2f size, Color color, const std::string& name, i32 id, bool canrotate,
 			const std::vector<int>& ignoreids = {0}, cb_ptr<Master*> callback = nullptr);
 
 		void Bind(bool Render, bool Collider);
 
-		void Rotate(sur::Vec2 origin, i32 Angle);
+		void Rotate(Vec2 origin, i32 Angle);
 	};
 	//
 	//	Load objects that were created with the Hgineres editor
 	// LoadObj.cpp
 	class Object : public Master {
 	protected:
-		bool rotatecpy = false;
+		bool fliped_X = false;
+		bool fliped_Y = false;
 		i32 x = 0;
 		i32 y = 0;
-		i32 previous_angle;
 		std::string path;		
 		sRGB tint_by;
 		
-		std::vector<i32>* XCoordsO = new std::vector<i32>;
-		std::vector<i32>* YCoordsO = new std::vector<i32>;
-		std::vector<Color>* ColorsO = new std::vector<Color>;
-		
-		std::vector<i32>* XCoords = XCoordsO;
-		std::vector<i32>* YCoords = YCoordsO;
-		std::vector<Color>* Colors = ColorsO;
+		std::vector<i32>* XCoords = new std::vector<i32>;
+		std::vector<i32>* YCoords = new std::vector<i32>;
+		std::vector<Color>* Colors = new std::vector<Color>;
 
-		std::vector<i32>* XCoordsC = nullptr;
-		std::vector<i32>* YCoordsC = nullptr;
-		std::vector<Color>* ColorsC = nullptr;
+		/*i32* TestCoordsX = nullptr;	//Come back to that later
+		i32* TestCoordsY = nullptr;
+		Color* TestColor = nullptr;*/
 
 		void Load();
 
 	public:
+		Vec2f origin;
+		i32 angle = 0;
+
 		//Only use this if you want an array
 		Object() = default;
 
-		Object(const std::string& path, sur::Vec2 position, const std::string& name, i32 id, const std::vector<int>& ignoreids = {0},
+		Object(const std::string& path, Vec2f position, const std::string& name, i32 id, const std::vector<int>& ignoreids = {0},
 			cb_ptr<Master*> callback = nullptr);
 
-		Object(const Object* const obj, sur::Vec2 position, const std::string& name, i32 id, const std::vector<int>& ignoreids = {0},
+		Object(const Object* const obj, Vec2f position, const std::string& name, i32 id, const std::vector<int>& ignoreids = {0},
 			cb_ptr<Master*> callback = nullptr);
 
 		void Bind(bool Render, ColliderType collidertype);
 
-		void Rotate(sur::Vec2 origin, i32 Angle);
-
-		inline void Scale(sur::Vec2f scale = { 1.f,1.f }) { matrix(scale.x, 0, 0, scale.y); }
+		inline void Scale(Vec2f scale = { 1.f,1.f }) { matrix(scale.x, 0, 0, scale.y); }
 
 		void LSD();
 
+		void FlipX(bool flip);
+
+		void FlipY(bool flip);
+
 		inline void Tint(sRGB rgb_intensity) { tint_by = rgb_intensity; }
 
+		inline XYC GetBuf() { return { XCoords,YCoords,Colors }; }
+
 		~Object() {
-			delete YCoordsO, XCoordsO, ColorsO;
-			if (rotatecpy)
-				delete YCoordsC, XCoordsC, ColorsC;
+			delete YCoords, XCoords, Colors;
 		}
 	};
 	//
@@ -183,13 +186,13 @@ namespace sur {
 	class Line : public Master {
 	private:
 		//Deleted functions
-		inline sur::Vec2 GetPosition() = delete;
-		inline sur::Vec2 GetSize() = delete;
-		inline sur::Vec2 GetOrigin() = delete;
+		inline Vec2 GetPosition() = delete;
+		inline Vec2 GetSize() = delete;
+		inline Vec2 GetOrigin() = delete;
 
 	private:
-		sur::Vec2 start;
-		sur::Vec2 end;
+		Vec2 start;
+		Vec2 end;
 		Color color;
 		size_t lenght = 0;
 		
@@ -198,16 +201,16 @@ namespace sur {
 		//Only use this if you want an array
 		Line() = default;
 
-		Line(sur::Vec2 start, sur::Vec2 end, Color color, const std::string& name, i32 id, const std::vector<int>& ignoreids = {0},
+		Line(Vec2f start, Vec2f end, Color color, const std::string& name, i32 id, const std::vector<int>& ignoreids = {0},
 			cb_ptr<Master*> callback = nullptr);
 
-		inline void Start(sur::Vec2 start) { this->start = start; }
+		inline void Start(Vec2f start) { this->start = ATS(start); }
 
-		inline void End(sur::Vec2 end) { this->end = end; }
+		inline void End(Vec2f end) { this->end = ATS(end); }
 
-		inline sur::Vec2 GetStart() const { return start; }
+		inline Vec2f GetStart() const { return STA(start); }
 
-		inline sur::Vec2 GetEnd() const { return end; }
+		inline Vec2f GetEnd() const { return STA(end); }
 
 		inline void SetColor(Color color) { this->color = color; }
 
@@ -218,7 +221,7 @@ namespace sur {
 	// Triangle.cpp
 	class Triangle : public Master {
 	private:
-		sur::Vec2 p1, p2, p3;
+		Vec2 p1, p2, p3;
 		Color color;
 
 		struct LineVector {
@@ -235,7 +238,7 @@ namespace sur {
 			std::vector<Vec2>* getother();
 		} linevector;
 
-		void Line(sur::Vec2 start, sur::Vec2 end, std::vector<sur::Vec2>* line,bool Render, bool Collider);
+		void Line(Vec2 start, Vec2 end, std::vector<sur::Vec2>* line, bool Render, bool Collider);
 
 		void Fill(LineVector& linevector);
 
@@ -249,20 +252,21 @@ namespace sur {
 		//Only use this if you want an array
 		Triangle() = default;
 
-		Triangle(sur::Vec2 p1, sur::Vec2 p2, sur::Vec2 p3, Color color, const std::string& name, i32 id, 
+		Triangle(Vec2f p1, Vec2f p2, Vec2f p3, Color color, const std::string& name, i32 id, 
 			const std::vector<int>& ignoreids = {0}, cb_ptr<Master*> callback = nullptr);
 
-		inline void SetPosition(i32 which, sur::Vec2 pos) {
+		inline void SetPosition(i32 which, Vec2f pos) {
 			switch (which) {
 			case 0: 
-				p1 = pos; 
+				p1 = ATS(pos); 
 				return;
 			case 1: 
-				p2 = pos; 
+				p2 = ATS(pos); 
 				return;
 			case 2: 
-				p3 = pos; 
-				return;}
+				p3 = ATS(pos); 
+				return;
+			}
 		}
 
 		void Bind(bool Render, bool Collider);
@@ -277,20 +281,20 @@ namespace sur {
 		using Master::matrix;
 		
 		//Deleted functions
-		inline sur::Vec2 GetPosition() = delete;
-		inline sur::Vec2 GetSize() = delete;
-		inline sur::Vec2 GetOrigin() = delete;
+		inline Vec2 GetPosition() = delete;
+		inline Vec2 GetSize() = delete;
+		inline Vec2 GetOrigin() = delete;
 
 	private:
 		Color color;
-		std::vector<sur::Vec2>* vec = new std::vector<sur::Vec2>;
-		std::vector<sur::Line*>* lines = new std::vector<sur::Line*>;
+		std::vector<Vec2>* vec = new std::vector<Vec2>;
+		std::vector<Line*>* lines = new std::vector<Line*>;
 		
 		void Gen();
 
 		template<VEC R>
 		void Pass(R r){
-			vec->push_back((sur::Vec2)r);
+			vec->push_back((Vec2f)r);
 			Gen();
 		}
 		
@@ -304,23 +308,22 @@ namespace sur {
 		// Call after constructor
 		template<VEC F, VEC ... R>
 		void Pass(F f, R ... r) {
-			vec->push_back((sur::Vec2)f);
+			vec->push_back((Vec2f)f);
 			Pass(r...);
 		}
 		
-		void SetPosition(i32 index, sur::Vec2 position);
+		void SetPosition(i32 index, Vec2f position);
 
 		void Bind(bool Render, bool Collider);
 
-		void Move(sur::Vec2f direction);
+		void Move(Vec2f direction);
 	};
 	//
 	//	Particle system
 	// 
 	class Particles : public Master {
 	private:
-
-		struct Particle : public Master{
+		struct Particle : public Master {
 			Vec2 pos;		
 			Color color;
 			Particle() = default;
@@ -331,6 +334,7 @@ namespace sur {
 		std::vector<Vec2>* Offsets = new std::vector<Vec2>;
 		ParticlesSetting* settings;
 	
+		inline void MoveInject(const Vec2& direction) override { position += direction; }
 	public:
 		
 		Particles() = default;
@@ -339,17 +343,17 @@ namespace sur {
 
 		//Moves every particle to the desired position.
 		//Be careful it is very performance heavy!
-		void MoveTowards(sur::Vec2 position, f32 speed);
+		void MoveTowards(Vec2f position, f32 speed);
 
 		void Bind(bool Render);
 
 		//Only moves the particles
-		inline void Move(sur::Vec2f direction) cpar(Master::Move(direction,false))
+		inline void Move(Vec2f direction) cpar(Master::Move(direction,false))
 
 		//Moves the particles, the middle and everything else
-		inline void MoveAll(sur::Vec2f direction) {
+		inline void MoveAll(Vec2f direction) {
 			Vec2 newdirection = MovQueue(direction);
-			settings->middle += newdirection;
+			settings->middle = settings->middle + newdirection;
 			position += newdirection;
 		}
 	};
@@ -362,10 +366,10 @@ namespace sur {
 		private:
 
 		public:
-			Rectangle(sur::Vec2 position, sur::Vec2 size, const std::string& name, i32 id, const std::vector<int>& ignoreids = {0},
+			Rectangle(Vec2f position, Vec2f size, const std::string& name, i32 id, const std::vector<int>& ignoreids = {0},
 				cb_ptr<Master*> callback = nullptr);
 
-			inline void Move(sur::Vec2f direction) cpar(Master::Move(direction, false))
+			inline void Move(Vec2f direction) cpar(Master::Move(direction, false))
 
 			void Bind();
 		};
@@ -412,7 +416,7 @@ namespace sur {
 	// Classes.cpp
 	struct Input {
 		struct Mouse {
-			sur::Vec2 Position() const;
+			Vec2f Position() const;
 			bool LClick() const;
 			bool RClick() const;
 		};
@@ -420,7 +424,7 @@ namespace sur {
 			bool Key(Keys::Keys key) const;
 			bool KeyDown(Keys::Keys key);
 		private:
-			Keys::Keys pressed;
+			Keys::Keys pressed[27] = { Keys::Keys::None };	// 27 because of the SPACE key
 		};
 		Mouse mouse;
 		Keyboard keyboard;
@@ -431,8 +435,8 @@ namespace sur {
 	struct Map_Analyses {
 		analyses::Array<i32> Collider, Trigger;
 		analyses::Array<Color> Render;
-		void operator ()(sur::Maps map, sur::Vec2 size);		
-		void operator ()(i32* cptr, i32* tptr, Color* rptr, sur::Vec2 size);
+		void operator ()(Maps map, Vec2 size);		
+		void operator ()(i32* cptr, i32* tptr, Color* rptr, Vec2 size);
 	};
 	
 	struct CollisionPackage {

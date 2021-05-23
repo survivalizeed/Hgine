@@ -10,7 +10,6 @@ extern std::vector<void*> ptrs;
 
 void sur::Object::Load()
 {
-
 	std::string Data = "";
 	std::string Nums = "0123456789";
 	std::string ColorRef = "";
@@ -54,9 +53,6 @@ void sur::Object::Load()
 				ColorRef = "";
 			}
 		}
-		size.x = *std::max_element(MaxX->begin(), MaxX->end());
-		size.y = y;
-		delete MaxX;
 		for (i32 i = 0; i < Colors->size(); ++i) {
 			sRGB tmp(GetRValue(Colors->at(i)), GetGValue(Colors->at(i)), GetBValue(Colors->at(i)));
 			Colors->at(i) = Color(tmp.r, tmp.g, tmp.b);
@@ -65,6 +61,9 @@ void sur::Object::Load()
 		for (auto&& iter : *YCoords) {
 			iter = maxY - iter;
 		}
+		size.x = *std::max_element(MaxX->begin(), MaxX->end());
+		size.y = y;
+		delete MaxX;
 	}
 	else if (_debug) {
 		std::string errstr = "Object path not found!\nPath given: ";
@@ -75,7 +74,8 @@ void sur::Object::Load()
 	}
 }
 
-sur::Object::Object(const std::string& path, Vec2 position, const std::string& name, i32 id, const std::vector<int>& ignoreids,
+
+sur::Object::Object(const std::string& path, Vec2f position, const std::string& name, i32 id, const std::vector<int>& ignoreids,
 	cb_ptr<Master*> callback)
 	: path(path), Master(name, id, position,callback)
 {
@@ -87,7 +87,7 @@ sur::Object::Object(const std::string& path, Vec2 position, const std::string& n
 	Load();
 }
 
-sur::Object::Object(const Object* const obj, Vec2 position, const std::string& name, i32 id, const std::vector<int>& ignoreids,
+sur::Object::Object(const Object* const obj, Vec2f position, const std::string& name, i32 id, const std::vector<int>& ignoreids,
 	cb_ptr<Master*> callback)
 	: XCoords(obj->XCoords), YCoords(obj->YCoords), Colors(obj->Colors), Master(name,id,position, callback)
 {
@@ -97,6 +97,19 @@ sur::Object::Object(const Object* const obj, Vec2 position, const std::string& n
 	size = obj->size;
 	identitys.push_back(id);
 	ptrs.push_back(this);
+}
+
+sur::Vec2 Rotate(sur::Vec2 vec, sur::Vec2 origin, i32 angle) {
+	if (angle == 0) return vec;
+	sur::Vec2 tmpv(origin - vec);
+	angle += 180;
+	sur::Mat2x2 tmpm
+	(
+		cos(angle * PI / 180), -sin(angle * PI / 180),
+		sin(angle * PI / 180), cos(angle * PI / 180)
+	);
+	sur::Vec2 a(tmpm.multiplyWithVector(tmpv) + origin);
+	return a;
 }
 
 void sur::Object::Bind(bool Render, ColliderType collidertype)
@@ -121,53 +134,54 @@ void sur::Object::Bind(bool Render, ColliderType collidertype)
 		return c;
 	};
 
-	if (OutOfScreenCheck()) return; //Needs fix
+	if (OutOfScreenCheck()) return; //Don't use this for matrix edited objects
 
 	CollisionPos.clear();
 
 	if (collidertype == ColliderType::None && Render) {
 		for (i32 i = 0; i < YCoords->size(); i++) {
-			_Amap.Render(matrix.mulitplyWithVector(Vec2(XCoords->at(i), YCoords->at(i))) + position,
-					TintIt(Colors->at(i)));
+			_Amap.Render(Rotate(matrix.multiplyWithVector(Vec2(XCoords->at(i), YCoords->at(i))) + position, ATS(origin), angle),
+				TintIt(Colors->at(i))
+			);
 		}
 	}
 	if (collidertype == ColliderType::Static) {
 		for (i32 i = 0; i < YCoords->size(); i++) {
 				if (Render)
-					_Amap.Render(matrix.mulitplyWithVector(Vec2(XCoords->at(i), YCoords->at(i))) + position,
+					_Amap.Render(matrix.multiplyWithVector(Vec2(XCoords->at(i), YCoords->at(i))) + position,
 						TintIt(Colors->at(i)));
-				_Amap.Collider(matrix.mulitplyWithVector(Vec2(XCoords->at(i), YCoords->at(i))) + position, id);
+				_Amap.Collider(matrix.multiplyWithVector(Vec2(XCoords->at(i), YCoords->at(i))) + position, id);
 		}
 		return;
 	}
 	if (collidertype == ColliderType::Outline) {	// Outlined Collider -> Good for Objects form outside.
 		if(Render)
 			for (i32 i = 0; i < YCoords->size(); i++)
-				_Amap.Render(matrix.mulitplyWithVector(Vec2(XCoords->at(i), YCoords->at(i))) + position,
+				_Amap.Render(Rotate(matrix.multiplyWithVector(Vec2(XCoords->at(i), YCoords->at(i))) + position, ATS(origin), angle),
 					TintIt(Colors->at(i)));
 			for (i32 i = 0; i < size.x; i++) {
-				sur::Vec2 tmp(matrix.mulitplyWithVector(Vec2(i, 0 )) + position);
+				sur::Vec2 tmp(Rotate(matrix.multiplyWithVector(Vec2(i, 0 )) + position, ATS(origin), angle));
 				CollisionPos.push_back(tmp);
 				if(_debug)
 					_Amap.Render(tmp, Color(255,0,0));
 				_Amap.Collider(tmp, id);
 			}
 			for (i32 i = 0; i < size.y; i++) {
-				sur::Vec2 tmp(matrix.mulitplyWithVector(Vec2(0, i )) + position);
+				sur::Vec2 tmp(Rotate(matrix.multiplyWithVector(Vec2(0, i )) + position, ATS(origin), angle));
 				CollisionPos.push_back(tmp);
 				if (_debug)
 					_Amap.Render(tmp, Color(255, 0, 0));
 				_Amap.Collider(tmp, id);
 			}
 			for (i32 i = 0; i < size.x; i++) {
-				sur::Vec2 tmp(matrix.mulitplyWithVector(Vec2(i, size.y )) + position);
+				sur::Vec2 tmp(Rotate(matrix.multiplyWithVector(Vec2(i, size.y )) + position, ATS(origin), angle));
 				CollisionPos.push_back(tmp);
 				if (_debug)
 					_Amap.Render(tmp, Color(255, 0, 0));
 				_Amap.Collider(tmp, id);
 			}
 			for (i32 i = 0; i < size.y; i++) {
-				sur::Vec2 tmp(matrix.mulitplyWithVector(Vec2(size.x, i )) + position);
+				sur::Vec2 tmp(Rotate(matrix.multiplyWithVector(Vec2(size.x, i )) + position, ATS(origin), angle));
 				CollisionPos.push_back(tmp);
 				if (_debug)
 					_Amap.Render(tmp, Color(255, 0, 0));
@@ -178,42 +192,15 @@ void sur::Object::Bind(bool Render, ColliderType collidertype)
 	if (collidertype == ColliderType::Filled) {
 		if(Render)
 			for (i32 i = 0; i < YCoords->size(); i++)
-				_Amap.Render(matrix.mulitplyWithVector(Vec2(XCoords->at(i), YCoords->at(i) )) + Vec2(position.x, position.y),
+				_Amap.Render(matrix.multiplyWithVector(Vec2(XCoords->at(i), YCoords->at(i) )) + Vec2(position.x, position.y),
 					TintIt(Colors->at(i)));
 			for (i32 a = 0; a < size.y; a++)
 				for (i32 b = 0; b < size.x; b++)
-					_Amap.Collider(matrix.mulitplyWithVector(Vec2(b, a )) + position, id);
+					_Amap.Collider(matrix.multiplyWithVector(Vec2(b, a )) + position, id);
 		return;
 	}
 }
 
-void sur::Object::Rotate(Vec2 origin, i32 Angle)
-{ 
-	assert(rotatecpy && previous_angle == Angle);
-	if (!rotatecpy) {
-		XCoordsC = new std::vector<i32>(*XCoords);
-		YCoordsC = new std::vector<i32>(*YCoords);
-		ColorsC = new std::vector<Color>(*Colors);
-		XCoords = XCoordsC; YCoords = YCoordsC; Colors = ColorsC;
-		rotatecpy = true;
-	}
-	else {
-		XCoordsC->clear();
-		YCoordsC->clear();
-		ColorsC->clear();
-		std::copy(XCoordsO->begin(), XCoordsO->end(), back_inserter(*XCoordsC));
-		std::copy(YCoordsO->begin(), YCoordsO->end(), back_inserter(*YCoordsC));
-		std::copy(ColorsO->begin(), ColorsO->end(), back_inserter(*ColorsC));
-	}
-	previous_angle = Angle;
-	Vec2 v;
-	for (i32 i = 0; i < YCoords->size(); ++i) {
-		v = rot({XCoords->at(i) + position.x, YCoords->at(i) + position.y }, origin, Angle);
-		v = v - position;
-		XCoords->at(i) = v.x;
-		YCoords->at(i) = v.y;
-	}
-}
 
 void sur::Object::LSD()
 {
@@ -235,4 +222,26 @@ void sur::Object::LSD()
 		tmp = inc;
 	}
 
+}
+
+void sur::Object::FlipX(bool flip)
+{
+	if (this->fliped_X != flip) {
+		i32 maxX = *std::max_element(XCoords->begin(), XCoords->end());
+		for (auto&& iter : *XCoords) {
+			iter = maxX - iter;
+		}
+	}
+	this->fliped_X = flip;
+}
+
+void sur::Object::FlipY(bool flip)
+{
+	if (this->fliped_Y != flip) {
+		i32 maxY = *std::max_element(YCoords->begin(), YCoords->end());
+		for (auto&& iter : *YCoords) {
+			iter = maxY - iter;
+		}
+	}
+	this->fliped_Y = flip;
 }

@@ -31,6 +31,13 @@ void sur::Sound(const char* path, u32 params, i32 volume)
 	PlaySoundA(path, NULL, params);
 }
 
+i32 sur::RandomRange(i32 min, i32 max)
+{
+	static bool once = false;
+	if (!once) { srand((u32)time(0)); once = true; }
+	return (min >= 0) ? rand() % (max - min + 1) + min : rand() % (max + min + 1) - min;
+}
+
 void sur::MoveTowards(Master* current, Master* target, f32 speed, const Axis& axis, bool detect)
 {
 	assert(target->GetName() == "invalid" || current->GetName() == "invalid");
@@ -48,7 +55,7 @@ void sur::MoveTowards(Master* current, Master* target, f32 speed, const Axis& ax
 	current->Move(direction * speed, detect);
 }
 
-sur::Vec2f sur::Direction(Vec2 first, Vec2 second)
+sur::Vec2f sur::Direction(Vec2f first, Vec2f second)
 {
 	bool xz = false, yz = false;
 	Vec2f direction(first - second);	
@@ -106,6 +113,15 @@ sur::Vec3f sur::RotateZ(Vec3f vec, Vec3f origin, i32 angle)
 		0, 0, 1
 	);
 	return tmpm.multiplyWithVector(tmpv) + origin;
+}
+
+void sur::SetPixel(Vec2f position, Color color, i32 CollisionId, i32 TriggerId)
+{
+	_Amap.Render(ATS(position), color);
+	if (CollisionId != 0)
+		_Amap.Collider(ATS(position), CollisionId);
+	if (CollisionId != 0)
+		_Amap.Trigger(ATS(position), TriggerId);
 }
 
 

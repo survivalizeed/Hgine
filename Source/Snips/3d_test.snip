@@ -1,0 +1,56 @@
+sur::Cuboid a({ 0,0,2 }, { 1,0,2 }, { 1,1,2}, { 0,1,2 }, { 0,0,4 }, { 1,0,3 }, { 1,1,3 }, { 0,1,3 },
+		Color(255, 0, 0), { 0,0, 3.5f});
+
+	f32 angle = 0;
+	for (;;) {
+		renderer.ClearScreenBuffer();
+		a.Bind(true,12);
+		a.Rotate(Dimension::X, (i32)angle);
+		if (_input.keyboard.Key(Keys::A)) {
+			a.Move({ -0.001,0,0 });
+		}
+		if (_input.keyboard.Key(Keys::D)) {
+			a.Move({ 0.001,0,0 });
+		}
+		angle += 0.01f;
+		renderer.RenderScreenBuffer();
+	}
+	f32 fov = 90.f;
+	f32 zFar = 1000.f;
+	f32 zNear = 10.f;
+	f32 aspect = _window_size.y / _window_size.x;
+	Mat4x4 proj;
+	proj.mat[0][0] = aspect * 1 / tan((fov * (PI / 180.f)) / 2);
+	proj.mat[1][1] = 1 / tan((fov * (PI / 180.f)) / 2);
+	proj.mat[2][2] = -(zFar * zNear) / (zFar - zNear);
+	proj.mat[2][3] = 1;
+	proj.mat[3][2] = (-zFar * zNear) / (zFar - zNear);
+	
+	std::array<sur::Vec3f,3> origPoint;
+	origPoint[0](0, 1, 0.1f);	
+	origPoint[1](0, -0.1f, 0.1f);
+	origPoint[2](-0.1f, -0.1f, 0.1f);
+	std::vector<sur::Vec3f> points;
+
+	i32 angle = 0;
+	for (;;) {
+		renderer.ClearScreenBuffer();
+		for (i32 i = 0; i < origPoint.size(); ++i) {
+			origPoint[i] = sur::RotateX(origPoint[i], { 0,0,0 }, angle);
+			origPoint[i] = sur::RotateY(origPoint[i], { 0,0,0 }, angle);
+			origPoint[i] = sur::RotateZ(origPoint[i], { 0,0,0 }, angle);
+		}
+		for (auto& iter : origPoint) {
+			sur::Vec3f test(Mat4x4MulVec3f(iter, proj));
+			l(test);
+			points.push_back(test);
+		}
+
+		sur::TMP::Line(points[0].toVec2(), points[1].toVec2(),Color(255,0,0));
+		sur::TMP::Line(points[1].toVec2(), points[2].toVec2(), Color(255, 0, 0));
+		sur::TMP::Line(points[2].toVec2(), points[0].toVec2(), Color(255, 0, 0));
+		angle++;
+		points.clear();
+		renderer.RenderScreenBuffer();
+		Sleep(100);
+	}

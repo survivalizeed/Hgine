@@ -19,10 +19,27 @@ sur::Cuboid::Cuboid(Vec3f a, Vec3f b, Vec3f c, Vec3f d, Vec3f e, Vec3f f, Vec3f 
 }
 
 sur::Cuboid::Cuboid(const Cuboid* const other, Color color, Vec3f origin, const Mat3x3& projection)
-	: points(other->points),color(color), origin(origin), projection(projection) {}
+	: points(other->points), color(color), origin(origin), projection(projection) {}
 
 
-void sur::Cuboid::Rotate(Dimension dimension, i32 angle){
+struct Mat4x4
+{
+	f32 m[4][4] = { 0 };
+};
+
+sur::Vec3f Mat4x4MulVec3f(const sur::Vec3f& vec, Mat4x4 mat) {
+	sur::Vec3f tmp;
+	tmp.x = vec.x * mat.m[0][0] + vec.y * mat.m[1][0] + vec.z * mat.m[2][0] + mat.m[3][0];
+	tmp.y = vec.x * mat.m[0][1] + vec.y * mat.m[1][1] + vec.z * mat.m[2][1] + mat.m[3][1];
+	tmp.z = vec.x * mat.m[0][2] + vec.y * mat.m[1][2] + vec.z * mat.m[2][2] + mat.m[3][2];
+	f32 w = vec.x * mat.m[0][3] + vec.y * mat.m[1][3] + vec.z * mat.m[2][3] + mat.m[3][3];
+	if (w != 0.f) {
+		tmp.x /= w; tmp.y /= w; tmp.z /= w;
+	}
+	return tmp;
+}
+
+void sur::Cuboid::Rotate(Dimension dimension, i32 angle) {
 	switch (dimension)
 	{
 	case Dimension::X: angleX = angle; break;
@@ -31,26 +48,30 @@ void sur::Cuboid::Rotate(Dimension dimension, i32 angle){
 	}
 }
 
-void sur::Cuboid::Bind(bool Render, i32 perspectiveThreshold){
-	std::vector<Vec2> transformed;
+void sur::Cuboid::Bind(bool Render, i32 perspectiveThreshold) {
+	std::vector<Vec2f> transformed;
 	for (auto&& iter : points) {
 		Vec3f tmp = iter;
 		tmp = sur::RotateX(tmp, origin - offset, angleX);
 		tmp = sur::RotateY(tmp, origin - offset, angleY);
-		tmp = sur::RotateZ(tmp, origin - offset, angleZ);		
+		tmp = sur::RotateZ(tmp, origin - offset, angleZ);
+		Mat4x4 matProj;
 		if (perspectiveThreshold != 0) {
-			f32 z = 1 / (tmp.z + offset.z);
-			z *= 160.f;
-			if (z > 3.f) z = 3.f;
-			projection
-			(
-				z, 0, 0,
-				0, z, 0,
-				0, 0, 0
-			);
+			f32 fNear = 0.1f;
+			f32 fFar = 1000.0f;
+			f32 fFov = 90.0f;
+			f32 fAspectRatio = (f32)_window_size.y / (f32)_window_size.x;
+			f32 fFovRad = 1.0f / tanf(fFov * 0.5f / 180.0f * PI);	
+			matProj.m[0][0] = fAspectRatio * fFovRad;
+			matProj.m[1][1] = fFovRad;
+			matProj.m[2][2] = fFar / (fFar - fNear);
+			matProj.m[3][2] = (-fFar * fNear) / (fFar - fNear);
+			matProj.m[2][3] = 1.0f;
+			matProj.m[3][3] = 0.0f;
+
 		}
-		Vec3f projectedPoint = projection.multiplyWithVector(tmp);
-		transformed.push_back(projectedPoint.toVec2() + offset.toVec2());
+		Vec3f projectedPoint = Mat4x4MulVec3f(tmp, matProj);
+		transformed.push_back(projectedPoint.toVec2f() + offset.toVec2f());
 	}
 
 	{
@@ -72,6 +93,21 @@ void sur::Cuboid::Bind(bool Render, i32 perspectiveThreshold){
 	transformed.clear();
 }
 
+//if (perspectiveThreshold != 0) {
+//	f32 z = 0;
+//	/*if (tmp.z + offset.z == 0) z = 1;
+//	else*/ z = 1 / (tmp.z + offset.z);
+//	projection
+//	(
+//		z, 0, 0,
+//		0, z, 0,
+//		0, 0, 1
+//	);
+//}
+/*Vec3f projectedPoint = projection.multiplyWithVector(tmp);*/
 void sur::Cuboid::Move(Vec3f direction){
-	
+	origin = origin + direction;
+	for (auto&& iter : points) {
+		iter = iter + direction;
+	}
 }
