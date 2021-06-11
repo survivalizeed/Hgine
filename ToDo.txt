@@ -38,3 +38,4 @@ New collision objects glitch through |DONE|
 if down and left are pressed with new collison, bugs through objects |DONE|
 3d perspective z too big bug 
 missing pixel in object / rectangle collision
+standard draw color not working correctly
