@@ -36,7 +36,5 @@ multithreading for particles |DONE|
 Matrix modified objects out of screen fix 
 New collision objects glitch through |DONE|
 if down and left are pressed with new collison, bugs through objects |DONE|
-Matrix for Triangle and Line buggy
 3d perspective z too big bug 
-hgineobj vector to std::array
-multiplyWithVector in matrix2x2 struct really slow
+missing pixel in object / rectangle collision
