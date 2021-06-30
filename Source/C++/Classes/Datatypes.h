@@ -28,7 +28,7 @@ constexpr f32 PI = 3.141f;
 
 // Colliders
 enum class ColliderType {
-	Static, Filled, Outline, None
+	Static, Outline, None
 };
 
 // Describes the axis something can move on
@@ -52,6 +52,7 @@ namespace sur {
 	// Vec2 -> i32
 	//
 
+
 	struct Vec2f {
 		
 		f32 x, y;
@@ -62,7 +63,7 @@ namespace sur {
 
 		Vec2f(const Vec2f& vector2d) : x(vector2d.x), y(vector2d.y) {}
 
-		inline f32 magnitude() { return (f32)sqrt(pow(x, 2) + pow(y, 2)); }
+		inline f32 magnitude() { return sqrt(x * x + y * y); }
 		inline void invert() { x *= -1.f; y *= -1.f; }
 		inline void normalize() { f32 mag = magnitude();  x /= mag; y /= mag; }
 
@@ -77,6 +78,15 @@ namespace sur {
 		inline Vec2f operator -(f32 value) const { return { x - value, y - value }; }
 		inline Vec2f operator *(f32 value) const { return { x * value, y * value }; }
 		inline Vec2f operator /(f32 value) const { return { x / value, y / value }; }
+
+		inline Vec2f operator --() { return { x - 1, y - 1 }; }
+		inline Vec2f operator ++() { return { x + 1, y + 1 }; }
+		inline bool operator ==(const Vec2f& other) const { return (x == other.x && y == other.y) ? true : false; }
+		inline bool operator !=(const Vec2f& other) const { return (x != other.x && y != other.y) ? true : false; }
+		inline bool operator >(Vec2f other) { return (magnitude() > other.magnitude()) ? true : false; }
+		inline bool operator >=(Vec2f other) { return (magnitude() >= other.magnitude()) ? true : false; }
+		inline bool operator <(Vec2f other) { return (magnitude() < other.magnitude()) ? true : false; }
+		inline bool operator <=(Vec2f other) { return (magnitude() <= other.magnitude()) ? true : false; }
 
 		friend std::ostream& operator<<(std::ostream& os, const Vec2f& vector2d) {
 			os << "X: " << vector2d.x << " Y: " << vector2d.y;
@@ -255,8 +265,10 @@ namespace sur {
 
 		inline void ToRGB(const Color& color) { r = GetBValue(color); g = GetGValue(color); b = GetRValue(color); }
 		inline void operator()(i32 r, i32 g, i32 b) { this->r = r; this->g = g; this->b = b; }
-		inline sRGB operator +(const sRGB& other) { return{ r + other.r, g + other.g,b + other.b }; }
-		inline sRGB operator -(const sRGB& other) { return{ r - other.r, g - other.g,b - other.b }; }
+		inline sRGB operator +(const sRGB& other) { return{ r + other.r, g + other.g, b + other.b }; }
+		inline sRGB operator -(const sRGB& other) { return{ r - other.r, g - other.g, b - other.b }; }
+
+		inline sRGB operator /(const sRGB& other) { return{ r / other.r, g / other.g, b / other.b }; }
 		inline bool operator ==(const sRGB& other) { return (r == other.r && g == other.g && b == other.b) ? true : false; }
 	};
 
@@ -300,7 +312,7 @@ namespace Keys {
 
 // Template stuff
 template <typename CallBackType>
-using cb_ptr = void(*)(CallBackType,CallBackType);
+using cb_ptr = std::function<void(CallBackType, CallBackType)>;
 
 template <typename T>
 inline constexpr bool is_Vec2 = std::_Is_any_of_v<std::remove_cv_t<T>, sur::Vec2f>;

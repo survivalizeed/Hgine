@@ -40,6 +40,8 @@ namespace sur {
 
 	void SetPixel(Vec2f position, Color color, i32 CollisionId = 0, i32 TriggerId = 0);
 
+	Vec2f Absolute(Vec2f vec);
+
 	template<Axis axis>
 	auto Distance(const Master* const a, const Master* const b) {
 		assert(a->GetName() == "invalid" || b->GetName() == "invalid", 999999999);

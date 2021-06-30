@@ -27,6 +27,7 @@
 #include <sstream>
 #include <type_traits>
 #include <array>
+#include <functional>
 
 #define l(x) std::cout << x << "\n"
 
@@ -45,7 +46,7 @@ return rt
 #define cpar(x) {x;}
 
 //There are no errors in the code but the optimization could make some problems. Just use this if you are in Release mode.
-#define _OPTIMIZATION_PROTECTION if(other->id == 0) return;
+#define _OPTIMIZATION_PROTECTION if(other->id == 0 || other->GetName() == "invalid") return;
 
 
 #define _milliseconds(x) x

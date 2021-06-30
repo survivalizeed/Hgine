@@ -6,7 +6,6 @@
 
 extern HWND _hwnd;
 
-
 namespace sur {
 	//
 	//	Classes
@@ -28,6 +27,7 @@ namespace sur {
 		Vec2 size;
 		
 		std::vector<sur::Vec2> CollisionPos;
+		std::vector<i32> push;
 
 		Master(const std::string& name, i32 id, cb_ptr<Master*> callback = nullptr)
 			: name(name), id(id), callback(callback) {}		//Line, Triangle
@@ -45,7 +45,7 @@ namespace sur {
 		//Only used by the engine itself. Never use this!
 		Vec2 MovQueue(Vec2f direction);	// Handles floats and does nothing until a floating number becomes an integer
 
-		Mat2x2 matrix = { 1, 0, 0,1 };	//standard so it won't modify anything
+		Mat2x2 matrix = { 1, 0, 0, 1 };	//standard so it won't modify anything
 
 		bool parentmem;
 
@@ -68,7 +68,7 @@ namespace sur {
 
 		virtual inline Vec2f GetPosition() const { return STA(position); }
 
-		virtual inline Vec2f GetSize() const { return STA(size + position); }
+		virtual inline Vec2f GetSize() const { return STA(size); }
 
 		virtual inline void SetPosition(Vec2f position) { this->position = ATS(position); }
 
@@ -76,7 +76,7 @@ namespace sur {
 
 		inline bool State() const { return active; }
 
-		virtual void Move(Vec2f direction, bool detect);
+		virtual Vec2 Move(Vec2f direction, bool detect);
 	};
 	//
 	//	Render class
@@ -120,12 +120,11 @@ namespace sur {
 		//Only use this if you want an array
 		Rectangle() = default;
 
-		Rectangle(Vec2f position, Vec2f size, Color color, const std::string& name, i32 id, bool canrotate,
-			const std::vector<int>& ignoreids = {0}, cb_ptr<Master*> callback = nullptr);
+		Rectangle(Vec2f position, Vec2f size, Color color, const std::string& name, i32 id,
+			const std::vector<i32>& ignoreids = { 0 }, const std::vector<i32>& push = { 0 }, cb_ptr<Master*> callback = nullptr);
 
 		void Bind(bool Render, bool Collider);
 
-		void Rotate(Vec2 origin, i32 Angle);
 	};
 	//
 	//	Load objects that were created with the Hgineres editor
@@ -156,11 +155,11 @@ namespace sur {
 		//Only use this if you want an array
 		Object() = default;
 
-		Object(const std::string& path, Vec2f position, const std::string& name, i32 id, const std::vector<int>& ignoreids = {0},
-			cb_ptr<Master*> callback = nullptr);
+		Object(const std::string& path, Vec2f position, const std::string& name, i32 id, const std::vector<i32>& ignoreids = {0},
+			const std::vector<i32>& push = { 0 }, cb_ptr<Master*> callback = nullptr);
 
-		Object(const Object* const obj, Vec2f position, const std::string& name, i32 id, const std::vector<int>& ignoreids = {0},
-			cb_ptr<Master*> callback = nullptr);
+		Object(const Object* const obj, Vec2f position, const std::string& name, i32 id, const std::vector<i32>& ignoreids = {0},
+			const std::vector<i32>& push = { 0 }, cb_ptr<Master*> callback = nullptr);
 
 		void Bind(bool Render, ColliderType collidertype);
 
@@ -174,7 +173,7 @@ namespace sur {
 
 		inline void Tint(sRGB rgb_intensity) { tint_by = rgb_intensity; }
 
-		inline XYC GetBuf() { return { XCoords,YCoords,Colors }; }
+		inline XYC GetBuf() { return { XCoords,YCoords,Colors}; }
 
 		~Object() {
 			delete YCoords, XCoords, Colors;
@@ -186,9 +185,9 @@ namespace sur {
 	class Line : public Master {
 	private:
 		//Deleted functions
-		inline Vec2 GetPosition() = delete;
-		inline Vec2 GetSize() = delete;
-		inline Vec2 GetOrigin() = delete;
+		inline Vec2f GetPosition() = delete;
+		inline Vec2f GetSize() = delete;
+		inline Vec2f GetOrigin() = delete;
 
 	private:
 		Vec2 start;
@@ -201,7 +200,7 @@ namespace sur {
 		//Only use this if you want an array
 		Line() = default;
 
-		Line(Vec2f start, Vec2f end, Color color, const std::string& name, i32 id, const std::vector<int>& ignoreids = {0},
+		Line(Vec2f start, Vec2f end, Color color, const std::string& name, i32 id, const std::vector<i32>& ignoreids = {0},
 			cb_ptr<Master*> callback = nullptr);
 
 		inline void Start(Vec2f start) { this->start = ATS(start); }
@@ -253,7 +252,7 @@ namespace sur {
 		Triangle() = default;
 
 		Triangle(Vec2f p1, Vec2f p2, Vec2f p3, Color color, const std::string& name, i32 id, 
-			const std::vector<int>& ignoreids = {0}, cb_ptr<Master*> callback = nullptr);
+			const std::vector<i32>& ignoreids = {0}, cb_ptr<Master*> callback = nullptr);
 
 		inline void SetPosition(i32 which, Vec2f pos) {
 			switch (which) {
@@ -281,9 +280,9 @@ namespace sur {
 		using Master::matrix;
 		
 		//Deleted functions
-		inline Vec2 GetPosition() = delete;
-		inline Vec2 GetSize() = delete;
-		inline Vec2 GetOrigin() = delete;
+		inline Vec2f GetPosition() = delete;
+		inline Vec2f GetSize() = delete;
+		inline Vec2f GetOrigin() = delete;
 
 	private:
 		Color color;
@@ -302,7 +301,7 @@ namespace sur {
 		//Only use this if you want an array
 		Shape() = default;
 
-		Shape(Color color, const std::string& name, i32 id, const std::vector<int>& ignoreids = {0},
+		Shape(Color color, const std::string& name, i32 id, const std::vector<i32>& ignoreids = {0},
 			cb_ptr<Master*> callback = nullptr);
 
 		// Call after constructor
@@ -357,6 +356,40 @@ namespace sur {
 			position += newdirection;
 		}
 	};
+
+	class Light : public Master {
+	private:
+		inline Vec2f GetOrigin() = delete;
+		inline Vec2f GetSize() = delete;
+
+	public:
+		f32 radius;
+		Color color;
+
+		Light() = default;
+
+		Light(Vec2f position, f32 radius, Color color, const std::string& name);
+
+	};
+
+	class Text : public Master {
+	private:
+		Color color;
+		u32 size;
+		
+	public:
+
+		std::string text;
+
+		Text() = default;
+
+		Text(const std::string& text, Vec2f position,Color color, u32 size)
+			: text(text), color(color), size(size) {
+			this->position = ATS(position);
+		}
+
+		void Bind(bool Render);
+	};
 	//
 	//	Triggers
 	// Classes_2.cpp
@@ -366,7 +399,7 @@ namespace sur {
 		private:
 
 		public:
-			Rectangle(Vec2f position, Vec2f size, const std::string& name, i32 id, const std::vector<int>& ignoreids = {0},
+			Rectangle(Vec2f position, Vec2f size, const std::string& name, i32 id, const std::vector<i32>& ignoreids = {0},
 				cb_ptr<Master*> callback = nullptr);
 
 			inline void Move(Vec2f direction) cpar(Master::Move(direction, false))
@@ -387,7 +420,7 @@ namespace sur {
 			inline static std::vector<sur::Triggers::Rectangle*>* trigger_rectangles = new std::vector<sur::Triggers::Rectangle*>;
 			 
 			// To return if nothing was found -> prevent error of nullpointer
-			inline static sur::Rectangle* Rdefault = new sur::Rectangle({ 0,0 }, { 0,0 }, Color(0, 0, 0), "invalid", -1, false);
+			inline static sur::Rectangle* Rdefault = new sur::Rectangle({ 0,0 }, { 0,0 }, Color(0, 0, 0), "invalid", -1);
 			inline static sur::Line* Ldefault = new sur::Line({ 0,0 }, { 0,0 }, Color(0, 0, 0), "invalid", -1);
 			inline static sur::Object* Odefault = new sur::Object("invalid", { 0,0 }, "invalid", -1);
 			inline static sur::Triangle* Tdefault = new sur::Triangle({ 0,0 }, { 0,0 }, { 0,0 }, Color(0, 0, 0), "invalid", -1);

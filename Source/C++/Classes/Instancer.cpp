@@ -91,7 +91,7 @@ RetTy* sur::Instancer::Get(const std::string& name, i32 index)
 					return (RetTy*)restricted::Ldefault;
 			
 			if (typeid(RetTy) == typeid(sur::Object))
-				if (index > restricted::objects->size())
+				if (index < restricted::objects->size())
 					return (RetTy*)restricted::objects->at(index);
 				else
 					return (RetTy*)restricted::Odefault;
@@ -103,7 +103,7 @@ RetTy* sur::Instancer::Get(const std::string& name, i32 index)
 					return (RetTy*)restricted::Tdefault;
 			
 			if (typeid(RetTy) == typeid(sur::Shape))
-				if (index > restricted::shapes->size())
+				if (index < restricted::shapes->size())
 					return (RetTy*)restricted::shapes->at(index);
 				else
 					return (RetTy*)restricted::Sdefault;

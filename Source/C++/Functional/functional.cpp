@@ -124,5 +124,12 @@ void sur::SetPixel(Vec2f position, Color color, i32 CollisionId, i32 TriggerId)
 		_Amap.Trigger(ATS(position), TriggerId);
 }
 
+sur::Vec2f sur::Absolute(Vec2f vec)
+{
+	if (vec.x < 0) vec.x *= -1;
+	if (vec.y < 0) vec.y *= -1;
+	return vec;
+}
+
 
 

@@ -1,37 +1,38 @@
-#include "Functional/includes.h"
-#include "Functional/functional.h"
-#include "Functional/TemporaryObjects.h"
+#include "../C++/Functional/includes.h"
+#include "../C++/Functional/functional.h"
+#include "../C++/Functional/TemporaryObjects.h"
 
 extern lua_State* Start();
 extern sur::Map_Analyses _Amap;
 extern sur::Input _input;
-using sur::Instancer::Types;
+using namespace sur::Instancer;
+
 
 int main() {
-	lua_State* LC = Start();
 	
-	sur::Render renderer(Color(0, 0, 0), true, 0);
+	lua_State* LC = Start();
+	sur::Render renderer(Color(0, 0, 0), true);
 	renderer.DebugConsole(_debug);
 	renderer.FPS();
-	
-	sur::Rectangle rect1({ 0,0 }, { 1,1 }, Color(0, 0, 255), "rect1", 1, false, { 0 });
-	sur::Rectangle rect2({ -1,-1 }, { 0 - Unit(5),0 - Unit(5) }, Color(0, 255, 0), "rect2", 2, false, { 0 });
+
+	i32 r = 0;
+	i32 g = 0;
+	i32 b = 0;
+
+	sur::Object obj((_resource_path + "woods.hgineres").c_str(), { 0,0 }, "obj", 1);
+	sur::Light light({ 5,5 }, 3.f, Color(40, 0, 0), "light");
+	sur::Light light2({ 5,5 }, 3.f, Color(0, 40, 0), "light2");
 
 	for (;;) {
 		renderer.ClearScreenBuffer();
-		rect1.Bind(true, true);
-		rect2.Bind(true, true);
-
-		if (_input.keyboard.Key(Keys::W))
-			rect1.Move({ 0,1 }, true);
-		if (_input.keyboard.Key(Keys::A))
-			rect1.Move({ -1,0 }, true);
-		if (_input.keyboard.Key(Keys::S))
-			rect1.Move({ 0,-1 }, true);
-		if (_input.keyboard.Key(Keys::D))
-			rect1.Move({ 1,0 }, true);
-
+		obj.Bind(true, ColliderType::None);
+		
+		if (_input.mouse.RClick()) {
+			light.SetPosition(_input.mouse.Position());
+		}
+		if (_input.mouse.LClick()) {
+			light2.SetPosition(_input.mouse.Position());
+		}
 		renderer.RenderScreenBuffer();
 	}
 }
-

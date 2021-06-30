@@ -5,6 +5,7 @@
 
 std::vector<i32> identitys;
 std::vector<void*> ptrs;
+std::vector<sur::Light*> lights;
 
 
 extern sur::Map_Analyses _Amap;
@@ -152,17 +153,20 @@ sur::Vec2 sur::Master::MovQueue(Vec2f direction)
 //	MoveInject(newdirection);
 //}
 
-void sur::Master::Move(sur::Vec2f direction, bool detect) {
+sur::Vec2 sur::Master::Move(sur::Vec2f direction, bool detect) {
 	Vec2 newdirection = MovQueue(direction);
-	assert(newdirection == Vec2(0, 0) || this->GetName() == "invalid");
+	assert(newdirection == Vec2(0, 0) || this->GetName() == "invalid", Vec2(0,0));
 
-	if (!detect) { MoveInject(newdirection); return; }
+	if (!detect) { MoveInject(newdirection); return newdirection; }
 
 	bool dirXpos = (newdirection.x >= 0) ? true : false;
 
 	bool dirYpos = (newdirection.y >= 0) ? true : false;
 
 	volatile i32 contentX = 0, contentY = 0;
+
+	Vec2 dirStor = newdirection;
+	Vec2 actualMoveX, actualMoveY;
 
 	if (dirXpos) {	
 		for (i32 c = 1; c <= newdirection.x; ++c) {
@@ -172,9 +176,17 @@ void sur::Master::Move(sur::Vec2f direction, bool detect) {
 					if (contentX == ignore.at(j))
 						contentX = 0;	//So it ignores the collision
 				if (contentX != 0 && contentX != this->id) {
+					for (i32 j = 0; j < push.size(); ++j)
+						if (contentX == push[j])
+							for (i32 a = 0; a < identitys.size(); ++a)
+								if (contentX == identitys[a]) {
+									actualMoveX(static_cast<sur::Master*>(ptrs[a])->Move({ f32(dirStor.x - (--c)),0 }, true));
+									newdirection.x = (--c) + actualMoveX.x;
+									goto jmp0;
+								}
 					newdirection.x = --c;
 					goto jmp0;
-				}
+				}		
 			}
 		}
 	jmp0:;
@@ -187,6 +199,14 @@ void sur::Master::Move(sur::Vec2f direction, bool detect) {
 					if (contentX == ignore.at(j))
 						contentX = 0;	//So it ignores the collision
 				if (contentX != 0 && contentX != this->id) {
+					for (i32 j = 0; j < push.size(); ++j)
+						if (contentX == push[j])
+							for (i32 a = 0; a < identitys.size(); ++a)
+								if (contentX == identitys[a]) {
+									actualMoveX(static_cast<sur::Master*>(ptrs[a])->Move({ f32(dirStor.x - (++c)),0 }, true));
+									newdirection.x = (++c) + actualMoveX.x;
+									goto jmp1;
+								}
 					newdirection.x = ++c;
 					goto jmp1;
 				}
@@ -202,6 +222,14 @@ void sur::Master::Move(sur::Vec2f direction, bool detect) {
 					if (contentY == ignore.at(j))
 						contentY = 0;	//So it ignores the collision
 				if (contentY != 0 && contentY != this->id) {
+					for (i32 j = 0; j < push.size(); ++j)
+						if (contentY == push[j])
+							for (i32 a = 0; a < identitys.size(); ++a)
+								if (contentY == identitys[a]) {
+									actualMoveY(static_cast<sur::Master*>(ptrs[a])->Move({ 0, f32(dirStor.y - (--c)) }, true));
+									newdirection.y = (--c) + actualMoveY.y;
+									goto jmp2;
+								}
 					newdirection.y = --c;
 					goto jmp2;
 				}
@@ -217,6 +245,14 @@ void sur::Master::Move(sur::Vec2f direction, bool detect) {
 					if (contentY == ignore.at(j))
 						contentY = 0;	//So it ignores the collision
 				if (contentY != 0 && contentY != this->id) {
+					for (i32 j = 0; j < push.size(); ++j)
+						if (contentY == push[j])
+							for (i32 a = 0; a < identitys.size(); ++a)
+								if (contentY == identitys[a]) {
+									actualMoveY(static_cast<sur::Master*>(ptrs[a])->Move({ 0, f32(dirStor.y - (++c)) }, true));
+									newdirection.y = (++c) + actualMoveY.y;
+									goto jmp3;
+								}
 					newdirection.y = ++c;
 					goto jmp3;
 				}
@@ -251,6 +287,7 @@ void sur::Master::Move(sur::Vec2f direction, bool detect) {
 		}
 	}
 	MoveInject(newdirection);
+	return newdirection;
 }
 
 //
@@ -260,8 +297,8 @@ void sur::Render::ClearScreenBuffer()
 {
 	if (FillBackground)
 		memset(_map.RenderMap, bg, sizeof(Color) * (_window_size.x * _window_size.y));	
-	memset(_map.ColliderMap, 0, sizeof(Color) * (_window_size.x * _window_size.y));
-	memset(_map.TriggerMap, 0, sizeof(Color) * (_window_size.x * _window_size.y));
+	memset(_map.ColliderMap, 0, sizeof(i32) * (_window_size.x * _window_size.y));
+	memset(_map.TriggerMap, 0, sizeof(i32) * (_window_size.x * _window_size.y));
 }
 
 void sur::Render::RenderScreenBuffer()
@@ -334,10 +371,11 @@ void sur::Camera::Move(Vec2f direction)
 //
 //	Rectangle
 //
-sur::Rectangle::Rectangle(Vec2f position, Vec2f size, Color color, const std::string& name, i32 id, bool canrotate,
-	const std::vector<int>& ignoreids, cb_ptr<Master*> callback)
+sur::Rectangle::Rectangle(Vec2f position, Vec2f size, Color color, const std::string& name, i32 id,
+	const std::vector<i32>& ignoreids, const std::vector<i32>& push, cb_ptr<Master*> callback)
 	:color(color), Master(name,id, position, size, callback)
 {
+	this->push = push;
 	ignore = ignoreids;
 	type = Type::Rectangle;
 	identitys.push_back(id);
@@ -348,7 +386,7 @@ void sur::Rectangle::Bind(bool Render, bool Collider)
 {
 	auto OutOfScreenCheck = [&]() -> bool {
 		return (position.x >= _window_size.x || position.y >= _window_size.y ||
-			position.x + size.x < 0 || position.y + size.y < 0) ? true : false;
+			size.x < 0 ||  size.y < 0) ? true : false;
 	};
 	if (OutOfScreenCheck()) return;	//needs a fix
 	if (Render)
@@ -391,10 +429,6 @@ void sur::Rectangle::Bind(bool Render, bool Collider)
 	}
 }
 
-void sur::Rectangle::Rotate(sur::Vec2 origin, i32 Angle)
-{
-
-}
 
 //
 //	Line
@@ -544,6 +578,17 @@ void sur::Shape::Move(sur::Vec2f direction)
 	}
 }
 //
+//	Light
+//
+sur::Light::Light(Vec2f position, f32 radius, Color color, const std::string& name)
+	: radius(radius), color(color)
+{
+	this->name = name;
+	this->position = ATS(position);
+	lights.push_back(this);
+}
+
+//
 //	Input
 //
 
@@ -594,7 +639,7 @@ bool sur::Input::Keyboard::KeyDown(Keys::Keys key)
 			pressed[26] = key;
 			return true;
 		}
-		else if (pressed[(i32)key - 65] != key) {		//Some ASCII calculations
+		else if (!space && pressed[(i32)key - 65] != key) {		//Some ASCII calculations
 			pressed[(i32)key - 65] = key;
 			return true;
 		}
@@ -624,4 +669,6 @@ void sur::Map_Analyses::operator()(i32* cptr, i32* tptr, Color* rptr, sur::Vec2 
 	Trigger(tptr, size);
 	Render(rptr, size);
 }
+
+
 
