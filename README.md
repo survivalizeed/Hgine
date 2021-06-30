@@ -7,7 +7,7 @@ Make sure you are using C++ 20. For the best results compile it in x64 release, 
 ## Note:  
 Im 15 years old and still learning C++ so please understand if this is not the best code you have ever seen ;)  
 The Engine is still under development and I am only one developer.  
-Please don't wonder if I won't commit weekly.
+Please don't wonder if I don't commit weekly.
 Most of the time Im raising new code to then publish it.  
 Discord: survivalizeed#7659  
 Server: https://discord.gg/ymVn8ZsbeT
