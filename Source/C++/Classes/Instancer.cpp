@@ -24,7 +24,7 @@ void sur::Instancer::Add(void* object, Types type)
 
 
 template<typename RetTy>
-RetTy* sur::Instancer::Get(const std::string& name, i32 index)
+RetTy* sur::Instancer::Get(std::string_view name, i32 index)
 {
 	using namespace sur::Instancer;
 	for (i32 i = 0;; i++) {
@@ -117,12 +117,12 @@ RetTy* sur::Instancer::Get(const std::string& name, i32 index)
 	}
 }
 
-template sur::Rectangle* sur::Instancer::Get(const std::string& name, i32 index);
-template sur::Line* sur::Instancer::Get(const std::string& name, i32 index);
-template sur::Object* sur::Instancer::Get(const std::string& name, i32 index);
-template sur::Triangle* sur::Instancer::Get(const std::string& name, i32 index);
-template sur::Shape* sur::Instancer::Get(const std::string& name, i32 index);
-template sur::Triggers::Rectangle* sur::Instancer::Get(const std::string& name, i32 index);
+template sur::Rectangle* sur::Instancer::Get(std::string_view name, i32 index);
+template sur::Line* sur::Instancer::Get(std::string_view name, i32 index);
+template sur::Object* sur::Instancer::Get(std::string_view name, i32 index);
+template sur::Triangle* sur::Instancer::Get(std::string_view name, i32 index);
+template sur::Shape* sur::Instancer::Get(std::string_view name, i32 index);
+template sur::Triggers::Rectangle* sur::Instancer::Get(std::string_view name, i32 index);
 
 u32 sur::Instancer::GetCount(Types type) {
 	switch (type) {
@@ -137,7 +137,7 @@ u32 sur::Instancer::GetCount(Types type) {
 	}
 }
 
-void sur::Instancer::State(Types type, bool active, const std::string& name, i32 index)
+void sur::Instancer::State(Types type, bool active, std::string_view name, i32 index)
 {
 	if (type == Types::Rectangle)
 		if (name != "") {
@@ -173,7 +173,7 @@ void sur::Instancer::State(Types type, bool active, const std::string& name, i32
 			restricted::triangles->at(index)->active = active;
 }
 
-void sur::Instancer::Delete(Types type, const std::string& name, i32 index)
+void sur::Instancer::Delete(Types type, std::string_view name, i32 index)
 {
 	if (type == Types::Rectangle)
 		if (name != "") {

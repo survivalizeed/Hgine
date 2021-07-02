@@ -20,8 +20,8 @@ int main() {
 	i32 b = 0;
 
 	sur::Object obj((_resource_path + "woods.hgineres").c_str(), { 0,0 }, "obj", 1);
-	sur::Light light({ 5,5 }, 3.f, Color(40, 0, 0), "light");
-	sur::Light light2({ 5,5 }, 3.f, Color(0, 40, 0), "light2");
+	sur::Light light({ 5,5 }, 3.f, Color(0, 0, 50), "light");
+	sur::Light light2({ 5,5 }, 3.f, Color(0, 0, 50), "light2");
 
 	for (;;) {
 		renderer.ClearScreenBuffer();
@@ -33,6 +33,7 @@ int main() {
 		if (_input.mouse.LClick()) {
 			light2.SetPosition(_input.mouse.Position());
 		}
+
 		renderer.RenderScreenBuffer();
 	}
 }

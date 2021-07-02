@@ -75,7 +75,7 @@ void sur::Object::Load()
 }
 
 
-sur::Object::Object(const std::string& path, Vec2f position, const std::string& name, i32 id, const std::vector<int>& ignoreids,
+sur::Object::Object(std::string_view path, Vec2f position, std::string_view name, i32 id, const std::vector<int>& ignoreids,
 	const std::vector<i32>& push, cb_ptr<Master*> callback)
 	: path(path), Master(name, id, position,callback)
 {
@@ -88,7 +88,7 @@ sur::Object::Object(const std::string& path, Vec2f position, const std::string& 
 	Load();
 }
 
-sur::Object::Object(const Object* const obj, Vec2f position, const std::string& name, i32 id, const std::vector<int>& ignoreids,
+sur::Object::Object(const Object* const obj, Vec2f position, std::string_view name, i32 id, const std::vector<int>& ignoreids,
 	const std::vector<i32>& push,cb_ptr<Master*> callback)
 	: XCoords(obj->XCoords), YCoords(obj->YCoords), Colors(obj->Colors), Master(name,id,position, callback)
 {
@@ -160,9 +160,12 @@ void sur::Object::Bind(bool Render, ColliderType collidertype)
 					distTooFar = true;
 				continue;
 			}
+
+
 			distTooFar = false;
 			allow = false;
-			colorRGB = colorRGB + (sRGB(expected.r / (dist * 0.17f), expected.g / (dist * 0.17f), expected.b / (dist * 0.17f)));
+			colorRGB = colorRGB + (sRGB(expected.r, expected.g, expected.b));
+			colorRGB = sRGB(i32(colorRGB.r / dist / dist), i32(colorRGB.g / dist / dist), i32(colorRGB.b / dist / dist));
 
 			if (colorRGB.r > 255) colorRGB.r = 255;
 			if (colorRGB.r < 0) colorRGB.r = 0;
@@ -170,15 +173,6 @@ void sur::Object::Bind(bool Render, ColliderType collidertype)
 			if (colorRGB.g < 0) colorRGB.g = 0;
 			if (colorRGB.b > 255) colorRGB.b = 255;
 			if (colorRGB.b < 0) colorRGB.b = 0;	
-
-			//i32 maxminimal;
-			//if (colorRGB.r <= colorRGB.g && colorRGB.r <= colorRGB.b)
-			//	maxminimal = colorRGB.r;
-			//if (colorRGB.g <= colorRGB.r && colorRGB.g <= colorRGB.b)
-			//	maxminimal = colorRGB.g;
-			//if (colorRGB.b <= colorRGB.r && colorRGB.b <= colorRGB.g)
-			//	maxminimal = colorRGB.b;	
-			//colorRGB = sRGB(colorRGB.r - maxminimal, colorRGB.g - maxminimal, colorRGB.b - maxminimal);
 		}
 		if (!runned || distTooFar)
 			return Color(0, 0, 0);

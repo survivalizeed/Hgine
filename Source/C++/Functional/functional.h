@@ -11,7 +11,7 @@ namespace sur {
 	sur::Maps Initialize();
 
 	//Unused
-	i32 CharCounter(char Char, const std::string& Data);
+	i32 CharCounter(char Char, std::string_view Data);
 
 	/*
 	Play a sound. Currently there are only .wav files supported
@@ -19,7 +19,7 @@ namespace sur {
 	The first 4 digits(FFFF) are the volume for your left box and
 	the last 4 digits are the volume for your right box.
 	*/
-	void Sound(const char* path, u32 params, i32 volume);
+	void Sound(const std::string& path, u32 params, i32 volume);
 
 	//Not thaaaat fast :)
 	i32 RandomRange(i32 min, i32 max);

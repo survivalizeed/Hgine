@@ -371,9 +371,9 @@ void sur::Camera::Move(Vec2f direction)
 //
 //	Rectangle
 //
-sur::Rectangle::Rectangle(Vec2f position, Vec2f size, Color color, const std::string& name, i32 id,
-	const std::vector<i32>& ignoreids, const std::vector<i32>& push, cb_ptr<Master*> callback)
-	:color(color), Master(name,id, position, size, callback)
+sur::Rectangle::Rectangle(Vec2f position, Vec2f size, Color color, std::string_view name, i32 id,
+	const std::vector<i32>& ignoreids, const std::vector<i32>& push, cb_ptr<Master*> callback) 
+	: Master(name,id,color, position, size, callback)
 {
 	this->push = push;
 	ignore = ignoreids;
@@ -381,6 +381,8 @@ sur::Rectangle::Rectangle(Vec2f position, Vec2f size, Color color, const std::st
 	identitys.push_back(id);
 	ptrs.push_back(this);
 }
+
+
 
 void sur::Rectangle::Bind(bool Render, bool Collider)
 {
@@ -433,9 +435,9 @@ void sur::Rectangle::Bind(bool Render, bool Collider)
 //
 //	Line
 //
-sur::Line::Line(Vec2f start, Vec2f end, Color color, const std::string& name, i32 id, const std::vector<int>& ignoreids,
+sur::Line::Line(Vec2f start, Vec2f end, Color color, std::string_view name, i32 id, const std::vector<int>& ignoreids,
 	cb_ptr<Master*> callback)
-	: start(ATS(start)), end(ATS(end)), color(color), Master(name, id, callback)
+	: start(ATS(start)), end(ATS(end)), Master(name, id, color, callback)
 {
 	ignore = ignoreids;
 	type = Type::Line;
@@ -529,15 +531,13 @@ void sur::Line::Bind(bool Render, bool Collider)
 //
 //	Custom wire shape
 //
-sur::Shape::Shape(Color color, const std::string& name, i32 id, const std::vector<int>& ignoreids,
-	cb_ptr<Master*> callback) : color(color)
+sur::Shape::Shape(Color color, std::string_view name, i32 id, const std::vector<int>& ignoreids,
+	cb_ptr<Master*> callback) : Master(name, id, color, callback)
 {
 	ignore = ignoreids;
-	this->name = name;
 	type = Type::Shape;
 	identitys.push_back(id);
 	ptrs.push_back(this);
-	this->id = id;
 }
 
 void sur::Shape::Gen()
@@ -580,9 +580,10 @@ void sur::Shape::Move(sur::Vec2f direction)
 //
 //	Light
 //
-sur::Light::Light(Vec2f position, f32 radius, Color color, const std::string& name)
-	: radius(radius), color(color)
+sur::Light::Light(Vec2f position, f32 radius, Color color, std::string_view name)
+	: radius(radius)
 {
+	this->color = color;
 	this->name = name;
 	this->position = ATS(position);
 	lights.push_back(this);

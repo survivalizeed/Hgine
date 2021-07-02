@@ -15,7 +15,7 @@ sur::Maps sur::Initialize()
 }
 
 
-i32 sur::CharCounter(char Char, const std::string& Data) {
+i32 sur::CharCounter(char Char, std::string_view Data) {
 	i32 counter = 0;
 	for (i32 i = 0; i < Data.size(); i++) {
 		if (Data[i] == Char) {
@@ -25,10 +25,10 @@ i32 sur::CharCounter(char Char, const std::string& Data) {
 	return counter;
 }
 
-void sur::Sound(const char* path, u32 params, i32 volume)
+void sur::Sound(const std::string& path, u32 params, i32 volume)
 {
 	waveOutSetVolume(NULL, volume);
-	PlaySoundA(path, NULL, params);
+	PlaySoundA(path.c_str(), NULL, params);
 }
 
 i32 sur::RandomRange(i32 min, i32 max)

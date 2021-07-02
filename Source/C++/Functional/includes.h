@@ -28,6 +28,7 @@
 #include <type_traits>
 #include <array>
 #include <functional>
+#include <string_view>
 
 #define l(x) std::cout << x << "\n"
 
