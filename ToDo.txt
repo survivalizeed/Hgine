@@ -1,4 +1,4 @@
-Camera movement |Done|
+Camera movement |Half DONE
 Movement with and without collider for every object |DONE|
 Collisions for line |DONE|
 Line outside of screen fix |DONE|
