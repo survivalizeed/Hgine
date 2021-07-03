@@ -41,3 +41,4 @@ missing pixel in object / rectangle collision
 standard draw color not working correctly
 update the instancer with lights and so one...
 overlapping lights are weird
+finally do the damn triggers
