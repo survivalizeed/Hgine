@@ -42,3 +42,4 @@ standard draw color not working correctly
 update the instancer with lights and so one...
 overlapping lights are weird
 finally do the damn triggers
+fix ClearAll method for the instancer
