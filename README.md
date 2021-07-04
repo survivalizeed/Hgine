@@ -20,7 +20,11 @@ After you have done that go into the SurLua.h and change the #pragma comment pat
 ##### Be aware of x64 and x86.  
 Now go into the Audio.h and do the same with the bass.lib.  
 ##### Again be aware of x64 and x86
-Next make sure that all x64 build folder (debug/release) include the lua54.dll and the bass.dll. Pick the ones from the Extern folder in the source folder.
+Next make sure that all x64 build folders (debug/release) include the lua54.dll and the bass.dll.  
+Pick the ones from the Extern folder in the source folder. Make sure you picked the x64 dlls.  
+  
+Then do the same with the x86 build folders (debug/release) include the lua54.dll and bass.dll.
+Pick the ones from the Extern folder in the source folder. Make sure you picked the x86 dlls.  
 
-Next download the Hgine resource generator.exe to be able to create 
+Next download the Hgine resource generator.exe to be able to create some Hgineres files.
 
