@@ -17,8 +17,8 @@ Server: https://discord.gg/ymVn8ZsbeT
 ## Make it work
 To make the Engine work you just need to download the source folder and import it in a visual studio project.  
 After you have done that go into the SurLua.h and change the #pragma comment paths to the destination where your .a files are placed.  
-#### Be aware of x64 and x86.  
+##### Be aware of x64 and x86.  
 Now go into the Audio.h and do the same with the bass.lib.  
-#### Again be aware of x64 and x86
+##### Again be aware of x64 and x86
 
 
