@@ -12,3 +12,7 @@ Please don't wonder if I don't commit weekly.
 Most of the time Im collecting new code to then publish it.  
 Discord: survivalizeed#7659  
 Server: https://discord.gg/ymVn8ZsbeT
+
+
+## Make it work
+To make the Engine work you just need to download the source folder
