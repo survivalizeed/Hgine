@@ -31,6 +31,11 @@ void sur::Sound(const std::string& path, u32 params, i32 volume)
 	PlaySoundA(path.c_str(), NULL, params);
 }
 
+void sur::SetVolume(i32 volume)
+{
+	waveOutSetVolume(NULL, volume);
+}
+
 i32 sur::RandomRange(i32 min, i32 max)
 {
 	static bool once = false;

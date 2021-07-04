@@ -21,6 +21,13 @@ namespace sur {
 	*/
 	void Sound(const std::string& path, u32 params, i32 volume);
 
+	/*
+	The volume is represented in hex.The max volume is 0xFFFFFFFF.
+	The first 4 digits(FFFF) are the volume for your left boxand
+	the last 4 digits are the volume for your right box.
+	*/
+	void SetVolume(i32 volume);
+
 	//Not thaaaat fast :)
 	i32 RandomRange(i32 min, i32 max);
 
