@@ -194,10 +194,13 @@ namespace sur {
 
 		inline XYC GetBuf() { return { XCoords,YCoords,Colors }; }
 
-		//~Object() {
-		//	if(!parentmem)
-		//		delete YCoords, XCoords, Colors;
-		//}
+		~Object() {
+			if (!parentmem) {
+				delete YCoords;
+				delete XCoords;
+				delete Colors;
+			}
+		}
 	};
 	//
 	//	Shape: Procedual Line

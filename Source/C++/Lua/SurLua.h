@@ -7,20 +7,22 @@
 #include <Windows.h>
 #include <string>
 #include <string_view>
-//Link to the include folder
+
+
+// The x64 in the path doesn't matter. The include files are the same
 extern "C"
 {
-#include "lua.h"
-#include "lauxlib.h"
-#include "lualib.h"
+#include "../../Extern/x64/Lua/include/lua.h"
+#include "../../Extern/x64/Lua/include/lauxlib.h"
+#include "../../Extern/x64/Lua/include/lualib.h"
 }
 
 
 #if _WIN32 || _WIN64
 #if _WIN64
-#pragma comment(lib,"F:\\C++\\###Includes###\\Lua x64\\liblua54.a")  //Be aware of x64 and x86 -> dll aswell
+#pragma comment(lib,"F:\\C++\\Hgine\\Hgine\\Source\\Extern\\x64\\Lua\\liblua54.a")  
 #else
-#pragma comment(lib,"F:\\C++\\###Includes###\\Lua x86\\liblua54.a")  //Be aware of x64 and x86 -> dll aswell
+#pragma comment(lib,"F:\\C++\\Hgine\\Hgine\\Source\\Extern\\x86\\Lua\\liblua54.a")  
 #endif
 #endif
 

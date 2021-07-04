@@ -54,6 +54,10 @@ return rt
 #define _seconds(x) x * 1000
 #define _minutes(x) x * 60000
 
+#define PREFAB
+#define GAMEOBJECT
+#define SINGLE
+
 using namespace std::this_thread;
 using namespace std::chrono;
 
@@ -67,6 +71,7 @@ using namespace std::chrono;
 #include "../Classes/Classes.h"
 #include "../Classes/3D_Objects.h"
 #include "../Lua/SurLua.h"
+#include "../Classes/Audio.h"
 //#include "functional.h" <- included in main so I don't get linker errors
 
 constexpr i32 RO = 0;	//currently useless

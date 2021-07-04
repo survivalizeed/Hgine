@@ -255,20 +255,20 @@ void sur::Instancer::ClearAll()
 {
 	for (i32 i = 0; i < restricted::rectangles->size(); ++i)
 		delete restricted::rectangles->at(i);
-	/*restricted::rectangles->clear();*/
+	restricted::rectangles->clear();
 	for (i32 i = 0; i < restricted::objects->size(); ++i)
 		delete restricted::objects->at(i);
-	/*restricted::objects->clear();*/
+	restricted::objects->clear();
 	for (i32 i = 0; i < restricted::lines->size(); ++i)
 		delete restricted::lines->at(i);
-	/*restricted::lines->clear();*/
+	restricted::lines->clear();
 	for (i32 i = 0; i < restricted::triangles->size(); ++i)
 		delete restricted::triangles->at(i);
-	/*restricted::triangles->clear();*/
+	restricted::triangles->clear();
 	for (i32 i = 0; i < restricted::shapes->size(); ++i)
 		delete restricted::shapes->at(i);
-	/*restricted::shapes->clear();*/
+	restricted::shapes->clear();
 	for (i32 i = 0; i < restricted::trigger_rectangles->size(); ++i)
 		delete restricted::trigger_rectangles->at(i);
-	/*restricted::trigger_rectangles->clear();*/
+	restricted::trigger_rectangles->clear();
 }
