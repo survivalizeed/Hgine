@@ -132,6 +132,12 @@ u32 sur::Instancer::GetCount(Types type) {
 		return (i32)restricted::lines->size();
 	case Types::Object:
 		return (i32)restricted::objects->size();
+	case Types::Triangle:
+		return (i32)restricted::triangles->size();
+	case Types::Shape:
+		return (i32)restricted::shapes->size();
+	case Types::Trigger_Rectangle:
+		return (i32)restricted::trigger_rectangles->size();
 	default:
 		return -1;
 	}
@@ -171,6 +177,22 @@ void sur::Instancer::State(Types type, bool active, std::string_view name, i32 i
 		}
 		else if (index >= 0)
 			restricted::triangles->at(index)->active = active;
+	if (type == Types::Shape)
+		if (name != "") {
+			for (i32 j = 0; j < restricted::shapes->size(); ++j)
+				if (restricted::shapes->at(j)->GetName() == name)
+					restricted::shapes->at(j)->active = active;
+		}
+		else if (index >= 0)
+			restricted::shapes->at(index)->active = active;
+	if (type == Types::Trigger_Rectangle)
+		if (name != "") {
+			for (i32 j = 0; j < restricted::trigger_rectangles->size(); ++j)
+				if (restricted::trigger_rectangles->at(j)->GetName() == name)
+					restricted::trigger_rectangles->at(j)->active = active;
+		}
+		else if (index >= 0)
+			restricted::trigger_rectangles->at(index)->active = active;
 }
 
 void sur::Instancer::Delete(Types type, std::string_view name, i32 index)
@@ -211,4 +233,42 @@ void sur::Instancer::Delete(Types type, std::string_view name, i32 index)
 		}
 		else if (index >= 0)
 			restricted::triangles->erase(restricted::triangles->begin() + index);
+	if (type == Types::Shape)
+		if (name != "") {
+			for (i32 j = 0; j < restricted::shapes->size(); ++j)
+				if (restricted::shapes->at(j)->GetName() == name)
+					restricted::shapes->erase(restricted::shapes->begin() + j);
+		}
+		else if (index >= 0)
+			restricted::shapes->erase(restricted::shapes->begin() + index);
+	if (type == Types::Trigger_Rectangle)
+		if (name != "") {
+			for (i32 j = 0; j < restricted::trigger_rectangles->size(); ++j)
+				if (restricted::trigger_rectangles->at(j)->GetName() == name)
+					restricted::trigger_rectangles->erase(restricted::trigger_rectangles->begin() + j);
+		}
+		else if (index >= 0)
+			restricted::trigger_rectangles->erase(restricted::trigger_rectangles->begin() + index);
+}
+
+void sur::Instancer::ClearAll()
+{
+	for (i32 i = 0; i < restricted::rectangles->size(); ++i)
+		delete restricted::rectangles->at(i);
+	/*restricted::rectangles->clear();*/
+	for (i32 i = 0; i < restricted::objects->size(); ++i)
+		delete restricted::objects->at(i);
+	/*restricted::objects->clear();*/
+	for (i32 i = 0; i < restricted::lines->size(); ++i)
+		delete restricted::lines->at(i);
+	/*restricted::lines->clear();*/
+	for (i32 i = 0; i < restricted::triangles->size(); ++i)
+		delete restricted::triangles->at(i);
+	/*restricted::triangles->clear();*/
+	for (i32 i = 0; i < restricted::shapes->size(); ++i)
+		delete restricted::shapes->at(i);
+	/*restricted::shapes->clear();*/
+	for (i32 i = 0; i < restricted::trigger_rectangles->size(); ++i)
+		delete restricted::trigger_rectangles->at(i);
+	/*restricted::trigger_rectangles->clear();*/
 }

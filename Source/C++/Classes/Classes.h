@@ -5,6 +5,9 @@
 #include "../Functional/includes.h"
 
 extern HWND _hwnd;
+extern f32 _ambientLight;
+extern bool _light;
+
 
 namespace sur {
 	//
@@ -17,7 +20,7 @@ namespace sur {
 	protected:
 
 		Vec2f counterneg = { -0.f,-0.f };
-		Vec2f counterpos = { 0.f,0.f };	
+		Vec2f counterpos = { 0.f,0.f };
 		Vec2 countercountpos = { 1,1 };
 		Vec2 countercountneg = { -1,-1 };
 
@@ -26,10 +29,10 @@ namespace sur {
 		std::string name;
 		Vec2 position;
 		Vec2 size;
-		
+
 		std::vector<sur::Vec2> CollisionPos;
 		std::vector<i32> push;
-		
+
 
 
 		Master(std::string_view name, i32 id, Color color, cb_ptr<Master*> callback = nullptr)
@@ -93,25 +96,28 @@ namespace sur {
 	private:
 		bool thread = false;
 		volatile u32 frameCounter = 0;
-		i32 Wait;
 		HDC dc;
 		Color bg;
-		bool FillBackground;
+		bool fillBackground;
 	public:
 
-		Render(Color bg, bool FillBackground, i32 Wait = 0) : bg(bg), FillBackground(FillBackground), Wait(Wait)
-		{ dc = GetDC(_hwnd); }
+		Render(Color bg, bool fillBackground, f32 ambientLight, bool light) : bg(bg), fillBackground(fillBackground)
+		{
+			dc = GetDC(_hwnd);
+			_ambientLight = ambientLight;
+			_light = light;
+		}
 
-		void ClearScreenBuffer();
+		void ClearScreenBuffer() const;
 
 		void RenderScreenBuffer();
 
 		void FPS();
 
-		void DebugConsole(bool Show);
+		void DebugConsole(bool Show) const;
 	};
 	//
-	// Camera class
+	//	Camera namespace <- no class because there will only be one
 	// Classes.cpp
 	namespace Camera {
 		void Move(sur::Vec2f direction);
@@ -139,7 +145,7 @@ namespace sur {
 	// LoadObj.cpp
 	class Object : public Master {
 	private:
-
+		//Deleted functions
 		inline void SetColor(Color color) = delete;
 
 	private:
@@ -147,9 +153,9 @@ namespace sur {
 		bool fliped_Y = false;
 		i32 x = 0;
 		i32 y = 0;
-		std::string path;		
+		std::string path;
 		sRGB tint_by;
-		
+
 		std::vector<i32>* XCoords = new std::vector<i32>;
 		std::vector<i32>* YCoords = new std::vector<i32>;
 		std::vector<Color>* Colors = new std::vector<Color>;
@@ -163,29 +169,35 @@ namespace sur {
 		//Only use this if you want an array
 		Object() = default;
 
-		Object(std::string_view path, Vec2f position, std::string_view name, i32 id, const std::vector<i32>& ignoreids = {0},
+		Object(std::string_view path, Vec2f position, std::string_view name, i32 id, const std::vector<i32>& ignoreids = { 0 },
 			const std::vector<i32>& push = { 0 }, cb_ptr<Master*> callback = nullptr);
 
-		Object(const Object* const obj, Vec2f position, std::string_view name, i32 id, const std::vector<i32>& ignoreids = {0},
+		Object(const Object* const obj, Vec2f position, std::string_view name, i32 id, const std::vector<i32>& ignoreids = { 0 },
 			const std::vector<i32>& push = { 0 }, cb_ptr<Master*> callback = nullptr);
 
 		void Bind(bool Render, ColliderType collidertype);
 
+		void ScrollBind(bool Render);
+
 		inline void Scale(Vec2f scale = { 1.f,1.f }) { matrix(scale.x, 0, 0, scale.y); }
 
+		// A little joke method
 		void LSD();
 
 		void FlipX(bool flip);
 
 		void FlipY(bool flip);
 
-		inline void Tint(sRGB rgb_intensity) { tint_by = rgb_intensity; }
+		inline void SetTint(sRGB rgb_intensity) { tint_by = rgb_intensity; }
 
-		inline XYC GetBuf() { return { XCoords,YCoords,Colors}; }
+		inline sRGB GetTint() { return tint_by; }
 
-		~Object() {
-			delete YCoords, XCoords, Colors;
-		}
+		inline XYC GetBuf() { return { XCoords,YCoords,Colors }; }
+
+		//~Object() {
+		//	if(!parentmem)
+		//		delete YCoords, XCoords, Colors;
+		//}
 	};
 	//
 	//	Shape: Procedual Line
@@ -201,13 +213,13 @@ namespace sur {
 		Vec2 start;
 		Vec2 end;
 		size_t lenght = 0;
-		
-		inline void MoveInject(const Vec2& direction) override { start += direction; end += direction;}
+
+		inline void MoveInject(const Vec2& direction) override { start += direction; end += direction; }
 	public:
 		//Only use this if you want an array
 		Line() = default;
 
-		Line(Vec2f start, Vec2f end, Color color, std::string_view name, i32 id, const std::vector<i32>& ignoreids = {0},
+		Line(Vec2f start, Vec2f end, Color color, std::string_view name, i32 id, const std::vector<i32>& ignoreids = { 0 },
 			cb_ptr<Master*> callback = nullptr);
 
 		inline void Start(Vec2f start) { this->start = ATS(start); }
@@ -248,7 +260,7 @@ namespace sur {
 		void Fill(LineVector& linevector);
 
 		inline void MoveInject(const Vec2& direction) override {
-			p1 += direction; 
+			p1 += direction;
 			p2 += direction;
 			p3 += direction;
 		}
@@ -257,24 +269,28 @@ namespace sur {
 		//Only use this if you want an array
 		Triangle() = default;
 
-		Triangle(Vec2f p1, Vec2f p2, Vec2f p3, Color color, std::string_view name, i32 id, 
-			const std::vector<i32>& ignoreids = {0}, cb_ptr<Master*> callback = nullptr);
+		Triangle(Vec2f p1, Vec2f p2, Vec2f p3, Color color, std::string_view name, i32 id,
+			const std::vector<i32>& ignoreids = { 0 }, cb_ptr<Master*> callback = nullptr);
 
 		inline void SetPosition(i32 which, Vec2f pos) {
 			switch (which) {
-			case 0: 
-				p1 = ATS(pos); 
+			case 0:
+				p1 = ATS(pos);
 				return;
-			case 1: 
-				p2 = ATS(pos); 
+			case 1:
+				p2 = ATS(pos);
 				return;
-			case 2: 
-				p3 = ATS(pos); 
+			case 2:
+				p3 = ATS(pos);
 				return;
 			}
 		}
 
 		void Bind(bool Render, bool Collider);
+
+		~Triangle() {
+			delete linevector.Line1, linevector.Line2, linevector.Line3;
+		}
 	};
 	//
 	//	Shape: Custom wire shape
@@ -284,7 +300,7 @@ namespace sur {
 		//Deleted attributes
 		using Master::ignore;
 		using Master::matrix;
-		
+
 		//Deleted functions
 		inline Vec2f GetPosition() = delete;
 		inline Vec2f GetSize() = delete;
@@ -293,20 +309,20 @@ namespace sur {
 	private:
 		std::vector<Vec2>* vec = new std::vector<Vec2>;
 		std::vector<Line*>* lines = new std::vector<Line*>;
-		
+
 		void Gen();
 
 		template<VEC R>
-		void Pass(R r){
+		void Pass(R r) {
 			vec->push_back((Vec2f)r);
 			Gen();
 		}
-		
+
 	public:
 		//Only use this if you want an array
 		Shape() = default;
 
-		Shape(Color color, std::string_view name, i32 id, const std::vector<i32>& ignoreids = {0},
+		Shape(Color color, std::string_view name, i32 id, const std::vector<i32>& ignoreids = { 0 },
 			cb_ptr<Master*> callback = nullptr);
 
 		// Call after constructor
@@ -315,7 +331,7 @@ namespace sur {
 			vec->push_back((Vec2f)f);
 			Pass(r...);
 		}
-		
+
 		void SetPosition(i32 index, Vec2f position);
 
 		void Bind(bool Render, bool Collider);
@@ -331,16 +347,16 @@ namespace sur {
 			Vec2 pos;
 			Color color;
 			Particle() = default;
-			Particle(Vec2 pos, Color color) : pos(pos), color(color){}
+			Particle(Vec2 pos, Color color) : pos(pos), color(color) {}
 		};
-		
+
 		std::vector<Particle>* Coords = new std::vector<Particle>;
 		std::vector<Vec2>* Offsets = new std::vector<Vec2>;
 		ParticlesSetting* settings;
-	
+
 		inline void MoveInject(const Vec2& direction) override { position += direction; }
 	public:
-		
+
 		Particles() = default;
 
 		Particles(ParticlesSetting* settings);
@@ -352,10 +368,10 @@ namespace sur {
 		void Bind(bool Render);
 
 		//Only moves the particles
-		inline void Move(Vec2f direction) cpar(Master::Move(direction,false))
+		inline void Move(Vec2f direction) cpar(Master::Move(direction, false))
 
-		//Moves the particles, the middle and everything else
-		inline void MoveAll(Vec2f direction) {
+			//Moves the particles, the middle and everything else
+			inline void MoveAll(Vec2f direction) {
 			Vec2 newdirection = MovQueue(direction);
 			settings->middle = settings->middle + newdirection;
 			position += newdirection;
@@ -380,7 +396,7 @@ namespace sur {
 	class Text : public Master {
 	private:
 		u32 size;
-		
+
 	public:
 
 		std::string text;
@@ -404,18 +420,18 @@ namespace sur {
 		private:
 
 		public:
-			Rectangle(Vec2f position, Vec2f size, std::string_view name, i32 id, const std::vector<i32>& ignoreids = {0},
+			Rectangle(Vec2f position, Vec2f size, std::string_view name, i32 id, const std::vector<i32>& ignoreids = { 0 },
 				cb_ptr<Master*> callback = nullptr);
 
 			inline void Move(Vec2f direction) cpar(Master::Move(direction, false))
 
-			void Bind();
+				void Bind();
 		};
 	}
 	//
 	//	Instancer <- For object management
 	// Instancer.cpp
-	namespace Instancer {	
+	namespace Instancer {
 		struct restricted {
 			inline static std::vector<sur::Rectangle*>* rectangles = new std::vector<sur::Rectangle*>;
 			inline static std::vector<sur::Line*>* lines = new std::vector<sur::Line*>;
@@ -423,7 +439,7 @@ namespace sur {
 			inline static std::vector<sur::Triangle*>* triangles = new std::vector<sur::Triangle*>;
 			inline static std::vector<sur::Shape*>* shapes = new std::vector<sur::Shape*>;
 			inline static std::vector<sur::Triggers::Rectangle*>* trigger_rectangles = new std::vector<sur::Triggers::Rectangle*>;
-			 
+
 			// To return if nothing was found -> prevent error of nullpointer
 			inline static sur::Rectangle* Rdefault = new sur::Rectangle({ 0,0 }, { 0,0 }, Color(0, 0, 0), "invalid", -1);
 			inline static sur::Line* Ldefault = new sur::Line({ 0,0 }, { 0,0 }, Color(0, 0, 0), "invalid", -1);
@@ -447,6 +463,8 @@ namespace sur {
 		void State(Types type, bool active, std::string_view name = "", i32 index = -1);
 
 		void Delete(Types type, std::string_view name = "", i32 index = -1);
+
+		void ClearAll();
 	}
 	//
 	//	Input
@@ -472,10 +490,10 @@ namespace sur {
 	struct Map_Analyses {
 		analyses::Array<i32> Collider, Trigger;
 		analyses::Array<Color> Render;
-		void operator ()(Maps map, Vec2 size);		
+		void operator ()(Maps map, Vec2 size);
 		void operator ()(i32* cptr, i32* tptr, Color* rptr, Vec2 size);
 	};
-	
+
 	struct CollisionPackage {
 		Master* ptr; i16 steps;
 	};

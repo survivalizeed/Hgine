@@ -28,8 +28,14 @@ constexpr f32 PI = 3.141f;
 
 // Colliders
 enum class ColliderType {
-	Static, Outline, None
+	Static, Outline, Filled, None
 };
+
+// Static is for a perfect collider but it also takes more performance. 
+// Outline is a boxcollider around the object. It is not perfect but takes as good as no performance
+// Filled is a filled boxcollider. You can use this for a UI to detect a hover or something like that.
+// None is self explaining ;)
+
 
 // Describes the axis something can move on
 enum class Axis {
@@ -49,12 +55,10 @@ namespace sur {
 	// struct 
 	//
 	//
-	// Vec2 -> i32
+	// Vec2f -> f32
 	//
-
-
 	struct Vec2f {
-		
+
 		f32 x, y;
 
 		Vec2f() = default;
@@ -93,7 +97,9 @@ namespace sur {
 			return os;
 		}
 	};
-
+	//
+	// Vec2 -> i32
+	//
 	struct Vec2 {
 
 		i32 x = 0, y = 0;
@@ -107,26 +113,26 @@ namespace sur {
 		inline void invert() { x *= -1; y *= -1; }
 		inline f32 magnitude() { return (f32)sqrt(pow(x, 2) + pow(y, 2)); }
 		inline void absolute() { (void)abs(x); (void)abs(y); }
-		
+
 		inline void operator ()(i32 x, i32 y) { this->x = x; this->y = y; }
 		inline void operator ()(const Vec2& vector2d) { x = vector2d.x; y = vector2d.y; }
-		inline void operator =(const Vec2& vector2d) { x = vector2d.x; y = vector2d.y; }	
-	
+		inline void operator =(const Vec2& vector2d) { x = vector2d.x; y = vector2d.y; }
+
 		inline Vec2 operator +(const Vec2& other) const { return { x + other.x, y + other.y }; }
 		inline Vec2 operator -(const Vec2& other) const { return { x - other.x, y - other.y }; }
 		inline i32 operator *(const Vec2& other) const { return x * other.x + y * other.y; }
-		inline Vec2 operator /(const Vec2& other) const { return { x / other.x, y / other.y }; }		
-		
+		inline Vec2 operator /(const Vec2& other) const { return { x / other.x, y / other.y }; }
+
 		inline Vec2 operator +(i32 value) const { return { x + value, y + value }; }
 		inline Vec2 operator -(i32 value) const { return { x - value, y - value }; }
 		inline Vec2 operator *(i32 value) const { return { x * value, y * value }; }
 		inline Vec2 operator /(i32 value) const { return { x / value, y / value }; }
-		
+
 		inline Vec2 operator +=(const Vec2& other) { return { x += other.x, y += other.y }; }
 		inline Vec2 operator -=(const Vec2& other) { return { x -= other.x, y -= other.y }; }
-		
+
 		inline Vec2 operator --() { return { x - 1, y - 1 }; }
-		inline Vec2 operator ++() { return { x + 1, y + 1 }; }		
+		inline Vec2 operator ++() { return { x + 1, y + 1 }; }
 		inline bool operator ==(const Vec2& other) const { return (x == other.x && y == other.y) ? true : false; }
 		inline bool operator !=(const Vec2& other) const { return (x != other.x && y != other.y) ? true : false; }
 		inline bool operator >(Vec2 other) { return (magnitude() > other.magnitude()) ? true : false; }
@@ -144,7 +150,7 @@ namespace sur {
 
 
 	struct Mat2x2 {
-		Vec2f v1,v2;
+		Vec2f v1, v2;
 
 		Mat2x2() = default;
 
@@ -154,13 +160,13 @@ namespace sur {
 			v1.x = a; v2.x = b; v1.y = c; v2.y = d;
 		}
 
-		Mat2x2(const Mat2x2& other) { 
+		Mat2x2(const Mat2x2& other) {
 			v1 = other.v1; v2 = other.v2;
 		}
 
 
 		inline Vec2 multiplyWithVector(const Vec2f& other) {
-			return { (i32)(v1.x * other.x + v2.x * other.y),(i32)(v1.y * other.x + v2.y * other.y)};
+			return { (i32)(v1.x * other.x + v2.x * other.y),(i32)(v1.y * other.x + v2.y * other.y) };
 		}
 
 		inline void multiplyWithMatrix(const Mat2x2& other) {
@@ -181,13 +187,15 @@ namespace sur {
 			if (which == 1) if (index == 0)	return v2.x;
 			if (index == 1) return v2.y;
 		}
-		friend std::ostream& operator<<(std::ostream& os,const Mat2x2& mat) {
+		friend std::ostream& operator<<(std::ostream& os, const Mat2x2& mat) {
 			os << "{ " << mat.v1.x << " " << mat.v2.x << " }" << "\n"
 				<< "{ " << mat.v1.y << " " << mat.v2.y << " }";
 			return os;
 		}
 	};
-
+	//
+	// 3D stuff...
+	//
 	struct Vec3f {
 		f32 x, y, z;
 
@@ -195,15 +203,15 @@ namespace sur {
 
 		Vec3f(f32 x, f32 y, f32 z) : x(x), y(y), z(z) {}
 
-		Vec3f(const Vec3f& other) : x(other.x), y(other.y), z(other.z){}
+		Vec3f(const Vec3f& other) : x(other.x), y(other.y), z(other.z) {}
 
 		inline Vec2 toVec2() { return{ (i32)x,(i32)y }; }
 
 		inline Vec2f toVec2f() { return{ (f32)x,(f32)y }; }
 
-		inline void operator ()(f32 x, f32 y, f32 z) { this->x = x; this->y = y; this->z = z;}
-		inline Vec3f operator +(const Vec3f& other) { return { x + other.x, y + other.y, z + other.z };}
-		inline Vec3f operator -(const Vec3f& other) { return { x - other.x, y - other.y, z - other.z };}
+		inline void operator ()(f32 x, f32 y, f32 z) { this->x = x; this->y = y; this->z = z; }
+		inline Vec3f operator +(const Vec3f& other) { return { x + other.x, y + other.y, z + other.z }; }
+		inline Vec3f operator -(const Vec3f& other) { return { x - other.x, y - other.y, z - other.z }; }
 		friend std::ostream& operator<<(std::ostream& os, const Vec3f& vector) {
 			os << "X: " << vector.x << " Y: " << vector.y << " Z: " << vector.z;
 			return os;
@@ -214,7 +222,7 @@ namespace sur {
 		Vec3f v1, v2, v3;
 
 		Mat3x3() = default;
-		
+
 		// { a | b | c }
 		// { d | e | f }
 		// { g | h | i }
@@ -264,11 +272,14 @@ namespace sur {
 		sRGB(i32 r, i32 g, i32 b) : r(r), g(g), b(b) {}
 
 		inline void ToRGB(const Color& color) { r = GetBValue(color); g = GetGValue(color); b = GetRValue(color); }
+		inline Color ToColor() { return Color(r, g, b); }
+
 		inline void operator()(i32 r, i32 g, i32 b) { this->r = r; this->g = g; this->b = b; }
 		inline sRGB operator +(const sRGB& other) { return{ r + other.r, g + other.g, b + other.b }; }
 		inline sRGB operator -(const sRGB& other) { return{ r - other.r, g - other.g, b - other.b }; }
-
 		inline sRGB operator /(const sRGB& other) { return{ r / other.r, g / other.g, b / other.b }; }
+
+		inline sRGB operator *(f32 value) { return{ i32(r * value), i32(g * value), i32(b * value) }; }
 		inline bool operator ==(const sRGB& other) { return (r == other.r && g == other.g && b == other.b) ? true : false; }
 	};
 
@@ -278,7 +289,7 @@ namespace sur {
 		std::vector<Color>* C = nullptr;
 	};
 
-	struct ParticlesSetting {	
+	struct ParticlesSetting {
 		i32 emission, noise_factor;
 		f32 max_distance_to_middle = 0;
 		std::vector<Direction> block_directions;  // VS 2019 shows an error here for some reason. Just don't care :)
@@ -287,11 +298,11 @@ namespace sur {
 		std::vector<Color> colors;
 
 		ParticlesSetting() = default;
-	
-		ParticlesSetting(Vec2f emission_point_min, Vec2f emission_point_max, i32 emission, i32 noise_factor, 
+
+		ParticlesSetting(Vec2f emission_point_min, Vec2f emission_point_max, i32 emission, i32 noise_factor,
 			f32 max_distance_to_middle = 0.f, const std::vector<Color>& colors = {})
 			: emission_point_max(emission_point_max), emission_point_min(emission_point_min),
-			  emission(emission), noise_factor(noise_factor), max_distance_to_middle(max_distance_to_middle), colors(colors){}
+			emission(emission), noise_factor(noise_factor), max_distance_to_middle(max_distance_to_middle), colors(colors) {}
 	};
 }
 

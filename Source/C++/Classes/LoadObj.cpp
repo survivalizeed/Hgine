@@ -56,7 +56,7 @@ void sur::Object::Load()
 		for (i32 i = 0; i < Colors->size(); ++i) {
 			sRGB tmp(GetRValue(Colors->at(i)), GetGValue(Colors->at(i)), GetBValue(Colors->at(i)));
 			Colors->at(i) = Color(tmp.r, tmp.g, tmp.b);
-		}	
+		}
 		i32 maxY = *std::max_element(YCoords->begin(), YCoords->end());
 		for (auto&& iter : *YCoords) {
 			iter = maxY - iter;
@@ -77,7 +77,7 @@ void sur::Object::Load()
 
 sur::Object::Object(std::string_view path, Vec2f position, std::string_view name, i32 id, const std::vector<int>& ignoreids,
 	const std::vector<i32>& push, cb_ptr<Master*> callback)
-	: path(path), Master(name, id, position,callback)
+	: path(path), Master(name, id, position, callback)
 {
 	this->push = push;
 	parentmem = false;
@@ -89,8 +89,8 @@ sur::Object::Object(std::string_view path, Vec2f position, std::string_view name
 }
 
 sur::Object::Object(const Object* const obj, Vec2f position, std::string_view name, i32 id, const std::vector<int>& ignoreids,
-	const std::vector<i32>& push,cb_ptr<Master*> callback)
-	: XCoords(obj->XCoords), YCoords(obj->YCoords), Colors(obj->Colors), Master(name,id,position, callback)
+	const std::vector<i32>& push, cb_ptr<Master*> callback)
+	: XCoords(obj->XCoords), YCoords(obj->YCoords), Colors(obj->Colors), Master(name, id, position, callback)
 {
 	this->push = push;
 	parentmem = true;
@@ -114,137 +114,204 @@ sur::Vec2 Rotate(sur::Vec2 vec, sur::Vec2 origin, i32 angle) {
 	return a;
 }
 
+auto OutOfScreenCheck = [&](sur::Object& obj) -> bool {
+	return (obj.GetPosition().x >= _window_size.x || obj.GetPosition().y >= _window_size.y ||
+		obj.GetPosition().x + obj.GetSize().x < 0 || obj.GetPosition().y + obj.GetSize().y < 0) ? true : false;
+};
 
+auto TintIt = [=](sur::Object& obj, Color color) -> Color
+{
+	using namespace sur;
+	assert(obj.GetTint() == sRGB(0, 0, 0), color);
+	sRGB tmp;
+	tmp.ToRGB(color);
+	tmp = tmp + obj.GetTint();
+	if (tmp.r > 255) tmp.r = 255;
+	if (tmp.r < 0) tmp.r = 0;
+	if (tmp.g > 255) tmp.g = 255;
+	if (tmp.g < 0) tmp.g = 0;
+	if (tmp.b > 255) tmp.b = 255;
+	if (tmp.b < 0) tmp.b = 0;
+	Color c = Color(tmp.r, tmp.g, tmp.b);
+	return c;
+};
+
+auto LightIt = [=](sur::Vec2 pos, Color color) -> Color
+{
+	using namespace sur;
+
+	auto OverFlowCheck = [=](sRGB color) -> sRGB {
+		if (color.r > 255) color.r = 255;
+		if (color.r < 0) color.r = 0;
+		if (color.g > 255) color.g = 255;
+		if (color.g < 0) color.g = 0;
+		if (color.b > 255) color.b = 255;
+		if (color.b < 0) color.b = 0;
+		return sRGB(color.r, color.g, color.b);
+	};
+
+	bool distTooFar = false;
+	bool runned = false;
+	bool allow = true;
+	sRGB expected(0, 0, 0);
+	sRGB colorRGB(0, 0, 0);
+	colorRGB.ToRGB(color);
+	for (auto& iter : lights) {
+		runned = true;
+		f32 maxDist = iter->radius;
+
+		expected.ToRGB(iter->color);
+
+		Vec2f middle(iter->GetPosition());
+		f32 dist = sur::Absolute(STA(pos) - middle).magnitude();
+
+		if (dist > maxDist) {
+			if (allow)
+				distTooFar = true;
+			continue;
+		}
+
+		distTooFar = false;
+		allow = false;
+		colorRGB = colorRGB + (sRGB(expected.r, expected.g, expected.b));
+		colorRGB = sRGB(i32(colorRGB.r / dist / dist), i32(colorRGB.g / dist / dist), i32(colorRGB.b / dist / dist));
+
+		if (colorRGB.r > 255) colorRGB.r = 255;
+		if (colorRGB.r < 0) colorRGB.r = 0;
+		if (colorRGB.g > 255) colorRGB.g = 255;
+		if (colorRGB.g < 0) colorRGB.g = 0;
+		if (colorRGB.b > 255) colorRGB.b = 255;
+		if (colorRGB.b < 0) colorRGB.b = 0;
+	}
+	if (!runned || distTooFar) {
+		return OverFlowCheck(colorRGB * _ambientLight).ToColor();
+	}
+	return colorRGB.ToColor();
+};
 
 
 void sur::Object::Bind(bool Render, ColliderType collidertype)
 {
-	auto OutOfScreenCheck = [&]() -> bool {
-		return (position.x >= _window_size.x || position.y >= _window_size.y || 
-			position.x + size.x < 0 || position.y + size.y < 0) ? true : false;
-	};
-	auto TintIt = [&](Color color) -> Color
-	{
-		assert(tint_by == sRGB(0,0,0), color);
-		sRGB tmp;
-		tmp.ToRGB(color);
-		tmp = tmp + tint_by;
-		if (tmp.r > 255) tmp.r = 255;
-		if (tmp.r < 0) tmp.r = 0;
-		if (tmp.g > 255) tmp.g = 255;
-		if (tmp.g < 0) tmp.g = 0;
-		if (tmp.b > 255) tmp.b = 255;
-		if (tmp.b < 0) tmp.b = 0;
-		Color c = Color(tmp.r, tmp.g, tmp.b);
-		return c;
-	};
-	auto LightIt = [=](Vec2 pos, Color color) -> Color
-	{
-		bool distTooFar = false;
-		bool runned = false;
-		bool allow = true;
-		sRGB expected(0,0,0);
-		sRGB colorRGB(0,0,0);
-		colorRGB.ToRGB(color);
-		for (auto& iter : lights) {
-			runned = true;
-			f32 maxDist = iter->radius;
-			
-			expected.ToRGB(iter->color);
 
-			Vec2f middle(iter->GetPosition());
-			f32 dist = sur::Absolute(STA(pos) - middle).magnitude();
-			
-			if (dist > maxDist) {
-				if(allow)
-					distTooFar = true;
-				continue;
-			}
-
-
-			distTooFar = false;
-			allow = false;
-			colorRGB = colorRGB + (sRGB(expected.r, expected.g, expected.b));
-			colorRGB = sRGB(i32(colorRGB.r / dist / dist), i32(colorRGB.g / dist / dist), i32(colorRGB.b / dist / dist));
-
-			if (colorRGB.r > 255) colorRGB.r = 255;
-			if (colorRGB.r < 0) colorRGB.r = 0;
-			if (colorRGB.g > 255) colorRGB.g = 255;
-			if (colorRGB.g < 0) colorRGB.g = 0;
-			if (colorRGB.b > 255) colorRGB.b = 255;
-			if (colorRGB.b < 0) colorRGB.b = 0;	
-		}
-		if (!runned || distTooFar)
-			return Color(0, 0, 0);
-		return  Color(colorRGB.r, colorRGB.g, colorRGB.b);
-	};
-
-	if (OutOfScreenCheck()) return; //Don't use this for matrix edited objects
+	if (OutOfScreenCheck(*this)) return; //Don't use this for matrix edited objects
 
 	CollisionPos.clear();
 
 	if (collidertype == ColliderType::None && Render) {
 		for (i32 i = 0; i < YCoords->size(); i++) {
-			_Amap.Render(Rotate(matrix.multiplyWithVector(Vec2(XCoords->at(i), YCoords->at(i))) + position, ATS(origin), angle),
-				LightIt({ XCoords->at(i), YCoords->at(i) }, TintIt(Colors->at(i)))
-			);
+			if (_light)
+				_Amap.Render(Rotate(matrix.multiplyWithVector(
+					Vec2(XCoords->at(i), YCoords->at(i))) + position, ATS(origin), angle),
+					LightIt({ XCoords->at(i) + position.x, YCoords->at(i) + position.y }, TintIt(*this, Colors->at(i)))
+				);
+			else
+				_Amap.Render(Rotate(matrix.multiplyWithVector(
+					Vec2(XCoords->at(i), YCoords->at(i))) + position, ATS(origin), angle),
+					TintIt(*this, Colors->at(i))
+				);
 		}
 	}
 	if (collidertype == ColliderType::Static) {
 		for (i32 i = 0; i < YCoords->size(); i++) {
 			if (Render)
-				if(_debug)
+				if (_debug)
 					_Amap.Render(Rotate(matrix.multiplyWithVector(Vec2(XCoords->at(i), YCoords->at(i))) + position, ATS(origin), angle),
-						Color(255,0,0));
-				else
-					_Amap.Render(Rotate(matrix.multiplyWithVector(Vec2(XCoords->at(i), YCoords->at(i))) + position, ATS(origin), angle),
-						TintIt(Colors->at(i)));
+						Color(255, 0, 0));
+				else {
+					if (_light)
+						_Amap.Render(Rotate(matrix.multiplyWithVector(
+							Vec2(XCoords->at(i), YCoords->at(i))) + position, ATS(origin), angle),
+							LightIt({ XCoords->at(i) + position.x, YCoords->at(i) + position.y }, TintIt(*this, Colors->at(i)))
+						);
+					else
+						_Amap.Render(Rotate(matrix.multiplyWithVector(
+							Vec2(XCoords->at(i), YCoords->at(i))) + position, ATS(origin), angle),
+							TintIt(*this, Colors->at(i))
+						);
+				}
 			_Amap.Collider(Rotate(matrix.multiplyWithVector(Vec2(XCoords->at(i), YCoords->at(i))) + position, ATS(origin), angle),
 				id);
 		}
 		return;
 	}
 	if (collidertype == ColliderType::Outline) {
-		if(Render)
+		if (Render)
 			for (i32 i = 0; i < YCoords->size(); i++)
-				_Amap.Render(Rotate(matrix.multiplyWithVector(Vec2(XCoords->at(i), YCoords->at(i))) + position, ATS(origin), angle),
-					TintIt(Colors->at(i)));
-			for (i32 i = 0; i < size.x; i++) {
-				sur::Vec2 tmp(Rotate(matrix.multiplyWithVector(Vec2(i, 0 )) + position, ATS(origin), angle));
-				CollisionPos.push_back(tmp);
-				if(_debug)
-					_Amap.Render(tmp, Color(255,0,0));
-				_Amap.Collider(tmp, id);
-			}
-			for (i32 i = 0; i < size.y; i++) {
-				sur::Vec2 tmp(Rotate(matrix.multiplyWithVector(Vec2(0, i )) + position, ATS(origin), angle));
-				CollisionPos.push_back(tmp);
-				if (_debug)
-					_Amap.Render(tmp, Color(255, 0, 0));
-				_Amap.Collider(tmp, id);
-			}
-			for (i32 i = 0; i < size.x; i++) {
-				sur::Vec2 tmp(Rotate(matrix.multiplyWithVector(Vec2(i, size.y )) + position, ATS(origin), angle));
-				CollisionPos.push_back(tmp);
-				if (_debug)
-					_Amap.Render(tmp, Color(255, 0, 0));
-				_Amap.Collider(tmp, id);
-			}
-			for (i32 i = 0; i < size.y; i++) {
-				sur::Vec2 tmp(Rotate(matrix.multiplyWithVector(Vec2(size.x, i )) + position, ATS(origin), angle));
-				CollisionPos.push_back(tmp);
-				if (_debug)
-					_Amap.Render(tmp, Color(255, 0, 0));
-				_Amap.Collider(tmp, id);
-			}
+				if (_light)
+					_Amap.Render(Rotate(matrix.multiplyWithVector(
+						Vec2(XCoords->at(i), YCoords->at(i))) + position, ATS(origin), angle),
+						LightIt({ XCoords->at(i) + position.x, YCoords->at(i) + position.y }, TintIt(*this, Colors->at(i)))
+					);
+				else
+					_Amap.Render(Rotate(matrix.multiplyWithVector(
+						Vec2(XCoords->at(i), YCoords->at(i))) + position, ATS(origin), angle),
+						TintIt(*this, Colors->at(i))
+					);
+		for (i32 i = 0; i < size.x; i++) {
+			sur::Vec2 tmp(Rotate(matrix.multiplyWithVector(Vec2(i, 0)) + position, ATS(origin), angle));
+			CollisionPos.push_back(tmp);
+			if (_debug)
+				_Amap.Render(tmp, Color(255, 0, 0));
+			_Amap.Collider(tmp, id);
+		}
+		for (i32 i = 0; i < size.y; i++) {
+			sur::Vec2 tmp(Rotate(matrix.multiplyWithVector(Vec2(0, i)) + position, ATS(origin), angle));
+			CollisionPos.push_back(tmp);
+			if (_debug)
+				_Amap.Render(tmp, Color(255, 0, 0));
+			_Amap.Collider(tmp, id);
+		}
+		for (i32 i = 0; i < size.x; i++) {
+			sur::Vec2 tmp(Rotate(matrix.multiplyWithVector(Vec2(i, size.y)) + position, ATS(origin), angle));
+			CollisionPos.push_back(tmp);
+			if (_debug)
+				_Amap.Render(tmp, Color(255, 0, 0));
+			_Amap.Collider(tmp, id);
+		}
+		for (i32 i = 0; i < size.y; i++) {
+			sur::Vec2 tmp(Rotate(matrix.multiplyWithVector(Vec2(size.x, i)) + position, ATS(origin), angle));
+			CollisionPos.push_back(tmp);
+			if (_debug)
+				_Amap.Render(tmp, Color(255, 0, 0));
+			_Amap.Collider(tmp, id);
+		}
 		return;
 	}
+	if (collidertype == ColliderType::Filled) {
+		if (Render)
+			for (i32 i = 0; i < YCoords->size(); i++) {
+				if (_light)
+					_Amap.Render(Rotate(matrix.multiplyWithVector(
+						Vec2(XCoords->at(i), YCoords->at(i))) + position, ATS(origin), angle),
+						LightIt({ XCoords->at(i) + position.x, YCoords->at(i) + position.y }, TintIt(*this, Colors->at(i)))
+					);
+				else
+					_Amap.Render(Rotate(matrix.multiplyWithVector(
+						Vec2(XCoords->at(i), YCoords->at(i))) + position, ATS(origin), angle),
+						TintIt(*this, Colors->at(i))
+					);
+			}
+		for (i32 i = 0; i < size.x; i++) {
+			for (i32 j = 0; j < size.y; j++) {
+				sur::Vec2 tmp(Rotate(matrix.multiplyWithVector(Vec2(i, j)) + position, ATS(origin), angle));
+				CollisionPos.push_back(tmp);
+				if (_debug)
+					_Amap.Render(tmp, Color(255, 0, 0));
+				_Amap.Collider(tmp, id);
+			}
+		}
+	}
+}
+
+void sur::Object::ScrollBind(bool Render)
+{
+
 }
 
 
 void sur::Object::LSD()
 {
-	sRGB inc(0,0,0);
+	sRGB inc(0, 0, 0);
 	switch (sur::RandomRange(1, 6))
 	{
 	case 1: inc(-1, 1, 1); break;

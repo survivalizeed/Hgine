@@ -293,9 +293,9 @@ sur::Vec2 sur::Master::Move(sur::Vec2f direction, bool detect) {
 //
 //	Render
 //
-void sur::Render::ClearScreenBuffer()
+void sur::Render::ClearScreenBuffer() const
 {
-	if (FillBackground)
+	if (fillBackground)
 		memset(_map.RenderMap, bg, sizeof(Color) * (_window_size.x * _window_size.y));	
 	memset(_map.ColliderMap, 0, sizeof(i32) * (_window_size.x * _window_size.y));
 	memset(_map.TriggerMap, 0, sizeof(i32) * (_window_size.x * _window_size.y));
@@ -310,7 +310,6 @@ void sur::Render::RenderScreenBuffer()
 	bi.bmiHeader.biPlanes = 1;
 	bi.bmiHeader.biBitCount = 32;
 	bi.bmiHeader.biCompression = BI_RGB;
-	sleep_for(milliseconds(Wait));
 	SetDIBitsToDevice(dc, 0, 0,_window_size.x, _window_size.y, 0, 0, 0, _window_size.x, _map.RenderMap, &bi, 0);
 	frameCounter++;
 }
@@ -337,7 +336,7 @@ void sur::Render::FPS()
 	}
 }
 
-void sur::Render::DebugConsole(bool Show)
+void sur::Render::DebugConsole(bool Show) const
 {
 	if (!Show)
 		ShowWindow(GetConsoleWindow(), SW_HIDE);
@@ -609,14 +608,14 @@ sur::Vec2f sur::Input::Mouse::Position() const
 
 bool sur::Input::Mouse::LClick() const
 {
-	if (GetAsyncKeyState(VK_LBUTTON))
+	if (GetKeyState(VK_LBUTTON) & 0x8000)
 		return true;
 	return false;
 }
 
 bool sur::Input::Mouse::RClick() const
 {
-	if (GetAsyncKeyState(VK_RBUTTON))
+	if (GetAsyncKeyState(VK_RBUTTON) & 0x8000)
 		return true;
 	return false;
 }
@@ -624,7 +623,7 @@ bool sur::Input::Mouse::RClick() const
 // Keyboard
 bool sur::Input::Keyboard::Key(Keys::Keys key) const
 {
-	if (GetAsyncKeyState(key))
+	if (GetAsyncKeyState(key) & 0x8000)
 		return true;
 	return false;
 }
@@ -635,7 +634,7 @@ bool sur::Input::Keyboard::KeyDown(Keys::Keys key)
 	bool space = false;
 	if (key == Keys::Keys::SPACE)
 		space = true;
-	if (GetAsyncKeyState(key)) {
+	if (GetAsyncKeyState(key) & 0x8000) {
 		if (space && pressed[26] != key) {
 			pressed[26] = key;
 			return true;

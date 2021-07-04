@@ -19,6 +19,10 @@ sur::Input _input;
 
 bool _debug = false;
 
+bool _light;
+
+f32 _ambientLight;
+
 std::string _resource_path;
 
 std::string _sound_path;
