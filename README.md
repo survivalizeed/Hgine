@@ -20,5 +20,5 @@ After you have done that go into the SurLua.h and change the #pragma comment pat
 ##### Be aware of x64 and x86.  
 Now go into the Audio.h and do the same with the bass.lib.  
 ##### Again be aware of x64 and x86
-
+Next go into 
 
