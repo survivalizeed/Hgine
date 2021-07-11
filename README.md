@@ -26,5 +26,7 @@ Pick the ones from the Extern folder in the source folder. Make sure you picked 
 Then do the same with the x86 build folders (debug/release) include the lua54.dll and bass.dll.
 Pick the ones from the Extern folder in the source folder. Make sure you picked the x86 dlls.  
 
+Now open the initialize.cpp and change the lua::LoadFile("To the path where the config.lua file is located at")  
+
 Next download the Hgine resource generator.exe to be able to create some Hgineres files.
 
