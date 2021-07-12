@@ -10,15 +10,15 @@ struct CK {
 		if (vec.x == 0 && vec.y == 0) return { 0,0 };
 		return 
 		{ 
-			i32((vec.x /*+ (0.5f * _aspect.x)*/) * (_window_size.x / _aspect.x)), 
-			i32((vec.y /*+ (0.5f * _aspect.y)*/) * (_window_size.y / _aspect.y))
+			i32(vec.x * (_window_size.x / _aspect.x)), 
+			i32(vec.y * (_window_size.y / _aspect.y))
 		};
 	}
 
 	static sur::Vec2f STA(const sur::Vec2& vec) {
 		return {
-			f32((vec.x /*- (0.5f * _window_size.x)*/) * ((f32)_aspect.x / (f32)_window_size.x)),
-			f32((vec.y /*- (0.5f * _window_size.y)*/) * ((f32)_aspect.y / (f32)_window_size.y))
+			f32(vec.x * ((f32)_aspect.x / (f32)_window_size.x)),
+			f32(vec.y * ((f32)_aspect.y / (f32)_window_size.y))
 		};
 	}
 

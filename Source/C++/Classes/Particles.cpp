@@ -47,7 +47,7 @@ void sur::Particles::Bind(bool Render)
 }
 
 
-void sur::Particles::MoveTowards(Vec2f position, f32 speed)
+void sur::Particles::MoveTowards(Vec2f position, i32 MovQueueIndex, f32 speed)
 {
 	i32 supportedThreads = std::thread::hardware_concurrency() == 0 ? 2 : std::thread::hardware_concurrency();
 	constexpr i32 minDataPerThread = 1000;
@@ -61,7 +61,7 @@ void sur::Particles::MoveTowards(Vec2f position, f32 speed)
 	auto calculate = [&](i32 start, i32 end) {
 		for (i32 i = start; i < end; ++i) { 
 			Vec2f dir(sur::Direction(ATS(position), Coords->at(i).pos + ATS(this->GetPosition()) + Offsets->at(i)));	
-			Vec2 move = Coords->at(i).MovQueue(dir * (f32)sur::RandomRange((i32)ceil(speed / 2), (i32)speed));
+			Vec2 move = Coords->at(i).MovQueue(dir * (f32)sur::RandomRange((i32)ceil(speed / 2), (i32)speed), MovQueueIndex);
 			if (move.x == 0 && move.y == 0) continue;
 			Offsets->at(i) = Offsets->at(i) + move;
 		}

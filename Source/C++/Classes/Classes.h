@@ -19,10 +19,10 @@ namespace sur {
 	class Master {
 	protected:
 
-		Vec2f counterneg = { -0.f,-0.f };
-		Vec2f counterpos = { 0.f,0.f };
-		Vec2 countercountpos = { 1,1 };
-		Vec2 countercountneg = { -1,-1 };
+		std::vector<Vec2f> counterneg = { {-0.f,-0.f} };
+		std::vector<Vec2f> counterpos = { {0.f,0.f} };
+		std::vector<Vec2> countercountpos = { {1,1} };
+		std::vector<Vec2> countercountneg = { {-1,-1 }};
 
 		Color color;
 		Vec2 moveiter;
@@ -32,7 +32,6 @@ namespace sur {
 
 		std::vector<sur::Vec2> CollisionPos;
 		std::vector<i32> push;
-
 
 
 		Master(std::string_view name, i32 id, Color color, cb_ptr<Master*> callback = nullptr)
@@ -49,10 +48,13 @@ namespace sur {
 
 		Vec2 rot(Vec2 pos, Vec2 origin, i32 Angle);	// The actual rotation math
 
-		virtual inline void MoveInject(const Vec2& direction) { position += direction; }
+		virtual inline void MoveInject(const Vec2& direction) { 
+			position = position + direction; 
+		}
+
 	public:
 		//Only used by the engine itself. Never use this!
-		Vec2 MovQueue(Vec2f direction);	// Handles floats and does nothing until a floating number becomes an integer
+		Vec2 MovQueue(Vec2f direction, i32 index);	// Handles floats and does nothing until a floating number becomes an integer
 
 		Mat2x2 matrix = { 1, 0, 0, 1 };	//standard so it won't modify anything
 
@@ -87,7 +89,7 @@ namespace sur {
 
 		inline bool State() const { return active; }
 
-		virtual Vec2 Move(Vec2f direction, bool detect);
+		virtual Vec2 Move(Vec2f direction, i32 MovQueueIndex, bool detect);
 	};
 	//
 	//	Render class
@@ -339,7 +341,7 @@ namespace sur {
 
 		void Bind(bool Render, bool Collider);
 
-		void Move(Vec2f direction);
+		void Move(Vec2f direction, i32 MovQueueIndex);
 	};
 	//
 	//	Particle system
@@ -366,16 +368,16 @@ namespace sur {
 
 		//Moves every particle to the desired position.
 		//Be careful it is very performance heavy!
-		void MoveTowards(Vec2f position, f32 speed);
+		void MoveTowards(Vec2f position, i32 MovQueueIndex, f32 speed);
 
 		void Bind(bool Render);
 
 		//Only moves the particles
-		inline void Move(Vec2f direction) cpar(Master::Move(direction, false))
+		inline void Move(Vec2f direction, i32 MovQueueIndex) cpar(Master::Move(direction, MovQueueIndex, false))
 
-			//Moves the particles, the middle and everything else
-			inline void MoveAll(Vec2f direction) {
-			Vec2 newdirection = MovQueue(direction);
+		//Moves the particles, the middle and everything else
+		inline void MoveAll(Vec2f direction, i32 MovQueueIndex) {
+			Vec2 newdirection = MovQueue(direction, MovQueueIndex);
 			settings->middle = settings->middle + newdirection;
 			position += newdirection;
 		}
@@ -426,9 +428,9 @@ namespace sur {
 			Rectangle(Vec2f position, Vec2f size, std::string_view name, i32 id, const std::vector<i32>& ignoreids = { 0 },
 				cb_ptr<Master*> callback = nullptr);
 
-			inline void Move(Vec2f direction) cpar(Master::Move(direction, false))
+			inline void Move(Vec2f direction, i32 MovQueueIndex) cpar(Master::Move(direction, MovQueueIndex, false))
 
-				void Bind();
+			void Bind();
 		};
 	}
 	//

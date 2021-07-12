@@ -32,7 +32,8 @@ namespace sur {
 	i32 RandomRange(i32 min, i32 max);
 
 	//Cast the object to a (sur::Master*). Make sure it inheritates from the Master class
-	void MoveTowards(Master* const current, Master* const target, f32 speed, const Axis& axis, bool detect);
+	void MoveTowards(Master* const current, Master* const target, f32 speed, const Axis& axis,
+		i32 MovQueueIndex, bool detect);
 
 	Vec2f Direction(Vec2f first, Vec2f second);
 

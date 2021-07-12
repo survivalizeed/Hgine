@@ -43,7 +43,7 @@ i32 sur::RandomRange(i32 min, i32 max)
 	return (min >= 0) ? rand() % (max - min + 1) + min : rand() % (max + min + 1) - min;
 }
 
-void sur::MoveTowards(Master* current, Master* target, f32 speed, const Axis& axis, bool detect)
+void sur::MoveTowards(Master* current, Master* target, f32 speed, const Axis& axis, i32 MovQueueIndex, bool detect)
 {
 	assert(target->GetName() == "invalid" || current->GetName() == "invalid");
 	Vec2f direction(target->GetPosition() - current->GetPosition());
@@ -57,7 +57,7 @@ void sur::MoveTowards(Master* current, Master* target, f32 speed, const Axis& ax
 	case Axis::Y: direction.x = 0; break;
 	default: break;
 	}
-	current->Move(direction * speed, detect);
+	current->Move(direction * speed, MovQueueIndex, detect);
 }
 
 sur::Vec2f sur::Direction(Vec2f first, Vec2f second)

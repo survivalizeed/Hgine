@@ -194,7 +194,7 @@ void sur::Object::Bind(bool Render, ColliderType collidertype)
 {
 
 	if (OutOfScreenCheck(*this)) return; //Don't use this for matrix edited objects
-
+	if (this->name == "invalid") return;
 	CollisionPos.clear();
 
 	if (collidertype == ColliderType::None && Render) {
@@ -275,6 +275,11 @@ void sur::Object::Bind(bool Render, ColliderType collidertype)
 				_Amap.Render(tmp, Color(255, 0, 0));
 			_Amap.Collider(tmp, id);
 		}
+		sur::Vec2 last(Rotate(matrix.multiplyWithVector(Vec2(size.x, size.y)) + position, ATS(origin), angle));
+		CollisionPos.push_back(last);
+		if (_debug)
+			_Amap.Render(last, Color(255, 0, 0));
+		_Amap.Collider(last, id);
 		return;
 	}
 	if (collidertype == ColliderType::Filled) {

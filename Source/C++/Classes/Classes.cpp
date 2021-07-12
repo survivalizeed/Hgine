@@ -22,34 +22,52 @@ sur::Vec2 sur::Master::rot(Vec2 pos, Vec2 origin, i32 angle)
 		(i32)(dist.x * sin(angle * PI / 180) + dist.y * cos(angle * PI / 180))) + origin;
 }
 
-sur::Vec2 sur::Master::MovQueue(Vec2f direction)
+sur::Vec2 sur::Master::MovQueue(Vec2f direction, i32 index)
 {
-	if(direction.x > 0)
-		counterpos.x += direction.x;
-	else 
-		counterneg.x += direction.x;
-	
-	if (direction.y > 0)
-		counterpos.y += direction.y;
-	else 
-		counterneg.y += direction.y;
+	auto round = [=](f32& n) {
+		f32 pow_10 = pow(10.0f, (f32)3);
+		n = ::round(n * pow_10) / pow_10;
+	};
+	if (index >= counterpos.size()) {
+		counterneg.push_back({ -0.f,-0.f });
+		counterpos.push_back({ 0.f,0.f });
+		countercountpos.push_back({ 1,1 });
+		countercountneg.push_back({ -1,-1 });
+		index = (i32)counterpos.size() - 1;
+	}
+	if (direction.x > 0) {
+		counterpos[index].x += direction.x;
+		round(counterpos[index].x);
+	}
+	else {
+		counterneg[index].x += direction.x;
+		round(counterneg[index].x);
+	}
+	if (direction.y > 0) {
+		counterpos[index].y += direction.y;
+		round(counterpos[index].y);
+	}
+	else {
+		counterneg[index].y += direction.y;
+		round(counterneg[index].y);
+	}
 	
 	direction = { 0,0 };
-	while (counterpos.x >= (f32)countercountpos.x) {
+	while (counterpos[index].x >= (f32)countercountpos[index].x) {
 		direction.x += 1;
-		countercountpos.x++;
+		countercountpos[index].x++;
 	}
-	while (counterpos.y >= (f32)countercountpos.y) {
+	while (counterpos[index].y >= (f32)countercountpos[index].y) {
 		direction.y += 1;
-		countercountpos.y++;
+		countercountpos[index].y++;
 	}
-	while (counterneg.x <= (f32)countercountneg.x) {
+	while (counterneg[index].x <= (f32)countercountneg[index].x) {
 		direction.x -= 1;
-		countercountneg.x--;
+		countercountneg[index].x--;
 	}
-	while (counterneg.y <= (f32)countercountneg.y) {
+	while (counterneg[index].y <= (f32)countercountneg[index].y) {
 		direction.y -= 1;
-		countercountneg.y--;
+		countercountneg[index].y--;
 	}
 	return { (i32)direction.x , (i32)direction.y};
 }
@@ -153,8 +171,8 @@ sur::Vec2 sur::Master::MovQueue(Vec2f direction)
 //	MoveInject(newdirection);
 //}
 
-sur::Vec2 sur::Master::Move(sur::Vec2f direction, bool detect) {
-	Vec2 newdirection = MovQueue(direction);
+sur::Vec2 sur::Master::Move(sur::Vec2f direction, i32 MovQueueIndex, bool detect) {
+	Vec2 newdirection = MovQueue(direction, MovQueueIndex);
 	assert(newdirection == Vec2(0, 0) || this->GetName() == "invalid", Vec2(0,0));
 
 	if (!detect) { MoveInject(newdirection); return newdirection; }
@@ -180,7 +198,7 @@ sur::Vec2 sur::Master::Move(sur::Vec2f direction, bool detect) {
 						if (contentX == push[j])
 							for (i32 a = 0; a < identitys.size(); ++a)
 								if (contentX == identitys[a]) {
-									actualMoveX(static_cast<sur::Master*>(ptrs[a])->Move({ f32(dirStor.x - (--c)),0 }, true));
+									actualMoveX(static_cast<sur::Master*>(ptrs[a])->Move({ f32(dirStor.x - (--c)),0 }, MovQueueIndex, true));
 									newdirection.x = (--c) + actualMoveX.x;
 									goto jmp0;
 								}
@@ -203,7 +221,7 @@ sur::Vec2 sur::Master::Move(sur::Vec2f direction, bool detect) {
 						if (contentX == push[j])
 							for (i32 a = 0; a < identitys.size(); ++a)
 								if (contentX == identitys[a]) {
-									actualMoveX(static_cast<sur::Master*>(ptrs[a])->Move({ f32(dirStor.x - (++c)),0 }, true));
+									actualMoveX(static_cast<sur::Master*>(ptrs[a])->Move({ f32(dirStor.x - (++c)),0 }, MovQueueIndex, true));
 									newdirection.x = (++c) + actualMoveX.x;
 									goto jmp1;
 								}
@@ -226,7 +244,7 @@ sur::Vec2 sur::Master::Move(sur::Vec2f direction, bool detect) {
 						if (contentY == push[j])
 							for (i32 a = 0; a < identitys.size(); ++a)
 								if (contentY == identitys[a]) {
-									actualMoveY(static_cast<sur::Master*>(ptrs[a])->Move({ 0, f32(dirStor.y - (--c)) }, true));
+									actualMoveY(static_cast<sur::Master*>(ptrs[a])->Move({ 0, f32(dirStor.y - (--c)) }, MovQueueIndex, true));
 									newdirection.y = (--c) + actualMoveY.y;
 									goto jmp2;
 								}
@@ -249,7 +267,7 @@ sur::Vec2 sur::Master::Move(sur::Vec2f direction, bool detect) {
 						if (contentY == push[j])
 							for (i32 a = 0; a < identitys.size(); ++a)
 								if (contentY == identitys[a]) {
-									actualMoveY(static_cast<sur::Master*>(ptrs[a])->Move({ 0, f32(dirStor.y - (++c)) }, true));
+									actualMoveY(static_cast<sur::Master*>(ptrs[a])->Move({ 0, f32(dirStor.y - (++c)) }, MovQueueIndex, true));
 									newdirection.y = (++c) + actualMoveY.y;
 									goto jmp3;
 								}
@@ -262,7 +280,7 @@ sur::Vec2 sur::Master::Move(sur::Vec2f direction, bool detect) {
 	}
 
 	{
-		volatile i32 iX = 0, iY = 0;
+		i32 iX = 0, iY = 0;
 		for (i32 i = 0; i < identitys.size(); ++i) {
 			if (contentX == identitys[i]) {
 				iX = i;
@@ -273,13 +291,13 @@ sur::Vec2 sur::Master::Move(sur::Vec2f direction, bool detect) {
 				iY = i;
 			}
 		}
-		if (iX != 0 && contentX != this->id) {		
+		if (contentX != 0 && contentX != this->id) {
 			if (callback != nullptr)
 				callback(this, (Master*)ptrs[iX]);
 			if (static_cast<Master*>(ptrs[iX])->callback != nullptr)
 				static_cast<Master*>(ptrs[iX])->callback((Master*)ptrs[iX], this);
 		}
-		if (iY != 0 && contentY != this->id) {
+		if (contentY != 0 && contentY != this->id) {
 			if (callback != nullptr)
 				callback(this, (Master*)ptrs[iY]);
 			if (static_cast<Master*>(ptrs[iY])->callback != nullptr)
@@ -298,7 +316,7 @@ void sur::Render::ClearScreenBuffer() const
 	if (fillBackground)
 		memset(_map.RenderMap, bg, sizeof(Color) * (_window_size.x * _window_size.y));	
 	memset(_map.ColliderMap, 0, sizeof(i32) * (_window_size.x * _window_size.y));
-	memset(_map.TriggerMap, 0, sizeof(i32) * (_window_size.x * _window_size.y));
+	//memset(_map.TriggerMap, 0, sizeof(i32) * (_window_size.x * _window_size.y));	Currently there are no triggers
 }
 
 void sur::Render::RenderScreenBuffer()
@@ -346,7 +364,7 @@ void sur::Render::DebugConsole(bool Show) const
 //
 void sur::Camera::Move(Vec2f direction)
 {
-	using namespace sur::Instancer;
+	/*using namespace sur::Instancer;
 	direction.invert();
 	for (i32 i = 0; i < restricted::rectangles->size(); i++) {
 		restricted::rectangles->at(i)->Move(direction, false);
@@ -365,7 +383,7 @@ void sur::Camera::Move(Vec2f direction)
 	}
 	for (i32 i = 0; i < restricted::trigger_rectangles->size(); i++) {
 		restricted::trigger_rectangles->at(i)->Move(direction);
-	}
+	}*/
 }
 //
 //	Rectangle
@@ -567,9 +585,9 @@ void sur::Shape::Bind(bool Render, bool Collider)
 		it->Bind(Render,Collider);
 }
 
-void sur::Shape::Move(sur::Vec2f direction)
+void sur::Shape::Move(sur::Vec2f direction,i32 MovQueueIndex)
 {
-	Vec2 newdirection = MovQueue(direction);
+	Vec2 newdirection = MovQueue(direction, MovQueueIndex);
 	assert(newdirection == Vec2(0, 0) || this->GetName() == "invalid");
 	for (auto&& it : *lines) {
 		it->Start(it->GetStart() + newdirection);
