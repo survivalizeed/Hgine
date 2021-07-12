@@ -15,7 +15,7 @@ extern void Level1(sur::Render& renderer);
 
 int main() {
 	lua_State* LC = Start();
-	sur::Render renderer(Color(0, 0, 0), true, 1.f, false);
+	sur::Render renderer(Color(0, 0, 0), false, 1.f, false);
 	renderer.DebugConsole(_debug);
 	renderer.FPS();
 	

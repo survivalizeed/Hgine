@@ -50,14 +50,6 @@ void Level1(sur::Render& renderer) {
 	}
 
 
-	sur::Line line({ 0,0 }, { 100,0 }, Color(255, 0, 0), "line", 4, { 0 },
-		[](sur::Master* current, sur::Master* other) {
-			if (other->GetName() == "player") {
-				saints::Kill("player");
-			}
-		}
-	);
-
 
 	// The loading stuff. Collapse this if you want
 	{
@@ -96,14 +88,11 @@ void Level1(sur::Render& renderer) {
 			Types::Object);
 	}
 
-
 	for (;;) {
 		renderer.ClearScreenBuffer();
 
-		saints::WallpaperScroll(*Get<sur::Object>("sky"));
-		saints::WallpaperScroll(*Get<sur::Object>("woods"));
-		
-		line.Bind(false, true);
+		saints::WallpaperScroll(*Get<sur::Object>("sky"), false);
+		saints::WallpaperScroll(*Get<sur::Object>("woods"), true);
 
 		Get<sur::Object>("rock")->Bind(true, ColliderType::Outline);
 
@@ -119,22 +108,16 @@ void Level1(sur::Render& renderer) {
 		Get<sur::Object>("blood")->Bind(true, ColliderType::None);
 
 		Get<sur::Object>("monster")->Bind(true, ColliderType::None);
-
+		
 		// Put all the logical stuff in this if statement. It is frame rate independent
 		if (sur::GetMilliseconds() - snap >= _milliseconds(8)) {
 
-			//saints::Gravity(Get<sur::Object>("player"), &grav, gravity);
+			saints::Gravity(Get<sur::Object>("player"), &grav, gravity);
 
-			saints::Controls(Get<sur::Object>("woods"), Get<sur::Object>("sky"), 1.2f);
+			saints::Controls(Get<sur::Object>("woods"), Get<sur::Object>("sky"), 2.4f);
 
-			sur::MoveTowards(Get<sur::Object>("monster"), Get<sur::Object>("player"), 2.f, Axis::Both, 2, false);
+			//sur::MoveTowards(Get<sur::Object>("monster"), Get<sur::Object>("player"), 2.f, Axis::Both, 2, false);
 
-			//if (_input.keyboard.Key(Keys::W))
-				//Get<sur::Object>("player")->Move({ 0,2 }, true);
-				//saints::Jump(Get<sur::Object>("woods"), Get<sur::Object>("sky"), 4, -1);
-			//if (_input.keyboard.Key(Keys::S))
-				//Get<sur::Object>("player")->Move({ 0,-2 }, true);
-				//saints::Jump(Get<sur::Object>("woods"), Get<sur::Object>("sky"), 4, 1);
 			if ((_input.keyboard.KeyDown(Keys::SPACE) || jumping) && canJump) {
 				if (!jumping) {
 					m = 9.f;
@@ -142,8 +125,7 @@ void Level1(sur::Render& renderer) {
 					jumping = true;
 				}
 				m -= (m / 20);
-				//saints::Jump(Get<sur::Object>("woods"), Get<sur::Object>("sky"), m/ 2, -1);
-				//(void)Get<sur::Object>("player")->Move({ 0, m * 1.5f}, true);
+				saints::Jump(Get<sur::Object>("woods"), Get<sur::Object>("sky"), m/ 2, true);
 				jumpFramesCounter++;
 				if (jumpFramesCounter >= 20) {
 					jumpFramesCounter = 0;

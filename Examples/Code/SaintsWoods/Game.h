@@ -16,7 +16,7 @@ namespace saints {
 
 	void Gravity(sur::Master* obj, f32* m, bool allowed);
 
-	void WallpaperScroll(sur::Object& obj);
+	void WallpaperScroll(sur::Object& obj, bool horizontalonly);
 
 	void Portals();
 }
