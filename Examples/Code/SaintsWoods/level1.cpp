@@ -12,7 +12,7 @@ void Level1(sur::Render& renderer) {
 
 	sur::SetVolume(0x44444444);
 	Audio audio;
-	//audio.Play(_sound_path + "game_music.mp3");
+	//audio.Play(_sound_path + "game_music.hginesnd");
 
 	bool gravity = true, jumping = false, canJump = true;
 
@@ -23,7 +23,6 @@ void Level1(sur::Render& renderer) {
 
 	i64 snap = sur::GetMilliseconds();
 
-
 	// Prefabs AND Singles
 	{
 		SINGLE Add(new sur::Object(_resource_path + "galaxy.hgineres", { 0, Unit(116) }, "sky", 0),
@@ -33,7 +32,7 @@ void Level1(sur::Render& renderer) {
 		SINGLE Add(new sur::Object(_resource_path + "blood.hgineres", { 0,0 }, "blood", 0),
 			Types::Object);
 		State(Types::Object, false, "blood");	//Disable the blood by default
-		SINGLE Add(new sur::Object(_resource_path + "player.hgineres", { 50,50 }, "player", 2, { 0 }, { 0 },
+		SINGLE Add(new sur::Object(_resource_path + "player.hgineres", { 50,8 }, "player", 2, { 0 }, { 0 },
 			[&](sur::Master* current, sur::Master* other) {
 				grav = 1.1f;
 				canJump = true;
@@ -91,10 +90,7 @@ void Level1(sur::Render& renderer) {
 		GAMEOBJECT Add(new sur::Object(Get<sur::Object>("platform2_prefab"), { 130,20 }, "platform2_2", 5, { 4,5 }),
 			Types::Object);
 
-		GAMEOBJECT Add(new sur::Object(Get<sur::Object>("rock_prefab"), { -50,0 }, "rock", 5, { 4,5 }, { 0 },
-			[](sur::Master* current, sur::Master* other) {
-				l(other->GetName());
-			}),
+		GAMEOBJECT Add(new sur::Object(Get<sur::Object>("rock_prefab"), { -50,0 }, "rock", 5, { 4,5 }, { 0 }),
 			Types::Object);
 		GAMEOBJECT Add(new sur::Object(Get<sur::Object>("monster_prefab"), { 50,50 }, "monster", 5, { 4 }),
 			Types::Object);
@@ -129,9 +125,9 @@ void Level1(sur::Render& renderer) {
 
 			//saints::Gravity(Get<sur::Object>("player"), &grav, gravity);
 
-			saints::Controls(Get<sur::Object>("woods"), Get<sur::Object>("sky"), 2.5f);
+			saints::Controls(Get<sur::Object>("woods"), Get<sur::Object>("sky"), 1.2f);
 
-			//sur::MoveTowards(Get<sur::Object>("monster"), Get<sur::Object>("player"), 5.f, Axis::X, false);
+			sur::MoveTowards(Get<sur::Object>("monster"), Get<sur::Object>("player"), 2.f, Axis::Both, 2, false);
 
 			//if (_input.keyboard.Key(Keys::W))
 				//Get<sur::Object>("player")->Move({ 0,2 }, true);

@@ -11,9 +11,9 @@ void Menu(sur::Render& renderer) {
 	
 	using namespace sur::Instancer;
 
-	sur::SetVolume(0x66666666);
+	sur::SetVolume(0x88888888);
 	Audio audio;
-	audio.Play(_sound_path + "menu_music.mp3");
+	audio.Play(_sound_path + "menu_music.hginesnd");
 
 	sur::Object background(_resource_path + "menu.Hgineres", { 0,0 }, "background", 0);
 	sur::Object play(_resource_path + "Menu\\Play.Hgineres", { 30,60 }, "play", 1);
@@ -35,13 +35,13 @@ void Menu(sur::Render& renderer) {
 
 		if (down) {
 			scaler -= 0.001f;
-			play.Move({ 0.15f,0.08f }, false);
-			quit.Move({ 0.15f,0.08f }, false);
+			play.Move({ 0.15f,0.08f },0, false);
+			quit.Move({ 0.15f,0.08f },0, false);
 		}
 		else {
 			scaler += 0.001f;
-			play.Move({ -0.15f,-0.08f }, false);
-			quit.Move({ -0.15f,-0.08f }, false);
+			play.Move({ -0.15f,-0.08f },0, false);
+			quit.Move({ -0.15f,-0.08f },0, false);
 		}
 
 		if (scaler >= 0.7f)
