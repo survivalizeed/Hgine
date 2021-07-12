@@ -37,7 +37,7 @@ Matrix modified objects out of screen fix
 New collision objects glitch through |DONE|
 if down and left are pressed with new collison, bugs through objects |DONE|
 3d perspective z too big bug 
-missing pixel in object / rectangle collision
+missing pixel in object / rectangle collision |DONE|
 standard draw color not working correctly
 update the instancer with lights and so one...
 overlapping lights are weird
