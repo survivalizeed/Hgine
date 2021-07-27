@@ -1,5 +1,5 @@
 # Hgine
-![alt text](https://github.com/survivalizeed/Hgine/blob/master/Res/HgineSplash50Per.png?raw=true)
+![nope](https://github.com/survivalizeed/Hgine/blob/master/Res/HgineSplash1000x1000.png?raw=true)
 
 Just an Engine that uses the gdiplus.h to display an array of pixels.  
 The average FPS are around 65 with 30 sprites. I know it is not the fastest Engine out there but it is really hardcoded and enough for some cool 2D games (probably 3D too).
