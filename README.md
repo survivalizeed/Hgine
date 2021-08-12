@@ -1,7 +1,7 @@
 ![nope](https://github.com/survivalizeed/Hgine/blob/master/Res/HgineSplashGithub.png?raw=true)
 # Hgine
 Just an Engine which uses the gdiplus.h to display an array of pixels.  
-The average FPS are around 65 with 30 sprites. I know it is not the fastest Engine out there but it is really hardcoded and enough for some cool 2D games (probably 3D too).
+It is not the fastest Engine out there but it is really hardcoded and enough for some cool 2D games (probably 3D too).
 Make sure you are using C++ 20. For the best results compile it in x64 release, MSVC and -O2 optimization level!  I am trying to re-create some algorithms from the graphics card and calling it Hgine:)  
 
 #### If you want to change something or just found a bug please send me a pullrequest or contact me via discord.
@@ -28,6 +28,10 @@ Then do the same with the x86 build folders (debug/release) include the lua54.dl
 Pick the ones from the Extern folder in the source folder. Make sure you picked the x86 dlls.  
 
 Now open the initialize.cpp and change the lua::LoadFile("To the path where the config.lua file is located at")  
+
+If you want to do the final build make sure you changed the lua::LoadFile("To only the name of the file (no path)"), so the application will search in the exe's directory.  
+Now copy your config.lua into the release folder where your exe will be generated.  
+This process applies to every other .lua file you will use in your project.
 
 Next download the Hgine resource generator.exe to be able to create some Hgineres files.
 
