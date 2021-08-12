@@ -31,11 +31,11 @@ namespace sur {
 	//Not thaaaat fast :)
 	i32 RandomRange(i32 min, i32 max);
 
+	Vec2f Direction(Vec2f first, Vec2f second);
+	
 	//Cast the object to a (sur::Master*). Make sure it inheritates from the Master class
 	void MoveTowards(Master* const current, Master* const target, f32 speed, const Axis& axis,
 		i32 MovQueueIndex, bool detect);
-
-	Vec2f Direction(Vec2f first, Vec2f second);
 
 	//To wait one second, just store the value of the first call and compare in an if, if it is value + 1000.
 	i64 GetMilliseconds();
@@ -49,6 +49,12 @@ namespace sur {
 	void SetPixel(Vec2f position, Color color, i32 CollisionId = 0, i32 TriggerId = 0);
 
 	Vec2f Absolute(Vec2f vec);
+
+	bool InBetween(f32 first, f32 second, f32 max);
+
+	bool InBetweenPositive(f32 first, f32 second, f32 max);
+
+	bool InBetweenNegative(f32 first, f32 second, f32 max);
 
 	template<Axis axis>
 	auto Distance(const Master* const a, const Master* const b) {

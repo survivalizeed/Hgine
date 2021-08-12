@@ -4,6 +4,11 @@
 
 #include "../Functional/includes.h"
 
+
+// This Entire File (and the .cpp File) are still under development.
+
+
+
 namespace sur {
 
 	class Cuboid {
@@ -12,6 +17,7 @@ namespace sur {
 		Color color;
 		Vec3f offset;
 		std::array<Vec3f, 8> points;
+
 	public:
 		Vec3f origin = { 0,0,0 };	
 		Mat3x3 projection;

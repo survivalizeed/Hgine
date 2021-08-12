@@ -3,6 +3,7 @@
 
 
 extern void Window(const char* name, int params);
+extern bool splash;
 
 lua_State* Start() {
 	lua_State* L = lua::LoadFile("F:\\C++\\Hgine\\Hgine\\Source\\Lua\\config.lua");
@@ -16,6 +17,8 @@ lua_State* Start() {
 	_resource_path = lua::GetTableContent(L, "configuration", "resource_path");
 
 	_sound_path = lua::GetTableContent(L, "configuration", "sound_path");
+
+	splash = stoi(lua::GetTableContent(L, "configuration", "splash"));
 
 	_map = sur::Initialize();
 
