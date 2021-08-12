@@ -36,7 +36,7 @@ If you want to do the final build make sure you changed the
 ##### lua::LoadFile("To only the name of the file (no path)")    
 so the application will search in the exe's directory.  
 Now copy your config.lua into the release folder where your exe will be generated.  
-This process applies to every other .lua file you will use in your project.
+#### This process applies to every other .lua file you will use in your project.
 
 
 
