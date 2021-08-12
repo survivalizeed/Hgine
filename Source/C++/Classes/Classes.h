@@ -550,11 +550,4 @@ namespace sur
         void operator()(Maps map, Vec2 size);
         void operator()(i32* cptr, i32* tptr, Color* rptr, Vec2 size);
     };
-
-    struct CollisionPackage
-    {
-        Master* ptr;
-        i16 steps;
-    };
-
 }
