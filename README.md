@@ -18,14 +18,15 @@ Server: https://discord.gg/ymVn8ZsbeT
 ## Make it work
 To make the Engine work you just need to download the source folder and import it into a visual studio project.  
 After you have done that go into the SurLua.h and change the #pragma comment paths to the destination where your .a files are placed.  
+They are included in the Extern folder in the Source folder 
 ##### Be aware of x64 and x86.  
 Now go into the Audio.h and do the same with the bass.lib.  
 ##### Again be aware of x64 and x86
 Next make sure that all x64 build folders (debug/release) include the lua54.dll and the bass.dll.  
-Pick the ones from the Extern folder in the source folder. Make sure you picked the x64 dlls.  
+Pick the ones from the Extern folder in the Source folder. Make sure you picked the x64 dlls.  
   
 Then do the same with the x86 build folders (debug/release) include the lua54.dll and bass.dll.
-Pick the ones from the Extern folder in the source folder. Make sure you picked the x86 dlls.  
+Pick the ones from the Extern folder in the Source folder. Make sure you picked the x86 dlls.  
 
 Now open the initialize.cpp and change the lua::LoadFile("To the path where the config.lua file is located at")  
 
