@@ -31,6 +31,7 @@ enum class ColliderType
     Static,
     Outline,
     Filled,
+    Exact,
     None
 };
 
@@ -287,6 +288,27 @@ namespace sur
         Vec2 toVec2() { return { (i32)x, (i32)y }; }
 
         Vec2f toVec2f() { return { (f32)x, (f32)y }; }
+
+        f32 magnitude()
+        {
+            return sqrt(x * x + y * y + z * z);
+        }
+
+        void normalize()
+        {
+            f32 mag = magnitude();
+            x /= mag;
+            y /= mag;
+            z /= mag;
+        }
+
+        Vec3f cross(const Vec3f& other) {
+            Vec3f tmp;
+            tmp.x = y * other.z - z * other.y;
+            tmp.y = z * other.x - x * other.z;
+            tmp.z = x * other.y - y * other.x;
+            return tmp;
+        }
 
         void operator()(f32 x, f32 y, f32 z)
         {

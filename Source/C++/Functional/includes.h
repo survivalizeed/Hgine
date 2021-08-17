@@ -44,8 +44,6 @@ return rt
 
 #define eassert(con,mes) if(con){ Error(mes);}
 
-#define cpar(x) {x;}
-
 //There are no errors in the code but the optimization could make some problems. Just use this if you are in Release mode.
 #define _OPTIMIZATION_PROTECTION if(other->id == 0 || other->GetName() == "invalid") return;
 

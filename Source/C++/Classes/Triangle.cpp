@@ -9,9 +9,9 @@ extern std::vector<void*> ptrs;
 void sur::Triangle::LineVector::clear()
 {
     memset(check, false, 3);
-    Line1->clear();
-    Line2->clear();
-    Line3->clear();
+    Line1.clear();
+    Line2.clear();
+    Line3.clear();
 }
 
 std::vector<sur::Vec2>* sur::Triangle::LineVector::get(i32 i)
@@ -20,13 +20,13 @@ std::vector<sur::Vec2>* sur::Triangle::LineVector::get(i32 i)
     {
     case 1:
         check[0] = true;
-        return this->Line1;
+        return &Line1;
     case 2:
         check[1] = true;
-        return this->Line2;
+        return &Line2;
     case 3:
         check[2] = true;
-        return this->Line3;
+        return &Line3;
     default:
         return nullptr;
     }
@@ -37,17 +37,17 @@ std::vector<sur::Vec2>* sur::Triangle::LineVector::getother()
     if (!check[0])
     {
         check[0] = true;
-        return this->Line1;
+        return &Line1;
     }
     if (!check[1])
     {
         check[1] = true;
-        return this->Line2;
+        return &Line2;
     }
     if (!check[2])
     {
         check[2] = true;
-        return this->Line3;
+        return &Line3;
     }
     return nullptr;
 }
@@ -161,7 +161,7 @@ void sur::Triangle::Fill(LineVector& linevector)
         return (abs(target - a) < abs(target - b)) ? 1 : 2; 
     };
 
-    i32 maxv = max_val((i32)linevector.Line1->size(), (i32)linevector.Line2->size(), (i32)linevector.Line3->size());
+    i32 maxv = max_val((i32)linevector.Line1.size(), (i32)linevector.Line2.size(), (i32)linevector.Line3.size());
     std::vector<sur::Vec2>* hypo = nullptr;
     std::vector<sur::Vec2>* other = nullptr;
     std::vector<sur::Vec2>* temp = nullptr;
@@ -236,13 +236,44 @@ sur::Triangle::Triangle(Vec2f p1, Vec2f p2, Vec2f p3, Color color, std::string_v
     ptrs.push_back(this);
 }
 
+void sur::Triangle::SetPosition(i32 which, Vec2f pos)
+{
+    switch (which)
+    {
+    case 0:
+        p1 = ATS(pos);
+        return;
+    case 1:
+        p2 = ATS(pos);
+        return;
+    case 2:
+        p3 = ATS(pos);
+        return;
+    }
+}
+
+sur::Vec2f sur::Triangle::GetPosition(i32 which)
+{
+    switch (which)
+    {
+    case 0:
+        return STA(p1);
+    case 1:
+        return STA(p2);
+    case 2:
+        return STA(p3);
+    default:
+        return { 0.f,0.f };
+    }
+}
+
 void sur::Triangle::Bind(bool Render, bool Collider)
 {
     if (Collider)
         CollisionPos.clear();
-    Line(p1, p2, linevector.Line1, Render, Collider);
-    Line(p2, p3, linevector.Line2, Render, Collider);
-    Line(p3, p1, linevector.Line3, Render, Collider);
+    Line(p1, p2, &linevector.Line1, Render, Collider);
+    Line(p2, p3, &linevector.Line2, Render, Collider);
+    Line(p3, p1, &linevector.Line3, Render, Collider);
     if (Render)
         Fill(linevector);
     linevector.clear();

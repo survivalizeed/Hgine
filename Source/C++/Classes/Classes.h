@@ -271,9 +271,9 @@ namespace sur
         {
             bool* check = new bool[3];
             LineVector() { memset(check, false, 3); }
-            std::vector<Vec2>* Line1 = new std::vector<Vec2>;
-            std::vector<Vec2>* Line2 = new std::vector<Vec2>;
-            std::vector<Vec2>* Line3 = new std::vector<Vec2>;
+            std::vector<Vec2> Line1;
+            std::vector<Vec2> Line2;
+            std::vector<Vec2> Line3;
 
             void clear();
 
@@ -300,28 +300,11 @@ namespace sur
         Triangle(Vec2f p1, Vec2f p2, Vec2f p3, Color color, std::string_view name, i32 id,
             const std::vector<i32>& ignoreids = { 0 }, cb_ptr<Master*> callback = nullptr);
 
-        void SetPosition(i32 which, Vec2f pos)
-        {
-            switch (which)
-            {
-            case 0:
-                p1 = ATS(pos);
-                return;
-            case 1:
-                p2 = ATS(pos);
-                return;
-            case 2:
-                p3 = ATS(pos);
-                return;
-            }
-        }
+        void SetPosition(i32 which, Vec2f pos);
+
+        Vec2f GetPosition(i32 which);
 
         void Bind(bool Render, bool Collider);
-
-        ~Triangle()
-        {
-            delete linevector.Line1, linevector.Line2, linevector.Line3;
-        }
     };
     //
     //	Shape: Custom wire shape

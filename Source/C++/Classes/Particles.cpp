@@ -15,10 +15,10 @@ sur::Particles::Particles(sur::ParticlesSetting* settings)
     for (i32 i = 0; i < settings->emission; ++i)
     {
         // Calculating every position - the min position. So the minimal is always (0,0).
-        Vec2 position(sur::RandomRange(position.x - position.x, tmp_emi_poi_max.x - position.x),
+        Vec2 local_position(sur::RandomRange(position.x - position.x, tmp_emi_poi_max.x - position.x),
             sur::RandomRange(position.y - position.y, tmp_emi_poi_max.y - position.y));
         Color color = settings->colors.at(sur::RandomRange(0, (i32)settings->colors.size() - 1));
-        Coords->push_back({ position, color });
+        Coords->push_back({ local_position, color });
         Offsets->push_back({ 0, 0 }); // To allocate the memory we will need later
     }
 }

@@ -11,7 +11,7 @@ lua_State* Start() {
 	_window_size(stoi(lua::GetTableContent(L, "configuration", "window_size_x")),
 		stoi(lua::GetTableContent(L, "configuration", "window_size_y")));
 
-	_aspect(100, 100);
+	_aspect(500, 500);
 
 	_resource_path = lua::GetTableContent(L, "configuration", "resource_path");
 

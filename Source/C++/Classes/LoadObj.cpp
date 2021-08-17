@@ -129,7 +129,7 @@ auto TintIt = [=](sur::Object& obj, Color color) -> Color
 {
     using namespace sur;
     assert(obj.GetTint() == sRGB(0, 0, 0), color);
-    sRGB tmp;
+    sRGB tmp(0,0,0);
     tmp.ToRGB(color);
     tmp = tmp + obj.GetTint();
     if (tmp.r > 255)
@@ -356,11 +356,59 @@ void sur::Object::Bind(bool Render, ColliderType collidertype)
                 _Amap.Collider(tmp, id);
             }
         }
+        return;
+    }
+    if (collidertype == ColliderType::Exact) {
+        if (Render)
+            for (i32 i = 0; i < YCoords->size(); i++)
+            {
+                if (_light)
+                    _Amap.Render(Rotate(matrix.multiplyWithVector(
+                        Vec2(XCoords->at(i), YCoords->at(i))) +
+                        position,
+                        ATS(origin), angle),
+                        LightIt({ XCoords->at(i) + position.x, YCoords->at(i) + position.y }, TintIt(*this, Colors->at(i))));
+                else
+                    _Amap.Render(Rotate(matrix.multiplyWithVector(
+                        Vec2(XCoords->at(i), YCoords->at(i))) +
+                        position,
+                        ATS(origin), angle),
+                        TintIt(*this, Colors->at(i)));
+            }
+
+        i32 firstXValueOfRow = XCoords->at(0);
+        i32 firstYValueOfRow = YCoords->at(0);
+        for (i32 i = 0; i < YCoords->size(); ++i) {
+            if (i < YCoords->size() - 1) {
+                if (YCoords->at(i) > YCoords->at(i + 1)) {
+                    sur::Vec2 tmp(
+                        Rotate(
+                            matrix.multiplyWithVector(
+                                Vec2(firstXValueOfRow, firstYValueOfRow)
+                            ) 
+                            + position, ATS(origin), angle)
+                    );
+                    _Amap.Render(tmp, Color(255,0,0));
+                    tmp(
+                        Rotate(
+                            matrix.multiplyWithVector(
+                                Vec2(XCoords->at(i), YCoords->at(i))
+                            )
+                            + position, ATS(origin), angle)
+                    );
+                    _Amap.Render(tmp, Color(255, 0, 0));
+                    firstXValueOfRow = XCoords->at(i + 1);
+                    firstYValueOfRow = YCoords->at(i + 1);
+                }
+            }
+        }
+        
     }
 }
 
 void sur::Object::ScrollBind(bool Render)
 {
+
 }
 
 void sur::Object::LSD()
