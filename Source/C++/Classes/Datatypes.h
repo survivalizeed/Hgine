@@ -310,6 +310,10 @@ namespace sur
             return tmp;
         }
 
+        f32 dot(const Vec3f& other) {
+            return x * other.x + y * other.y + z * other.z;
+        }
+
         void operator()(f32 x, f32 y, f32 z)
         {
             this->x = x;
