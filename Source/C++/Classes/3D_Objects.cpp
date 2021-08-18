@@ -152,7 +152,7 @@ sur::Mesh::Mesh(const std::string& file, Vec3f position, Color color, Vec3f orig
         }
         for (i32 i = 0; i < words.size(); ++i) {
             if (words[i] == "v")
-                verts.push_back(sur::Vec3f(round(stoi(words[i + 1])), round(stoi(words[i + 2])), round(stoi(words[i + 3]))));
+                verts.push_back(sur::Vec3f(round(stof(words[i + 1])), round(stof(words[i + 2])), round(stof(words[i + 3]))));
             if (words[i] == "f") {
                 std::string container[3];
                 for (i32 c = 1; c <= 3; ++c) {
@@ -165,7 +165,7 @@ sur::Mesh::Mesh(const std::string& file, Vec3f position, Color color, Vec3f orig
                 }
                 if (!once) {
                     for (i32 a = 0; a < 3; ++a) {
-                        std::vector<i32> values;
+                        std::vector<f32> values;
                         for (i32 c = 0; c < verts.size(); ++c) {
                             if (a == 0)
                                 values.push_back(verts[c].x);
@@ -174,7 +174,7 @@ sur::Mesh::Mesh(const std::string& file, Vec3f position, Color color, Vec3f orig
                             if (a == 2)
                                 values.push_back(verts[c].z);
                         }
-                        i32 min = *std::min_element(values.begin(), values.end());
+                        f32 min = *std::min_element(values.begin(), values.end());
                         for (i32 c = 0; c < verts.size(); ++c) {
                             if (a == 0)
                                 verts[c].x += -min + 1;
@@ -268,7 +268,7 @@ void sur::Mesh::Bind(bool Render, i32 perspectiveThreshold)
         Color(152,30,0), Color(20,20,20), Color(155,80,73), Color(69,220,187), Color(187,220,69)
     };
 
-    i32 count = 0;
+    //i32 count = 0;
     for (i32 i = 0; i < transformed.size(); i += 3) {
        
         Vec3f normal{}, line1{}, line2{};
@@ -280,11 +280,11 @@ void sur::Mesh::Bind(bool Render, i32 perspectiveThreshold)
         normal.normalize();
 
         if(normal.z > 0) {         
-            renderableTris.push_back({ transformed[i], transformed[i + 1], transformed[i + 2], colors[count] });
+            renderableTris.push_back({ transformed[i], transformed[i + 1], transformed[i + 2], colors[sur::RandomRange(0, 19)] });
         }
-        count++;
-        if (count == 19)
-            count = 0;
+        //count++;
+        /*if (count == 19)
+            count = 0;*/
     }
     std::sort(renderableTris.begin(), renderableTris.end(), [](TrianglePosColContainer& t1, TrianglePosColContainer& t2) {
         f32 z1 = (t1.a.z + t1.b.z + t1.c.z) / 3.f;

@@ -92,16 +92,16 @@ int main() {
 
 	//sur::Object player(_resource_path + "player.Hgineres", { 0,0 }, "obj", 1);
 	//sur::Cuboid c(Vec3f(0, 0, 50), Vec3f(100, 0, 50), Vec3f(100, 100, 50), Vec3f(0, 100, 50),
-	//	Vec3f(0, 0, 150), Vec3f(100, 0, 150), Vec3f(100, 100, 150), Vec3f(0, 100, 150), Color(255, 0, 0),
-	//	Vec3f(0, 0, 50));
+	//Vec3f(0, 0, 150), Vec3f(100, 0, 150), Vec3f(100, 100, 150), Vec3f(0, 100, 150), Color(255, 0, 0),
+	//Vec3f(0, 0, 50));
 
-	sur::Mesh c("C:\\Users\\gero\\Desktop\\obj3.obj", { 0,0,0 }, Color(255, 0, 0), { 200,200,200 });
+	sur::Mesh c("C:\\Users\\gero\\Desktop\\Handgun_obj.obj", { 0,0,0 }, Color(255, 0, 0), { 200,200,200 });
 	f32 angleX = 0;
 	f32 angleY = 0;
 	f32 angleZ = 0;
 	for (;;) {
 		renderer.ClearScreenBuffer();
-		c.Bind(true, 100);
+		c.Bind(true, 120);
 		if (_input.keyboard.Key(Keys::J)) {
 			c.Rotate(Dimension::X, (i32)angleX);
 			angleX += 0.2f;
@@ -120,8 +120,9 @@ int main() {
 			c.Move({ 0,0,-1 });
 		if (_input.keyboard.Key(Keys::D))
 			c.Move({ 1,0,0 });
-		renderer.RenderScreenBuffer();
-		
+		if (_input.keyboard.Key(Keys::A))
+			c.Move({ -1,0,0 });
+		renderer.RenderScreenBuffer();	
 	}
 }
 //player.Bind(true, ColliderType::Exact);
