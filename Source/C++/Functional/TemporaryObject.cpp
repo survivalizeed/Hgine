@@ -28,15 +28,14 @@ void sur::TMP::Line(Vec2f start, Vec2f end, Color color)
         return;
     }
     i32 Dx, Dy;
-    f32 RunsThrough;
     Dx = endINT.x - startINT.x;
     Dy = endINT.y - startINT.y;
-    RunsThrough = (f32)Dy / (f32)Dx;
+    f32 RunsThrough = (f32)Dy / (f32)Dx;
+    f32 counter = 0.0f;
+    i32 countcounter = 1;
     if (RunsThrough >= 0)
     {
         i32 tempy = startINT.y;
-        f32 counter = 0.0f;
-        i32 countcounter = 1;
         for (i32 i = startINT.x; i <= endINT.x; i++)
         {
             _Amap.Render(i, tempy, color);
@@ -53,8 +52,6 @@ void sur::TMP::Line(Vec2f start, Vec2f end, Color color)
     {
         RunsThrough *= -1;
         i32 tempy = startINT.y;
-        f32 counter = 0.0f;
-        i32 countcounter = 1;
         bool runned = false;
         for (i32 i = startINT.x; i <= endINT.x; i++)
         {

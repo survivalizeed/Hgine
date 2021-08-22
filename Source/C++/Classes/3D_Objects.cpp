@@ -198,7 +198,7 @@ void sur::Mesh::Rotate(Dimension dimension, i32 angle)
     }
 }
 
-void sur::Mesh::Bind(bool Render, i32 perspectiveThreshold, i32 clipping)
+void sur::Mesh::Bind(bool Render, bool preciseFill, i32 perspectiveThreshold, i32 clipping)
 {
     struct TrianglePosColContainer {
         Vec3f a, b, c;
@@ -268,7 +268,7 @@ void sur::Mesh::Bind(bool Render, i32 perspectiveThreshold, i32 clipping)
         triangles.push_back(sur::Triangle(iter.a.toVec2f(), iter.b.toVec2f(), iter.c.toVec2f(), iter.color, "", 0));
     }
     for (auto& iter : triangles) {
-        iter.Bind(Render, false);
+        iter.Bind(Render, false, preciseFill);
     }
     triangles.clear();
     

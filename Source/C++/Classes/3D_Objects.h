@@ -64,7 +64,7 @@ namespace sur {
 		void Rotate(Dimension dimension, i32 angle);
 
 		//A threshold around 300 is good ;)
-		void Bind(bool Render, i32 perspectiveThreshold = 0, i32 clipping = 40);
+		void Bind(bool Render, bool preciseFill, i32 perspectiveThreshold = 0, i32 clipping = 40);
 
 		void Move(Vec3f direction);
 	};

@@ -81,7 +81,7 @@ namespace sur
 
         Master() = default;
 
-        std::string_view GetName() const { return name; }
+        virtual std::string_view GetName() const { return name; }
 
         virtual void SetPosition(Vec2f position) { this->position = ATS(position); }
 
@@ -89,11 +89,11 @@ namespace sur
 
         virtual Vec2f GetSize() const { return STA(size); }
 
-        void SetColor(Color color) { this->color = color; }
+        virtual void SetColor(Color color) { this->color = color; }
 
-        Vec2f GetOrigin() const { return GetPosition() + (GetSize() / 2); }
+        virtual Vec2f GetOrigin() const { return GetPosition() + (GetSize() / 2); }
 
-        bool State() const { return active; }
+        virtual bool State() const { return active; }
 
         virtual Vec2 Move(Vec2f direction, i32 MovQueueIndex, bool detect);
     };
@@ -159,8 +159,7 @@ namespace sur
     class Object : public Master
     {
     private:
-        //Deleted functions
-        void SetColor(Color color) = delete;
+        using Master::SetColor;
 
     private:
         bool fliped_X = false;
@@ -224,10 +223,10 @@ namespace sur
     class Line : public Master
     {
     private:
-        //Deleted functions
-        Vec2f GetPosition() = delete;
-        Vec2f GetSize() = delete;
-        Vec2f GetOrigin() = delete;
+        using Master::GetPosition;
+        using Master::GetSize;
+        using Master::GetOrigin;
+        using Master::SetPosition;
 
     private:
         Vec2 start;
@@ -257,7 +256,11 @@ namespace sur
 
         void SetColor(Color color) { this->color = color; }
 
+        // Be aware! This function returns a Vec2. To convert a single element to a Vec2f, use the STA() macro.
+        std::vector<Vec2>* CoordBuffer();
+
         void Bind(bool Render, bool Collider);
+    
     };
     //
     //	Shape: Triangle
@@ -286,6 +289,8 @@ namespace sur
 
         void Fill(LineVector& linevector);
 
+        void PreciseFill(LineVector& linevector);
+
         void MoveInject(const Vec2& direction) override
         {
             p1 += direction;
@@ -304,7 +309,7 @@ namespace sur
 
         Vec2f GetPosition(i32 which);
 
-        void Bind(bool Render, bool Collider);
+        void Bind(bool Render, bool Collider, bool preciseFill);
     };
     //
     //	Shape: Custom wire shape
@@ -312,14 +317,11 @@ namespace sur
     class Shape : public Master
     {
     private:
-        //Deleted attributes
         using Master::ignore;
         using Master::matrix;
-
-        //Deleted functions
-        Vec2f GetPosition() = delete;
-        Vec2f GetSize() = delete;
-        Vec2f GetOrigin() = delete;
+        using Master::GetPosition;
+        using Master::GetSize;
+        using Master::GetOrigin;
 
     private:
         std::vector<Vec2>* vec = new std::vector<Vec2>;
@@ -404,8 +406,8 @@ namespace sur
     class Light : public Master
     {
     private:
-        Vec2f GetOrigin() = delete;
-        Vec2f GetSize() = delete;
+        using Master::GetOrigin;
+        using Master::GetSize;
 
     public:
         f32 radius;

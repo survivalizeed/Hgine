@@ -15,18 +15,14 @@ int main() {
 	renderer.DebugConsole(_debug);
 	renderer.FPS();
 
-	//sur::Object player(_resource_path + "player.Hgineres", { 0,0 }, "obj", 1);
-	//sur::Cuboid c(Vec3f(0, 0, 50), Vec3f(100, 0, 50), Vec3f(100, 100, 50), Vec3f(0, 100, 50),
-	//Vec3f(0, 0, 150), Vec3f(100, 0, 150), Vec3f(100, 100, 150), Vec3f(0, 100, 150), Color(255, 0, 0),
-	//Vec3f(0, 0, 50));
 
-	sur::Mesh c("C:\\Users\\gero\\Desktop\\gun.obj", { 0,0,0 }, Color(255, 255, 255), { 200,200,200 });
+	sur::Mesh c("C:\\Users\\gero\\Desktop\\axe.obj", { 0,0,0 }, Color(255, 255, 255), { 200,200,200 });
 	f32 angleX = 0;
 	f32 angleY = 0;
 	f32 angleZ = 0;
 	for (;;) {
 		renderer.ClearScreenBuffer();
-		c.Bind(true, 300);
+		c.Bind(true, true, 300);
 		if (_input.keyboard.Key(Keys::J)) {
 			c.Rotate(Dimension::X, (i32)angleX);
 			angleX += 0.2f;
@@ -47,9 +43,10 @@ int main() {
 			c.Move({ 1,0,0 });
 		if (_input.keyboard.Key(Keys::A))
 			c.Move({ -1,0,0 });
-		renderer.RenderScreenBuffer();	
+		renderer.RenderScreenBuffer();
 	}
 }
+
 //player.Bind(true, ColliderType::Exact);
 //if (_input.keyboard.Key(Keys::A))
 //	player.Move({ -1,0 }, 0,true);
@@ -83,3 +80,16 @@ int main() {
 		//if (_input.keyboard.Key(Keys::E)) {
 		//	c.Move({ 0,1,0 });
 		//}
+
+	//sur::Triangle tri({ 0,0 }, { 100,100 }, { 0,100 }, Color(255, 0, 0), "tri", 0);
+	//for (;;) {
+	//	renderer.ClearScreenBuffer();
+	//	tri.Bind(true, false);
+	//	if (_input.mouse.RClick()) {
+	//		tri.SetPosition(0,_input.mouse.Position());
+	//	}
+	//	if (_input.keyboard.Key(Keys::F)) {
+	//		tri.SetPosition(2, _input.mouse.Position());
+	//	}
+	//	renderer.RenderScreenBuffer();	
+	//}

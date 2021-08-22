@@ -1,7 +1,7 @@
 
 
 #include "Classes.h"
-
+#include "../Functional/TemporaryObjects.h"
 extern sur::Map_Analyses _Amap;
 extern std::vector<i32> identitys;
 extern std::vector<void*> ptrs;
@@ -66,16 +66,31 @@ void sur::Triangle::Line(Vec2 start, Vec2 end, std::vector<Vec2>* line, bool Ren
             _Amap.Collider({ x, y }, id);
         }
     };
+
     if (start.y > end.y || start.x > end.x)
     {
         std::swap(start.y, end.y);
         std::swap(start.x, end.x);
-    }
-    if (start.x == end.x)
-        start.x--;
-    else
-        line->push_back(start);
+    } 
     position = { start.x, start.y };
+    if (start.x == end.x)
+    {
+        for (i32 i = start.y; i <= end.y; ++i)
+        {
+            line->push_back({ start.x, i });
+            Write(start.x, i);
+        }
+        return;
+    }
+    if (start.y == end.y)
+    {
+        line->push_back(start);
+        for (i32 i = start.x; i <= end.x; ++i)
+        {
+            Write(i, start.y);
+        }
+        return;
+    }  
     i32 Dx, Dy;
     f32 RunsThrough;
     Dx = end.x - start.x;
@@ -83,6 +98,7 @@ void sur::Triangle::Line(Vec2 start, Vec2 end, std::vector<Vec2>* line, bool Ren
     RunsThrough = (f32)Dy / (f32)Dx;
     if (RunsThrough >= 0)
     {
+        line->push_back(start);
         i32 tempy = start.y;
         f32 counter = 0.0f;
         i32 countcounter = 1;
@@ -108,6 +124,9 @@ void sur::Triangle::Line(Vec2 start, Vec2 end, std::vector<Vec2>* line, bool Ren
         bool runned = false;
         for (i32 i = start.x; i <= end.x; i++)
         {
+            if (!runned) {
+                line->push_back(start);
+            }
             Write(i, tempy);
             while (counter >= countcounter)
             {
@@ -138,7 +157,11 @@ void sur::Triangle::Line(Vec2 start, Vec2 end, std::vector<Vec2>* line, bool Ren
             }
         }
     }
+    line->push_back(end);
 }
+
+
+
 
 void sur::Triangle::Fill(LineVector& linevector)
 {
@@ -226,6 +249,53 @@ void sur::Triangle::Fill(LineVector& linevector)
     }
 }
 
+void sur::Triangle::PreciseFill(LineVector& linevector)
+{
+    std::vector<Vec2> border(linevector.Line1);
+    border.insert(border.end(), linevector.Line2.begin(), linevector.Line2.end());
+    border.insert(border.end(), linevector.Line3.begin(), linevector.Line3.end());
+
+    // Now every coordinate of the lines is inside the border vector
+    std::sort(border.begin(), border.end(), [](Vec2& v1, Vec2& v2) {
+        if (v1.y > v2.y)
+            return true;
+        else
+            return false;
+        }
+    );
+
+    bool except = false;
+    i32 index = 0;
+    std::vector<Vec2> tmp;
+    for (i32 i = 0; i < border.size(); ++i) {
+        tmp.push_back(border[i]);
+        if (tmp[index].y != border[i].y)
+        {
+            tmp.erase(tmp.end() - 1);
+            if (tmp.size() >= 3) {
+                std::sort(tmp.begin(), tmp.end(), [](Vec2& v1, Vec2& v2) {
+                    if (v1.x < v2.x)
+                        return true;
+                    else
+                        return false;
+                    }
+                );
+            }
+            sur::TMP::Line(STA(tmp[0]), STA(tmp[tmp.size() - 1]), color);
+            tmp.clear();
+            index = 0;
+            except = false;
+            i--;
+        }
+        else {
+            if (except)
+                index++;
+            except = true;
+        }
+    }
+}
+
+
 sur::Triangle::Triangle(Vec2f p1, Vec2f p2, Vec2f p3, Color color, std::string_view name, i32 id, const std::vector<int>& ignoreids,
     cb_ptr<Master*> callback)
     : p1(ATS(p1)), p2(ATS(p2)), p3(ATS(p3)), Master(name, id, color, callback)
@@ -267,14 +337,21 @@ sur::Vec2f sur::Triangle::GetPosition(i32 which)
     }
 }
 
-void sur::Triangle::Bind(bool Render, bool Collider)
+void sur::Triangle::Bind(bool Render, bool Collider, bool preciseFill)
 {
     if (Collider)
         CollisionPos.clear();
     Line(p1, p2, &linevector.Line1, Render, Collider);
     Line(p2, p3, &linevector.Line2, Render, Collider);
     Line(p3, p1, &linevector.Line3, Render, Collider);
-    if (Render)
-        Fill(linevector);
+    if (Render) {
+        if (preciseFill) {
+            PreciseFill(linevector);
+        }
+        else
+        {
+            Fill(linevector);
+        }
+    }
     linevector.clear();
 }
