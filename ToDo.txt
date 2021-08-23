@@ -23,7 +23,6 @@ Wire colliders for Rectangles |DONE|
 Tint for objects |DONE|
 The object id always needs to be different because otherwise it will call the callback of the first object it finds -> include hash algorithm ?
 Take input only if window is in focus
-Game Freeze functionality -> Use the chrono library
 Hold type of object by enum in Master class -> cast in callback |DONE|
 Rotation for all Objects
 Rotation for Camera
@@ -33,7 +32,6 @@ Fix those annoying RGB and Tint bugs. Understand what the fck windows wants with
 Faster random number generator. Maybe Xoshiro256+? |Not going to happen|
 Instancer support for particle systems
 multithreading for particles |DONE|
-Matrix modified objects out of screen fix 
 New collision objects glitch through |DONE|
 if down and left are pressed with new collison, bugs through objects |DONE|
 3d perspective z too big bug 
@@ -44,3 +42,4 @@ overlapping lights are weird
 finally do the damn triggers
 fix ClearAll method for the instancer |DONE|
 sur::Object Scroll method
+change 3d renderer to use a fov projection matrix
