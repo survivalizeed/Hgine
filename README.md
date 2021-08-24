@@ -1,5 +1,8 @@
 ![nope](https://github.com/survivalizeed/Hgine/blob/master/Res/HgineSplashGithub.png?raw=true)
 # Hgine
+### Download: https://minhaskamal.github.io/DownGit/#/home?url=https://github.com/survivalizeed/Hgine/tree/master/Source  
+## About:
+
 Just an Engine which uses the gdiplus.h to display an array of pixels.  
 It is not the fastest Engine out there but it is really hardcoded and enough for some cool 2D games (probably 3D too).
 Make sure you are using C++ 20. For the best results compile it in x64 release, MSVC and -O2 optimization level!  I am trying to re-create some algorithms from the graphics card and calling it Hgine:)  
