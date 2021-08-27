@@ -408,14 +408,15 @@ namespace sur
     private:
         using Master::GetOrigin;
         using Master::GetSize;
+        using Master::SetColor;
 
     public:
-        f32 radius;
+        f32 radius, threshold, falloffIntensity;
         using Master::color;
 
         Light() = default;
 
-        Light(Vec2f position, f32 radius, Color color, std::string_view name);
+        Light(Vec2f position, f32 radius, f32 threshold, f32 falloffIntensity, Color color, std::string_view name);
     };
 
     class Text : public Master

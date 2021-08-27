@@ -148,6 +148,68 @@ auto TintIt = [=](sur::Object& obj, Color color) -> Color
     return c;
 };
 
+//auto LightIt = [=](sur::Vec2 pos, Color color) -> Color
+//{
+//    using namespace sur;
+//
+//    auto OverFlowCheck = [=](sRGB color) -> sRGB
+//    {
+//        if (color.r > 255)
+//            color.r = 255;
+//        if (color.r < 0)
+//            color.r = 0;
+//        if (color.g > 255)
+//            color.g = 255;
+//        if (color.g < 0)
+//            color.g = 0;
+//        if (color.b > 255)
+//            color.b = 255;
+//        if (color.b < 0)
+//            color.b = 0;
+//        return sRGB(color.r, color.g, color.b);
+//    };
+//
+//    bool once = false;
+//    sRGB expected(0, 0, 0);
+//    sRGB save(0, 0, 0);
+//    save.ToRGB(color);
+//    sRGB colorRGB(0, 0, 0);
+//    sRGB colorRGBsave(0, 0, 0);
+//
+//    for (auto& iter : lights)
+//    {
+//        colorRGB.ToRGB(color);
+//        colorRGBsave.ToRGB(color);
+//        colorRGB = colorRGB * (1 - _ambientLight);
+//
+//        f32 maxDist = iter->radius;
+//
+//        expected.ToRGB(iter->color);
+//
+//        Vec2f middle(iter->GetPosition());
+//        f32 dist = sur::Absolute(STA(pos) - middle).magnitude();
+//
+//        if (dist > maxDist)
+//        {
+//            continue;
+//        }
+//
+//        colorRGB = colorRGB + (sRGB(expected.r, expected.g, expected.b));
+//        colorRGB = sRGB(i32(colorRGB.r / dist / dist), i32(colorRGB.g / dist / dist), i32(colorRGB.b / dist / dist));
+//
+//        if (!once) {
+//            save = colorRGB + colorRGBsave * (1 - _ambientLight);
+//            once = true;
+//        }
+//        else {
+//            save = save + sRGB(abs(colorRGB.r - save.r), abs(colorRGB.g - save.g), abs(colorRGB.b - save.b));
+//        }
+//    }
+//    if (!once) {
+//        return OverFlowCheck(colorRGB * _ambientLight).ToColor();
+//    }
+//    return OverFlowCheck(save /** (1 + _ambientLight)*/ /*sRGB(i32(255 * _ambientLight), i32(255 * _ambientLight), i32(255 * _ambientLight))*/).ToColor();
+//};
 auto LightIt = [=](sur::Vec2 pos, Color color) -> Color
 {
     using namespace sur;
@@ -169,53 +231,58 @@ auto LightIt = [=](sur::Vec2 pos, Color color) -> Color
         return sRGB(color.r, color.g, color.b);
     };
 
-    bool distTooFar = false;
     bool runned = false;
-    bool allow = true;
     sRGB expected(0, 0, 0);
     sRGB colorRGB(0, 0, 0);
     colorRGB.ToRGB(color);
+    sRGB saved(0, 0, 0);
     for (auto& iter : lights)
-    {
-        runned = true;
-        f32 maxDist = iter->radius;
+    {     
+        if (runned) {
+            colorRGB = sRGB(0, 0, 0);
+        }
+
+        f32 maxDist = abs(iter->radius);
 
         expected.ToRGB(iter->color);
 
         Vec2f middle(iter->GetPosition());
         f32 dist = sur::Absolute(STA(pos) - middle).magnitude();
+        if (dist == 0.f)
+            dist = 1.f;
 
-        if (dist > maxDist)
+
+        if (dist > maxDist && maxDist != 0.f)
         {
-            if (allow)
-                distTooFar = true;
             continue;
         }
+        
+        f32 tmpFalloffIntensity = (iter->falloffIntensity == 0) ? 1.f : iter->falloffIntensity;
+        f32 tmpThreshold = (iter->threshold == 0) ? 1.f : iter->threshold;
 
-        distTooFar = false;
-        allow = false;
         colorRGB = colorRGB + (sRGB(expected.r, expected.g, expected.b));
-        colorRGB = sRGB(i32(colorRGB.r / dist / dist), i32(colorRGB.g / dist / dist), i32(colorRGB.b / dist / dist));
-
-        if (colorRGB.r > 255)
-            colorRGB.r = 255;
-        if (colorRGB.r < 0)
-            colorRGB.r = 0;
-        if (colorRGB.g > 255)
-            colorRGB.g = 255;
-        if (colorRGB.g < 0)
-            colorRGB.g = 0;
-        if (colorRGB.b > 255)
-            colorRGB.b = 255;
-        if (colorRGB.b < 0)
-            colorRGB.b = 0;
+        colorRGB = sRGB(
+            i32(colorRGB.r / ((dist * (tmpFalloffIntensity * dist)) / tmpThreshold)),
+            i32(colorRGB.g / ((dist * (tmpFalloffIntensity * dist)) / tmpThreshold)),
+            i32(colorRGB.b / ((dist * (tmpFalloffIntensity * dist)) / tmpThreshold))
+        );
+        if (!runned) {
+            saved = colorRGB;
+        }
+        else {
+            saved = saved + colorRGB;
+        }
+        runned = true;
     }
-    if (!runned || distTooFar)
+    if (!runned)
     {
         return OverFlowCheck(colorRGB * _ambientLight).ToColor();
     }
-    return colorRGB.ToColor();
+    sRGB tmp(0, 0, 0);
+    tmp.ToRGB(color);
+    return OverFlowCheck(saved + tmp * _ambientLight).ToColor();
 };
+
 
 void sur::Object::Bind(bool Render, ColliderType collidertype)
 {

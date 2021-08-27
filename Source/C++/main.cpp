@@ -11,12 +11,10 @@ using namespace sur::Instancer;
 int main() {
 
 	lua_State* LC = Start();
-	sur::Render renderer(Color(0, 0, 0), true, 0.4f, false);
+	sur::Render renderer(Color(0, 0, 0), true, 0.2f, true);
 	renderer.DebugConsole(_debug);
 	renderer.FPS();
-
-
-	sur::Mesh c("C:\\Users\\gero\\Desktop\\axe.obj", { 0,0,0 }, Color(255, 255, 255), { 200,200,200 });
+	sur::Mesh c("C:\\Users\\gero\\Desktop\\gun.obj", { 0,0,0 }, Color(255, 255, 255), { 200,200,200 });
 	f32 angleX = 0;
 	f32 angleY = 0;
 	f32 angleZ = 0;
@@ -45,6 +43,7 @@ int main() {
 			c.Move({ -1,0,0 });
 		renderer.RenderScreenBuffer();
 	}
+
 }
 
 //player.Bind(true, ColliderType::Exact);
@@ -92,4 +91,27 @@ int main() {
 	//		tri.SetPosition(2, _input.mouse.Position());
 	//	}
 	//	renderer.RenderScreenBuffer();	
+	//}
+
+
+
+
+
+
+
+	//sur::Light light1 ({ 0,0 }, 0, 100, 0.5f, Color(255, 255, 255), "light");
+	//sur::Light light2({ 0,0 }, 0, 100, 0.5f, Color(255, 255, 255), "light");
+	//sur::Object obj(_resource_path + "woods.hgineres", { 0,0 }, "wo", 0);
+
+	//for (;;) {
+	//	renderer.ClearScreenBuffer();
+	//	obj.Bind(true, ColliderType::None);
+	//	if (_input.mouse.RClick())
+	//		light1.SetPosition(_input.mouse.Position());
+	//	if (_input.mouse.LClick())
+	//		light2.SetPosition(_input.mouse.Position());
+	//	//if (_input.keyboard.Key(Keys::A)) {
+	//	//	light1.
+	//	//}
+	//	renderer.RenderScreenBuffer();
 	//}

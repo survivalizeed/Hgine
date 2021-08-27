@@ -568,10 +568,12 @@ void sur::Shape::Move(sur::Vec2f direction, i32 MovQueueIndex)
 //
 //	Light
 //
-sur::Light::Light(Vec2f position, f32 radius, Color color, std::string_view name)
+sur::Light::Light(Vec2f position, f32 radius, f32 threshold, f32 falloffIntensity, Color color, std::string_view name)
 	: radius(radius)
 {
 	this->color = color;
+	this->threshold = threshold;
+	this->falloffIntensity = falloffIntensity;
 	this->name = name;
 	this->position = ATS(position);
 	lights.push_back(this);

@@ -287,8 +287,6 @@ namespace sur
 
         Vec2 toVec2() { return { (i32)x, (i32)y }; }
 
-        Vec2f toVec2f() { return { (f32)x, (f32)y }; }
-
         f32 magnitude()
         {
             return sqrt(x * x + y * y + z * z);
@@ -402,6 +400,13 @@ namespace sur
             this->r = r;
             this->g = g;
             this->b = b;
+        }
+        sRGB operator()(const sRGB& other)
+        {
+            r = other.r;
+            g = other.g;
+            b = other.b;
+            return other;
         }
         sRGB operator+(const sRGB& other) { return { r + other.r, g + other.g, b + other.b }; }
         sRGB operator-(const sRGB& other) { return { r - other.r, g - other.g, b - other.b }; }
