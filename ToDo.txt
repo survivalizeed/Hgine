@@ -43,3 +43,5 @@ finally do the damn triggers
 fix ClearAll method for the instancer |DONE|
 sur::Object Scroll method
 change 3d renderer to use a fov projection matrix
+change mat3x3 to mat4x4 
+fix window needs to be quad
