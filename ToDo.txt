@@ -38,7 +38,7 @@ if down and left are pressed with new collison, bugs through objects |DONE|
 missing pixel in object / rectangle collision |DONE|
 standard draw color not working correctly
 update the instancer with lights and so one...
-overlapping lights are weird
+overlapping lights are weird |DONE|
 finally do the damn triggers
 fix ClearAll method for the instancer |DONE|
 sur::Object Scroll method
