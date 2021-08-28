@@ -36,8 +36,8 @@ Now open the initialize.cpp and change the lua::LoadFile("To the path where the 
 Next download the Hgine resource generator.exe to be able to create some Hgineres files.  
 
 ### The final build
-If you want to do the final build make sure you changed the   
-##### lua::LoadFile("To only the name of the file (no path)")    
+If you want to do the final build make sure you changed all lua::LoadFile() calls to 
+##### lua::LoadFile(sur::GetExeDirectory() + "xyz.lua")  
 so the application will search in the exe's directory.  
 Now copy your config.lua into the release folder where your exe will be generated.  
 #### This process applies to every other .lua file you will use in your project.
