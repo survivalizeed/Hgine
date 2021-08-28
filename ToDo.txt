@@ -45,3 +45,4 @@ sur::Object Scroll method
 change 3d renderer to use a fov projection matrix
 change mat3x3 to mat4x4 
 fix window needs to be quad
+non quad window collisions out of screen seem weird
