@@ -10,8 +10,7 @@ Make sure you are using C++ 20. For the best results compile it in x64 release, 
 
 #### If you want to change something or just found a bug please send me a pullrequest or contact me via discord.
 
-## Note:  
-Im 16 years old and still learning C++ so please understand if this is not the best code you have ever seen ;)  
+## Note:   
 The Engine is still under development and I am only one developer.  
 Please don't wonder if I don't commit weekly.
 Most of the time Im collecting new code to then publish it.  
