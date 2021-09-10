@@ -46,14 +46,14 @@ i32 sur::RandomRange(i32 min, i32 max)
 
 void sur::Set(Vec2 pos, Color color)
 {
-    if (pos.x < 0 || pos.x > _window_size.x || pos.y < 0 || pos.y > _window_size.y)
+    if (pos.x < 0 || pos.x > _window_size.x - 1 || pos.y < 0 || pos.y > _window_size.y - 1)
         return;
     _render_buffer[pos.x + _window_size.y * pos.y] = color;
 }
 
 Color sur::Get(Vec2 pos)
 {
-    if (pos.x < 0 || pos.x > _window_size.x || pos.y < 0 || pos.y > _window_size.y)
+    if (pos.x < 0 || pos.x > _window_size.x - 1 || pos.y < 0 || pos.y > _window_size.y - 1)
         Color(0, 0, 0);
     return _render_buffer[pos.x + _window_size.y * pos.y];
 }
@@ -78,4 +78,13 @@ sur::Vec2f sur::Rotate2D(Vec2f position, Vec2f origin, i32 angle)
     return STA(sur::Vec2((i32)(dist.x * cos(angle * PI / 180) - dist.y * sin(angle * PI / 180)),
         (i32)(dist.x * sin(angle * PI / 180) + dist.y * cos(angle * PI / 180))) +
         ATS(origin));
+}
+
+sur::Vec2f sur::CalculateOrigin(const std::vector<Vec2f>& points)
+{
+    Vec2f tmp;
+    for (auto& iter : points) {
+        tmp += iter;
+    }
+    return tmp / static_cast<f32>(points.size());
 }

@@ -16,50 +16,46 @@ namespace sur
 		Sprite,
 
 	};
-
-	struct Object 
+//=======================================================================
+	class Object 
 	{
-		
+	protected:
+
+		std::string name;
+
+	public:
+
 		Type type;
 		bool active;
 		Color color;
 		Vec2f position;
-		std::string name;
+		i32 hash;
+
+		std::string_view GetName()
+		{
+			return name;
+		}
 
 	};
-
-	class Line : public Object
+//=======================================================================
+	struct Line : public Object
 	{
-	private:
 
 		Vec2f start_point;
 		Vec2f end_point;
 
-	public:
-
 		Line(Vec2f start_point, Vec2f end_point, Color color, std::string_view name);
-
-		void SetStart(Vec2f start_point);
-
-		void SetEnd(Vec2f end_point);
-
-		Vec2f GetStart();
-		
-		Vec2f GetEnd();
 
 		void Bind(bool render);
 
 	};
-
-	class Triangle : public Object 
+//=======================================================================
+	struct Triangle : public Object 
 	{
-	private:
 		
 		Vec2f p1;
 		Vec2f p2;
 		Vec2f p3;
-
-	public:
 
 		Triangle(Vec2f p1, Vec2f p2, Vec2f p3, Color color, std::string_view name);
 
@@ -70,25 +66,44 @@ namespace sur
 		void Bind(bool render, bool wireframe);
 
 	};
-
-	class Form : public Object 
-	{
-	private:
+//=======================================================================
+	struct Form : public Object 
+	{	
 		
 		std::vector<Vec2f> points;
 
-	public:
+		enum class Modifier {
+			None,
+			InverseKinematic,
+			ConvexHull	// not supported yet
+		} modifier;
 
-		Form(const std::vector<Vec2f>& points, Color color, std::string_view name);
+		Form(const std::vector<Vec2f>& points, const Modifier& modifier, Color color, std::string_view name);
 
-		void SetPoint(u32 index, Vec2f position, bool inverseKinematic);
+		void SetPoint(u32 index, Vec2f position);
 
 		Vec2f GetPoint(u32 index);
+
+		void Insert(u32 index, Vec2f position);
+
+		void Remove(u32 index);
 
 		void Bind(bool render, bool wireframe);
 
 	};
+//=======================================================================
+	struct Square : public Object
+	{
 
+		Vec2f start_point;
+		Vec2f end_point;
+
+		Square(Vec2f start_point, Vec2f end_point, Color color, std::string_view name);
+
+		void Bind(bool render);
+	
+	};
+//=======================================================================
 	class Sprite : public Object 
 	{
 	private:

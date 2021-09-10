@@ -2,6 +2,11 @@
 
 #include "../../../Includes.h"
 
+namespace sur
+{
+	class Object;
+}
+
 HWND _window_hwnd;
 
 WNDCLASSEX _window_class;
@@ -23,3 +28,7 @@ f32 _ambient_light;
 std::string _resource_path;
 
 std::string _sound_path;
+
+std::vector<sur::Object> _objects;
+
+std::vector<i32> _hashes;

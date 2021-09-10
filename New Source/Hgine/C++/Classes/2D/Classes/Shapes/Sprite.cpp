@@ -78,11 +78,16 @@ sur::Sprite::Sprite(std::string_view path, Vec2f position, std::string_view name
         }
         size.x = *std::max_element(MaxX.begin(), MaxX.end());
         size.y = y;
+        this->color = Color(0, 0, 0);
+        this->position = position;
+        this->type = Type::Sprite;
+        this->name = name;
+        this->hash = static_cast<i32>(std::hash<std::string>{}(name.data()));
     }
 }
 
 void sur::Sprite::Bind(bool render)
 {
     for (i32 i = 0; i < points.size(); ++i)
-        Set(ATS(points[i]), colors[i]);
+        Set(points[i] + ATS(position), colors[i]);
 }

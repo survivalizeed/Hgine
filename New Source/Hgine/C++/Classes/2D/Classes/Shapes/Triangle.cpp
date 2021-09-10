@@ -11,6 +11,7 @@ sur::Triangle::Triangle(Vec2f p1, Vec2f p2, Vec2f p3, Color color, std::string_v
 	this->position(0, 0);
 	this->type = Type::Triangle;
 	this->name = name;
+	this->hash = static_cast<i32>(std::hash<std::string>{}(name.data()));
 }
 
 void sur::Triangle::SetPoint(u32 index, Vec2f position)

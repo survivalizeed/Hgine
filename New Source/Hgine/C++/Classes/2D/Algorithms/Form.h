@@ -9,7 +9,7 @@ namespace sur::algorithm
 	inline void DrawFormWire(const std::vector<Vec2f>& coords, Color color) 
 	{
 		for (i32 i = 0; i < static_cast<i32>(coords.size()) - 1; ++i) {
-			DrawLine(ATS(coords[static_cast<size_t>(i)]), ATS(coords[static_cast<size_t>(i + 1)]), color, nullptr, nullptr);
+			DrawLine(coords[i], coords[static_cast<size_t>(i) + 1], color, nullptr, nullptr);
 		}
 	}
 
@@ -17,13 +17,13 @@ namespace sur::algorithm
 	{
 		std::vector<Vec2> wireForm;
 		for (i32 i = 0; i < static_cast<i32>(coords.size()) - 1; ++i) {
-			DrawLine(ATS(coords[static_cast<size_t>(i)]), ATS(coords[static_cast<size_t>(i + 1)]), color, nullptr,
+			DrawLine(coords[i], coords[static_cast<size_t>(i) + 1], color, nullptr,
 				[&](Vec2 position) {
 					wireForm.push_back(position);
 				}
 			);
 		}
-		DrawLine(ATS(coords[static_cast<size_t>(coords.size() - 1)]), ATS(coords[0]), color, nullptr,
+		DrawLine(coords[coords.size() - 1], coords[0], color, nullptr,
 			[&](Vec2 position) {
 				wireForm.push_back(position);
 			}

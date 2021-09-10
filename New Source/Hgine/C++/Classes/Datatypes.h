@@ -69,7 +69,7 @@ namespace sur
     struct Vec2f
     {
 
-        f32 x, y;
+        f32 x = 0, y = 0;
 
         Vec2f() = default;
 
@@ -95,6 +95,12 @@ namespace sur
             y /= mag;
         }
 
+        void absolute()
+        {
+            x = abs(x);
+            x = abs(y);
+        }
+
         void operator()(f32 x, f32 y)
         {
             this->x = x;
@@ -115,20 +121,21 @@ namespace sur
 
         Vec2f operator+(const Vec2f& other) const { return { x + other.x, y + other.y }; }
         Vec2f operator-(const Vec2f& other) const { return { x - other.x, y - other.y }; }
+        f32 operator*(const Vec2f& other) const { return x * other.x + y * other.y; }
+        Vec2f operator/(const Vec2f& other) const { return { x / other.x, y / other.y }; }
 
         Vec2f operator+(f32 value) const { return { x + value, y + value }; }
         Vec2f operator-(f32 value) const { return { x - value, y - value }; }
         Vec2f operator*(f32 value) const { return { x * value, y * value }; }
         Vec2f operator/(f32 value) const { return { x / value, y / value }; }
 
+        Vec2f operator+=(const Vec2f& other) { return { x += other.x, y += other.y }; }
+        Vec2f operator-=(const Vec2f& other) { return { x -= other.x, y -= other.y }; }
+
         Vec2f operator--() { return { x - 1, y - 1 }; }
         Vec2f operator++() { return { x + 1, y + 1 }; }
         bool operator==(const Vec2f& other) const { return (x == other.x && y == other.y) ? true : false; }
         bool operator!=(const Vec2f& other) const { return (x != other.x && y != other.y) ? true : false; }
-        bool operator>(Vec2f other) { return (magnitude() > other.magnitude()) ? true : false; }
-        bool operator>=(Vec2f other) { return (magnitude() >= other.magnitude()) ? true : false; }
-        bool operator<(Vec2f other) { return (magnitude() < other.magnitude()) ? true : false; }
-        bool operator<=(Vec2f other) { return (magnitude() <= other.magnitude()) ? true : false; }
 
         friend std::ostream& operator<<(std::ostream& os, const Vec2f& vector2d)
         {
@@ -148,21 +155,21 @@ namespace sur
 
         Vec2(const Vec2& vector2d) : x(vector2d.x), y(vector2d.y) {}
 
+        f32 magnitude()
+        {
+            return (f32)sqrt(pow(x, 2) + pow(y, 2));
+        }
+
         void invert()
         {
             x *= -1;
             y *= -1;
         }
 
-        f32 magnitude()
-        {
-            return (f32)sqrt(pow(x, 2) + pow(y, 2));
-        }
-
         void absolute()
         {
-            (void)abs(x);
-            (void)abs(y);
+            x = abs(x);
+            y = abs(y);
         }
 
         void operator()(i32 x, i32 y)
@@ -200,19 +207,11 @@ namespace sur
         Vec2 operator++() { return { x + 1, y + 1 }; }
         bool operator==(const Vec2& other) const { return (x == other.x && y == other.y) ? true : false; }
         bool operator!=(const Vec2& other) const { return (x != other.x && y != other.y) ? true : false; }
-        bool operator>(Vec2 other) { return (magnitude() > other.magnitude()) ? true : false; }
-        bool operator>=(Vec2 other) { return (magnitude() >= other.magnitude()) ? true : false; }
-        bool operator<(Vec2 other) { return (magnitude() < other.magnitude()) ? true : false; }
-        bool operator<=(Vec2 other) { return (magnitude() <= other.magnitude()) ? true : false; }
        
         friend std::ostream& operator<<(std::ostream& os, const Vec2& vector2d)
         {
             os << "X: " << vector2d.x << " Y: " << vector2d.y;
             return os;
-        }
-
-        operator Vec2f() {
-            return { (f32)x, (f32)y };
         }
     };
 
@@ -245,10 +244,10 @@ namespace sur
 
         void multiplyWithMatrix(const Mat2x2& other)
         {
-            sur::Vec2f tmp1 = multiplyWithVector({ other.v1.x, other.v1.y });
-            sur::Vec2f tmp2 = multiplyWithVector({ other.v2.x, other.v2.y });
-            v1 = tmp1;
-            v2 = tmp2;
+            //sur::Vec2f tmp1 = multiplyWithVector({ other.v1.x, other.v1.y });
+            //sur::Vec2f tmp2 = multiplyWithVector({ other.v2.x, other.v2.y });
+            //v1 = tmp1;
+            //v2 = tmp2;
         }
 
         // { a | b }
@@ -369,15 +368,6 @@ namespace sur
                 << "{ " << mat.v1.z << " " << mat.v2.z << " " << mat.v3.z << " }";
             return os;
         }
-    };
-
-    //
-    // Map pointer for Rendering, Collision and Trigger detection
-    //
-    struct Maps
-    {
-        i32* ColliderMap, * TriggerMap;
-        Color* RenderMap;
     };
 
     struct sRGB
