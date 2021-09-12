@@ -48,7 +48,7 @@ void sur::Set(Vec2 pos, Color color)
 {
     if (pos.x < 0 || pos.x > _window_size.x - 1 || pos.y < 0 || pos.y > _window_size.y - 1)
         return;
-    _render_buffer[pos.x + _window_size.y * pos.y] = color;
+    _render_buffer[pos.x + _window_size.x * pos.y] = color;
 }
 
 Color sur::Get(Vec2 pos)

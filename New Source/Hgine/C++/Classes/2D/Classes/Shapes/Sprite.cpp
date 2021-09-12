@@ -88,7 +88,7 @@ void sur::Sprite::LoadHgineres(std::string_view path)
     }
 }
 
-void sur::Sprite::LoadPng(std::string_view path)
+void sur::Sprite::LoadPng(std::string_view path, Color colorToAlpha)
 {
     std::vector<unsigned char> image; 
     u32 width = 0, height = 0;
@@ -119,10 +119,17 @@ void sur::Sprite::LoadPng(std::string_view path)
     {
         iter.y = maxY - iter.y;
     }
+    for (i32 i = 0; i < colors.size(); ++i) {
+        if (colors[i] == colorToAlpha) {
+            colors.erase(colors.begin() + i);
+            points.erase(points.begin() + i);
+            i--;
+        }
+    }
 
 }
 
-sur::Sprite::Sprite(std::string_view path, FileType filetype, Vec2f position, std::string_view name)
+sur::Sprite::Sprite(std::string_view path, FileType filetype, Vec2f position, std::string_view name, Color colorToAlpha)
 {
 
     this->color = Color(0, 0, 0);
@@ -134,7 +141,7 @@ sur::Sprite::Sprite(std::string_view path, FileType filetype, Vec2f position, st
     if (filetype == FileType::Hgineres)
         LoadHgineres(path);
     if (filetype == FileType::PNG)
-        LoadPng(path);
+        LoadPng(path, colorToAlpha);
 }
 
 void sur::Sprite::Bind(bool render)

@@ -28,3 +28,39 @@ bool sur::Input::Mouse::RClick()
 		return true;
 	return false;
 }
+
+bool sur::Input::Keyboard::KeyHeld(Keys::Keys key)
+{
+	bool space = false;
+	if (key == Keys::Keys::SPACE)
+		space = true;
+	if (GetAsyncKeyState(key) & 0x8000)
+	{
+		if (space && pressed[26] != key)
+		{
+			pressed[26] = key;
+			return true;
+		}
+		else if (!space && pressed[static_cast<i32>(key) - 65] != key)
+		{
+			pressed[static_cast<i32>(key) - 65] = key;
+			return true;
+		}
+		return false;
+	}
+	else
+	{
+		if (space)
+			pressed[26] = Keys::Keys::None;
+		else
+			pressed[static_cast<i32>(key) - 65] = Keys::Keys::None;
+		return false;
+	}
+}
+
+bool sur::Input::Keyboard::KeyPress(Keys::Keys key)
+{
+	if (GetAsyncKeyState(key) & 0x8000)
+		return true;
+	return false;
+}

@@ -7,6 +7,7 @@
 namespace sur
 {
 	 struct Input {
+		
 		struct Mouse {
 
 			static Vec2f Position();
@@ -14,9 +15,17 @@ namespace sur
 			static bool RClick();
 
 		};
-		struct Keyboard {
 
+		struct Keyboard {
+			
+			static bool KeyHeld(Keys::Keys key);
+			static bool KeyPress(Keys::Keys key);
+
+		private:
+
+			inline static Keys::Keys pressed[27] = { Keys::Keys::None }; // 27 because of the SPACE key
 
 		};
-	};
+
+	 };
 }

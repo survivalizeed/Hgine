@@ -116,7 +116,7 @@ namespace sur
 
 		void LoadHgineres(std::string_view path);
 
-		void LoadPng(std::string_view path);
+		void LoadPng(std::string_view path, Color colorToAlpha);
 
 	public:
 
@@ -125,7 +125,8 @@ namespace sur
 			PNG
 		};
 
-		Sprite(std::string_view path, FileType filetype, Vec2f position, std::string_view name);
+		// colorToAlpha not required for filetype Hgineres
+		Sprite(std::string_view path, FileType filetype, Vec2f position, std::string_view name, Color colorToAlpha = Color(0,0,0));
 
 		void Bind(bool render);
 
