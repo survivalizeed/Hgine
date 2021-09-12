@@ -88,3 +88,11 @@ sur::Vec2f sur::CalculateOrigin(const std::vector<Vec2f>& points)
     }
     return tmp / static_cast<f32>(points.size());
 }
+
+std::string sur::GetExeDirectory()
+{
+    char buffer[MAX_PATH];
+    GetModuleFileNameA(NULL, buffer, MAX_PATH);
+    std::string f(buffer);
+    return f.substr(0, f.find_last_of("\\/")) + "\\";
+}

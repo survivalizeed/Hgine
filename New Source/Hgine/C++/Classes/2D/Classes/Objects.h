@@ -114,9 +114,18 @@ namespace sur
 		std::vector<Vec2> points;
 		std::vector<Color> colors;
 
+		void LoadHgineres(std::string_view path);
+
+		void LoadPng(std::string_view path);
+
 	public:
 
-		Sprite(std::string_view path, Vec2f position, std::string_view name);
+		enum class FileType {
+			Hgineres,
+			PNG
+		};
+
+		Sprite(std::string_view path, FileType filetype, Vec2f position, std::string_view name);
 
 		void Bind(bool render);
 

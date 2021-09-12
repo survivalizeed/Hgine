@@ -25,4 +25,6 @@ namespace sur
 	Vec2f Rotate2D(Vec2f position, Vec2f origin, i32 angle);
 
 	Vec2f CalculateOrigin(const std::vector<Vec2f>& points);
+
+	std::string GetExeDirectory();
 }

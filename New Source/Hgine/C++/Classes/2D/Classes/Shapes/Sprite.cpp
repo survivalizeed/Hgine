@@ -2,7 +2,14 @@
 
 #include "../Objects.h"
 
-sur::Sprite::Sprite(std::string_view path, Vec2f position, std::string_view name)
+#include <codeanalysis\warnings.h>
+#pragma warning( push )
+#pragma warning ( disable : ALL_CODE_ANALYSIS_WARNINGS )
+#include "../../../Lodepng/lodepng.h"
+#pragma warning( pop )
+
+
+void sur::Sprite::LoadHgineres(std::string_view path)
 {
     i32 x = 0, y = 0;
 
@@ -76,14 +83,58 @@ sur::Sprite::Sprite(std::string_view path, Vec2f position, std::string_view name
         {
             iter.y = maxY - iter.y;
         }
-        size.x = *std::max_element(MaxX.begin(), MaxX.end());
-        size.y = y;
-        this->color = Color(0, 0, 0);
-        this->position = position;
-        this->type = Type::Sprite;
-        this->name = name;
-        this->hash = static_cast<i32>(std::hash<std::string>{}(name.data()));
+        this->size.x = *std::max_element(MaxX.begin(), MaxX.end());
+        this->size.y = y;
     }
+}
+
+void sur::Sprite::LoadPng(std::string_view path)
+{
+    std::vector<unsigned char> image; 
+    u32 width = 0, height = 0;
+    static_cast<void>(lodepng::decode(image, width, height, path.data()));
+
+    i32 x = 0;
+    i32 y = 0;
+    for (i32 i = 0; i < image.size(); i = i + 4) {
+        this->colors.push_back(Color(image[i], image[static_cast<size_t>(i) + 1], image[static_cast<size_t>(i) + 2]));
+        this->points.push_back({ x, y });
+        ++x;
+        if (x >= width) {
+            ++y;
+            x = 0;
+        }
+    }
+    std::vector<Vec2> tmp(points);
+    std::sort(tmp.begin(), tmp.end(), [](Vec2& l, Vec2& r) {
+        if (l.y > r.y)
+            return true;
+        else
+            return false;
+        }
+    );
+    i32 maxY = tmp[0].y;
+
+    for (auto& iter : points)
+    {
+        iter.y = maxY - iter.y;
+    }
+
+}
+
+sur::Sprite::Sprite(std::string_view path, FileType filetype, Vec2f position, std::string_view name)
+{
+
+    this->color = Color(0, 0, 0);
+    this->position = position;
+    this->type = Type::Sprite;
+    this->name = name;
+    this->hash = static_cast<i32>(std::hash<std::string>{}(name.data()));
+
+    if (filetype == FileType::Hgineres)
+        LoadHgineres(path);
+    if (filetype == FileType::PNG)
+        LoadPng(path);
 }
 
 void sur::Sprite::Bind(bool render)
