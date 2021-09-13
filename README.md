@@ -21,7 +21,7 @@ Discord: survivalizeed#7659
 Server: https://discord.gg/ymVn8ZsbeT
 
 
-## Make it work
+## Make it work (Old)
 To make the Engine work you just need to download the source folder and import it into a visual studio project.  
 After you have done that go into the SurLua.h and change the #pragma comment paths to the destination where your .a files are placed.  
 They are included in the Extern folder in the Source folder 
