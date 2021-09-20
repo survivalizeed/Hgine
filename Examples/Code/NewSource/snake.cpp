@@ -109,15 +109,17 @@ int main() {
 			++score;
 
 		}
-		else if (virtual_field[playerPos.x][playerPos.y] == 'X' || virtual_field[playerPos.x][playerPos.y] == 'P') {
+
+
+		for (i32 i = 1; i < snake.size(); ++i) {
+			virtual_field[snake[i].x][snake[i].y] = 'P';
+		}
+
+		if (virtual_field[playerPos.x][playerPos.y] == 'X' || virtual_field[playerPos.x][playerPos.y] == 'P') {
 			MessageBoxA(_window_hwnd, "You died", "Game", MB_SERVICE_NOTIFICATION_NT3X);
 			return 0;
 		}
-
-
-		for (i32 i = 0; i < snake.size(); ++i) {
-			virtual_field[snake[i].x][snake[i].y] = 'P';
-		}
+		virtual_field[playerPos.x][playerPos.y] = 'P';
 
 		if (found) {
 			switch (latestInput) {
