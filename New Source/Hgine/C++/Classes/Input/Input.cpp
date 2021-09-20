@@ -29,10 +29,17 @@ bool sur::Input::Mouse::RClick()
 	return false;
 }
 
-bool sur::Input::Keyboard::KeyHeld(Keys::Keys key)
+bool sur::Input::Keyboard::KeyHeld(Keys key)
+{
+	if (GetAsyncKeyState(key) & 0x8000)
+		return true;
+	return false;
+}
+
+bool sur::Input::Keyboard::KeyPress(Keys key)
 {
 	bool space = false;
-	if (key == Keys::Keys::SPACE)
+	if (key == Keys::SPACE)
 		space = true;
 	if (GetAsyncKeyState(key) & 0x8000)
 	{
@@ -51,16 +58,9 @@ bool sur::Input::Keyboard::KeyHeld(Keys::Keys key)
 	else
 	{
 		if (space)
-			pressed[26] = Keys::Keys::None;
+			pressed[26] = Keys::None;
 		else
-			pressed[static_cast<i32>(key) - 65] = Keys::Keys::None;
+			pressed[static_cast<i32>(key) - 65] = Keys::None;
 		return false;
 	}
-}
-
-bool sur::Input::Keyboard::KeyPress(Keys::Keys key)
-{
-	if (GetAsyncKeyState(key) & 0x8000)
-		return true;
-	return false;
 }

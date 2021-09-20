@@ -29,9 +29,7 @@ void sur::Sprite::LoadHgineres(std::string_view path)
         for (i32 i = 0; i < Data.size(); i++)
         {
             if (Data[i] == '-')
-            {
                 x++;
-            }
             if (Data[i] == 'E')
             {
                 //Get X Value. It will be the last of the row. Here are (X,Y) the last of the row.
@@ -45,17 +43,13 @@ void sur::Sprite::LoadHgineres(std::string_view path)
                 {
                     count = 0;
                     for (i32 a = 0; a < Nums.size(); a++)
-                    {
                         if (Data[i + j] == Nums[a])
                         {
                             ColorRef += Data[i + j];
                             count++;
                         }
                         else if (a == Nums.size() - 1 && count == 0)
-                        {
                             goto Leave;
-                        }
-                    }
                 }
             Leave:
                 points.push_back({ x, y });
@@ -99,9 +93,9 @@ void sur::Sprite::LoadPng(std::string_view path, Color colorToAlpha)
     for (i32 i = 0; i < image.size(); i = i + 4) {
         this->colors.push_back(Color(image[i], image[static_cast<size_t>(i) + 1], image[static_cast<size_t>(i) + 2]));
         this->points.push_back({ x, y });
-        ++x;
-        if (x >= width) {
-            ++y;
+        x++;
+        if (x >= static_cast<i32>(width)) {
+            y++;
             x = 0;
         }
     }
@@ -140,7 +134,7 @@ sur::Sprite::Sprite(std::string_view path, FileType filetype, Vec2f position, st
 
     if (filetype == FileType::Hgineres)
         LoadHgineres(path);
-    if (filetype == FileType::PNG)
+    else if (filetype == FileType::PNG)
         LoadPng(path, colorToAlpha);
 }
 

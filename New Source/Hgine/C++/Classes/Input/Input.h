@@ -18,12 +18,12 @@ namespace sur
 
 		struct Keyboard {
 			
-			static bool KeyHeld(Keys::Keys key);
-			static bool KeyPress(Keys::Keys key);
+			static bool KeyHeld(Keys key);
+			static bool KeyPress(Keys key);
 
 		private:
 
-			inline static Keys::Keys pressed[27] = { Keys::Keys::None }; // 27 because of the SPACE key
+			inline static Keys pressed[27] = { Keys::None }; // 27 because of the SPACE key
 
 		};
 

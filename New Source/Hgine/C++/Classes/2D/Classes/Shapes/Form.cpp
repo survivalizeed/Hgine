@@ -101,14 +101,37 @@ void sur::Form::Remove(u32 index)
 	points.erase(points.begin() + index);
 }
 
+sur::Vec2 sur::Form::Move(Vec2f direction, i32 moveQueueIndex)
+{
+	Vec2 move = MoveQueue(direction, moveQueueIndex);
+	for(auto& iter : points)
+		iter += { static_cast<f32>(move.x), static_cast<f32>(move.y) };
+	return move;
+}
+
 void sur::Form::Bind(bool render, bool wireframe)
 {
 	std::vector<Vec2f> points_with_position(points);
 	for (auto& iter : points_with_position)
 		iter = iter + position;
-	if (render)
-		if (wireframe)
-			algorithm::DrawFormWire(points_with_position, color);
-		else
-			algorithm::DrawForm(points_with_position, color);
+	if (render) {
+		if (modifier == Modifier::None || modifier == Modifier::InverseKinematic) {
+			if (wireframe)
+				algorithm::DrawFormWire(points_with_position, color);
+			else
+				algorithm::DrawForm(points_with_position, color);
+		}
+		else if (modifier == Modifier::ConvexHull) {
+			Vec2f average;
+			std::vector<f32> lengths;
+			for (auto& iter : points_with_position) {
+				average += iter;
+			}
+			average = average / static_cast<f32>(points_with_position.size());
+			for (i32 i = 0; i < points_with_position.size(); ++i) {
+				lengths.push_back(Vec2f(average - points_with_position[i]).magnitude());
+			}
+			//for()
+		}
+	}
 }

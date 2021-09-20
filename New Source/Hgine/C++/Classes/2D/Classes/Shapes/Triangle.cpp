@@ -45,6 +45,15 @@ sur::Vec2f sur::Triangle::GetPoint(u32 index)
 	}
 }
 
+sur::Vec2 sur::Triangle::Move(Vec2f direction, i32 moveQueueIndex)
+{
+	Vec2 move = MoveQueue(direction, moveQueueIndex);
+	p1 += { static_cast<f32>(move.x), static_cast<f32>(move.y) };
+	p2 += { static_cast<f32>(move.x), static_cast<f32>(move.y) };
+	p3 += { static_cast<f32>(move.x), static_cast<f32>(move.y) };
+	return move;
+}
+
 void sur::Triangle::Bind(bool render, bool wireframe)
 {
 	if (render)

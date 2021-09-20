@@ -21,20 +21,36 @@ namespace sur
 	{
 	protected:
 
-		std::string name;
+		struct MoveQueueContainer {
+			Vec2f counter_neg;
+			Vec2f counter_pos;
+			Vec2 counter_counter_neg = { 1, 1};
+			Vec2 counter_counter_pos = { -1, -1 };
+		};
 
-	public:
+		i32 hash;
 
 		Type type;
+
+		std::string name;
+
+		std::map<i32, MoveQueueContainer> mvContainer;	
+
+	public:
+	
 		bool active;
 		Color color;
 		Vec2f position;
-		i32 hash;
 
-		std::string_view GetName()
-		{
-			return name;
-		}
+		Vec2 MoveQueue(Vec2f direction, i32 moveQueueIndex);
+		
+		virtual Vec2 Move(Vec2f direction, i32 moveQueueIndex);
+
+		std::string_view GetName();
+	
+		Type GetType();
+
+		i32 GetHash();
 
 	};
 //=======================================================================
@@ -44,7 +60,11 @@ namespace sur
 		Vec2f start_point;
 		Vec2f end_point;
 
+		Line() = default;
+
 		Line(Vec2f start_point, Vec2f end_point, Color color, std::string_view name);
+
+		Vec2 Move(Vec2f direction, i32 moveQueueIndex) override;
 
 		void Bind(bool render);
 
@@ -57,11 +77,15 @@ namespace sur
 		Vec2f p2;
 		Vec2f p3;
 
+		Triangle() = default;
+
 		Triangle(Vec2f p1, Vec2f p2, Vec2f p3, Color color, std::string_view name);
 
 		void SetPoint(u32 index, Vec2f position);
 
 		Vec2f GetPoint(u32 index);
+
+		Vec2 Move(Vec2f direction, i32 moveQueueIndex) override;
 
 		void Bind(bool render, bool wireframe);
 
@@ -78,6 +102,8 @@ namespace sur
 			ConvexHull	// not supported yet
 		} modifier;
 
+		Form() = default;
+
 		Form(const std::vector<Vec2f>& points, const Modifier& modifier, Color color, std::string_view name);
 
 		void SetPoint(u32 index, Vec2f position);
@@ -87,6 +113,8 @@ namespace sur
 		void Insert(u32 index, Vec2f position);
 
 		void Remove(u32 index);
+
+		Vec2 Move(Vec2f direction, i32 moveQueueIndex) override;
 
 		void Bind(bool render, bool wireframe);
 
@@ -98,10 +126,12 @@ namespace sur
 		Vec2f start_point;
 		Vec2f end_point;
 
+		Square() = default;
+
 		Square(Vec2f start_point, Vec2f end_point, Color color, std::string_view name);
 
-		void Bind(bool render);
-	
+		void Bind(bool render);	
+
 	};
 //=======================================================================
 	class Sprite : public Object 
@@ -122,8 +152,11 @@ namespace sur
 
 		enum class FileType {
 			Hgineres,
-			PNG
+			PNG,
+			Empty
 		};
+
+		Sprite() = default;
 
 		// colorToAlpha not required for filetype Hgineres
 		Sprite(std::string_view path, FileType filetype, Vec2f position, std::string_view name, Color colorToAlpha = Color(0,0,0));
