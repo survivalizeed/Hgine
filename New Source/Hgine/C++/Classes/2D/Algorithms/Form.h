@@ -6,14 +6,15 @@
 
 namespace sur::algorithm
 {
-	inline void DrawFormWire(const std::vector<Vec2f>& coords, Color color) 
+	inline void DrawFormWire(const std::vector<Vec2f>& coords, Color color)
 	{
 		for (i32 i = 0; i < static_cast<i32>(coords.size()) - 1; ++i) {
 			DrawLine(coords[i], coords[static_cast<size_t>(i) + 1], color, nullptr, nullptr);
 		}
 	}
 
-	inline void DrawForm(const std::vector<Vec2f>& coords, Color color) 
+	//Not finished yet
+	inline void DrawFormAuto(const std::vector<Vec2f>& coords, Color color)
 	{
 		std::vector<Vec2> wireForm;
 		for (i32 i = 0; i < static_cast<i32>(coords.size()) - 1; ++i) {
@@ -28,6 +29,14 @@ namespace sur::algorithm
 				wireForm.push_back(position);
 			}
 		);
+
+		auto DrawHorLine = [&](i32 StartX, i32 EndX, i32 Y) {
+			if (StartX > EndX)
+				std::swap(StartX, EndX);
+			for (i32 i = StartX; i < EndX; ++i) {
+				Set({ i, Y }, color);
+			}
+		};
 
 		std::sort(wireForm.begin(), wireForm.end(), [](Vec2& v1, Vec2& v2) {
 			if (v1.y > v2.y)
@@ -52,11 +61,10 @@ namespace sur::algorithm
 							return false;
 						}
 					);
+					DrawHorLine(tmp[0].x, tmp[tmp.size() - 1].x, tmp[0].y);
 				}
-				if (tmp[0].x > tmp[tmp.size() - 1].x)
-					std::swap(tmp[0].x, tmp[tmp.size() - 1].x);
-				for (i32 c = tmp[0].x; c < tmp[tmp.size() - 1].x; ++c) {
-					Set({ c, tmp[0].y }, color);
+				else {
+					DrawHorLine(tmp[0].x, tmp[tmp.size() - 1].x, tmp[0].y);
 				}
 				tmp.clear();
 				index = 0;
@@ -70,4 +78,15 @@ namespace sur::algorithm
 			}
 		}
 	}
+
+	inline void DrawFormIndex(const std::vector<Vec2f>& coords, const std::vector<i32> indices, Color color) 
+	{
+		for (i32 i = 0; i < indices.size(); i += 3) {
+			DrawTriangle(coords[indices[i]], coords[indices[i + 1]], coords[indices[i + 2]], color);
+		}
+	}
 }
+
+
+
+	

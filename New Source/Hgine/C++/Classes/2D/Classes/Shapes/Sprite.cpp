@@ -109,8 +109,7 @@ void sur::Sprite::LoadPng(std::string_view path, Color colorToAlpha)
     );
     i32 maxY = tmp[0].y;
 
-    for (auto& iter : points)
-    {
+    for (auto& iter : points) {
         iter.y = maxY - iter.y;
     }
     for (i32 i = 0; i < colors.size(); ++i) {

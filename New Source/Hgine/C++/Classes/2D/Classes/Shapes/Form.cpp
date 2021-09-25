@@ -2,10 +2,13 @@
 
 #include "../Objects.h"
 
-sur::Form::Form(const std::vector<Vec2f>& points, const Modifier& modifier, Color color, std::string_view name) 
+sur::Form::Form(const std::vector<Vec2f>& points, const std::vector<i32>& indices, const Modifier& modifier, const FillMode& fillMode,
+	Color color, std::string_view name) 
 {
 	this->points = points;
+	this->indices = indices;
 	this->modifier = modifier;
+	this->fillMode = fillMode;
 	this->color = color;
 	this->position(0, 0);
 	this->type = Type::Form;
@@ -17,7 +20,7 @@ void sur::Form::SetPoint(u32 index, Vec2f position)
 {
 	if (index >= points.size()) {
 #ifdef _DEBUG
-		Error("Form SetPoint(...) index out of range. Make sure you don't index something that doesn't exist");
+		Error(("Form SetPoint(...) in " + name + " index out of range. Make sure you don't index something that doesn't exist").c_str());
 #endif
 		return;
 	}
@@ -73,17 +76,39 @@ sur::Vec2f sur::Form::GetPoint(u32 index)
 {
 	if (index >= points.size()) {
 #ifdef _DEBUG
-		Error("Form GetPoint(...) index out of range. Make sure you don't index something that doesn't exist");
+		Error(("Form GetPoint(...) in " + name + " index out of range. Make sure you don't index something that doesn't exist").c_str());
 #endif
 		return { 0,0 };
 	}
+}
+
+void sur::Form::SetIndex(u32 index, i32 what)
+{
+	if (index >= indices.size()) {
+#ifdef _DEBUG
+		Error(("Form SetIndex(...) in " + name + " index out of range. Make sure you don't index something that doesn't exist").c_str());
+#endif
+		return;
+	}
+	indices[static_cast<size_t>(index)] = what;
+}
+
+i32 sur::Form::GetIndex(u32 index)
+{
+	if (index >= indices.size()) {
+#ifdef _DEBUG
+		Error(("Form GetIndex(...) in " + name + " index out of range. Make sure you don't index something that doesn't exist").c_str());
+#endif
+		return 0;
+	}
+	return indices[static_cast<size_t>(index)];
 }
 
 void sur::Form::Insert(u32 index, Vec2f position)
 {
 	if (index >= points.size()) {
 #ifdef _DEBUG
-		Error("Form Insert(...) index out of range. Make sure you don't index something that doesn't exist");
+		Error(("Form Insert(...) in " + name + " index out of range. Make sure you don't index something that doesn't exist").c_str());
 #endif
 		return;
 	}
@@ -119,19 +144,22 @@ void sur::Form::Bind(bool render, bool wireframe)
 			if (wireframe)
 				algorithm::DrawFormWire(points_with_position, color);
 			else
-				algorithm::DrawForm(points_with_position, color);
+				if (fillMode == FillMode::Auto)
+					algorithm::DrawFormAuto(points_with_position, color);
+				else if (fillMode == FillMode::Index)
+					algorithm::DrawFormIndex(points_with_position, indices, color);
 		}
-		else if (modifier == Modifier::ConvexHull) {
-			Vec2f average;
-			std::vector<f32> lengths;
-			for (auto& iter : points_with_position) {
-				average += iter;
-			}
-			average = average / static_cast<f32>(points_with_position.size());
-			for (i32 i = 0; i < points_with_position.size(); ++i) {
-				lengths.push_back(Vec2f(average - points_with_position[i]).magnitude());
-			}
-			//for()
-		}
+		//else if (modifier == Modifier::ConvexHull) {
+		//	Vec2f average;
+		//	std::vector<f32> lengths;
+		//	for (auto& iter : points_with_position) {
+		//		average += iter;
+		//	}
+		//	average = average / static_cast<f32>(points_with_position.size());
+		//	for (i32 i = 0; i < points_with_position.size(); ++i) {
+		//		lengths.push_back(Vec2f(average - points_with_position[i]).magnitude());
+		//	}
+		//	//for()
+		//}
 	}
 }

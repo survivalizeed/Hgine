@@ -73,9 +73,7 @@ namespace sur
 	struct Triangle : public Object 
 	{
 		
-		Vec2f p1;
-		Vec2f p2;
-		Vec2f p3;
+		Vec2f p1, p2, p3;
 
 		Triangle() = default;
 
@@ -95,6 +93,7 @@ namespace sur
 	{	
 		
 		std::vector<Vec2f> points;
+		std::vector<i32> indices;
 
 		enum class Modifier {
 			None,
@@ -102,13 +101,24 @@ namespace sur
 			ConvexHull	// not supported yet
 		} modifier;
 
+		enum class FillMode {
+			Auto,
+			Index
+		} fillMode;
+
 		Form() = default;
 
-		Form(const std::vector<Vec2f>& points, const Modifier& modifier, Color color, std::string_view name);
+		//The indices are 3 grouped. Every 3 indices create a triangle. If the FillMode is Auto, you can put {} in the indices parameter
+		Form(const std::vector<Vec2f>& points, const std::vector<i32>& indices, const Modifier& modifier, const FillMode& fillMode,
+			Color color, std::string_view name);
 
 		void SetPoint(u32 index, Vec2f position);
 
 		Vec2f GetPoint(u32 index);
+
+		void SetIndex(u32 index, i32 what);
+
+		i32 GetIndex(u32 index);
 
 		void Insert(u32 index, Vec2f position);
 
@@ -130,7 +140,7 @@ namespace sur
 
 		Square(Vec2f start_point, Vec2f end_point, Color color, std::string_view name);
 
-		void Bind(bool render);	
+		void Bind(bool render);
 
 	};
 //=======================================================================
@@ -141,14 +151,15 @@ namespace sur
 		using Object::color;
 
 		Vec2 size;
-		std::vector<Vec2> points;
-		std::vector<Color> colors;
 
 		void LoadHgineres(std::string_view path);
 
 		void LoadPng(std::string_view path, Color colorToAlpha);
 
 	public:
+
+		std::vector<Vec2> points;
+		std::vector<Color> colors;
 
 		enum class FileType {
 			Hgineres,
