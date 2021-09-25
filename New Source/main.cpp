@@ -4,32 +4,46 @@
 
 using namespace sur;
 
+
 int main() {
 
-	wndInitialize(Vec2(1000, 750), Vec2(1000, 750), "", "");
+	wndInitialize(Vec2(750, 750), Vec2(750, 750), "", "");
 	wndCreate("Hgine Demo", WS_OVERLAPPEDWINDOW);
 
 	Renderer renderer(Color(0, 0, 0), true, 0.f, false);
 	renderer.FPS();
 
-	Form a({ {200,200}, {300, 200}, {300, 300}, {200,300}, {200,200} }, Form::Modifier::None, Color(255, 255, 255), "a");
-	//Sprite b("C:\\Users\\gero\\Pictures\\forestrain.png", Sprite::FileType::PNG, { 0,0 }, "n");
+	Sprite s("C:\\Users\\gero\\Pictures\\Adrian.png", Sprite::FileType::PNG, { 0,0 }, "n");
 
-	f32 angle1 = 0;
-	f32 angle2 = 0;
-	std::vector<Vec2f> original_points(a.points);
+	std::vector<Vec2> backup(s.points);
+
+	f32 angle = 0;
 	for (;;) {
 		renderer.Clear();
-		a.Bind(true, false);
-		
-		for (i32 i = 0; i < a.points.size(); ++i) {
-			a.points[i] = Rotate2D(original_points[i], { 250,250 }, (i32)angle1);
+		s.Bind(true);
+		for (i32 i = 0; i < s.points.size(); ++i) {
+			backup[i] = ATS(Rotate2D(STA(backup[i]), {375, 375}, (i32)angle));
 		}
-		for (i32 i = 0; i < a.points.size(); ++i) {
-			a.points[i] = Rotate2D(a.points[i], { 500,375 }, (i32)angle2);
+		if(Input::Keyboard::KeyHeld(R))
+			angle += 1.f;
+		if (Input::Keyboard::KeyHeld(W)) {
+			for (auto& iter : backup)
+				iter += {0, 1};
 		}
-		angle1 += 0.4f;
-		angle2 += 1.f;
+		if (Input::Keyboard::KeyHeld(A)) {
+			for (auto& iter : backup)
+				iter += {-1, 0};
+		}
+		if (Input::Keyboard::KeyHeld(S)) {
+			for (auto& iter : backup)
+				iter += {0, -1};
+		}
+		if (Input::Keyboard::KeyHeld(D)) {
+			for (auto& iter : backup)
+				iter += {1, 0};
+		}
+		for (i32 i = 0; i < backup.size(); i++)
+			s.points[i] = backup[i];
 		renderer.Render();
 	}
 }
