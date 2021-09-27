@@ -25,38 +25,6 @@ constexpr i32 Second = 1000;
 constexpr i32 Minute = 60000;
 constexpr f32 PI = 3.141f;
 
-// Colliders
-enum class ColliderType
-{
-    Static,
-    Outline,
-    Filled,
-    Exact,  // Not supported yet
-    None
-};
-
-// Static is for a perfect collider but it also takes more performance.
-// Outline is a boxcollider around the object. It is not perfect but takes as good as no performance
-// Filled is a filled boxcollider. You can use this for a UI to detect a hover or something like that.
-// None is self explaining ;)
-
-// Describes the axis something can move on
-enum class Axis
-{
-    X,
-    Y,
-    Both
-};
-
-enum class Direction
-{
-    Up,
-    Down,
-    Left,
-    Right,
-    None
-};
-
 enum class Dimension
 {
     X,
@@ -410,29 +378,6 @@ namespace sur
         bool operator==(const sRGB& other) { return (r == other.r && g == other.g && b == other.b) ? true : false; }
     };
 
-    struct XYC
-    {
-        std::vector<i32>* X = nullptr;
-        std::vector<i32>* Y = nullptr;
-        std::vector<Color>* C = nullptr;
-    };
-
-    struct ParticlesSetting
-    {
-        i32 emission, noise_factor;
-        f32 max_distance_to_middle = 0;
-        std::vector<Direction> block_directions; // VS 2019 shows an error here for some reason. Just don't care :)
-        Vec2 middle;
-        Vec2f emission_point_min, emission_point_max;
-        std::vector<Color> colors;
-
-        ParticlesSetting() = default;
-
-        ParticlesSetting(Vec2f emission_point_min, Vec2f emission_point_max, i32 emission, i32 noise_factor,
-            f32 max_distance_to_middle = 0.f, const std::vector<Color>& colors = {})
-            : emission_point_max(emission_point_max), emission_point_min(emission_point_min),
-            emission(emission), noise_factor(noise_factor), max_distance_to_middle(max_distance_to_middle), colors(colors) {}
-    };
 }
 
 //

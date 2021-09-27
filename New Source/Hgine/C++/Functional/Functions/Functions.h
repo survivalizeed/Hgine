@@ -26,5 +26,7 @@ namespace sur
 
 	Vec2f CalculateOrigin(const std::vector<Vec2f>& points);
 
+	Vec2f Direction(Vec2f first, Vec2f second);
+
 	std::string GetExeDirectory();
 }

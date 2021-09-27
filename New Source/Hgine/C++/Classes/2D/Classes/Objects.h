@@ -16,6 +16,37 @@ namespace sur
 		Sprite,
 
 	};
+
+	enum class ParticleDirection
+	{
+
+		North,
+		North_East,
+		East,
+		South_East,
+		South,
+		South_West,
+		West,
+		North_West
+	};
+
+	struct ParticleSettings 
+	{
+
+		i32 emission;
+		i32 min_noise;
+		i32 max_noise;	
+		f32 min_distance_to_middle = 0;
+		f32 max_distance_to_middle = 0;
+		Vec2f origin;
+		Vec2f middle;
+		Vec2f emission_point_minimal;
+		Vec2f emission_point_maximal;
+		std::vector<ParticleDirection> blocked_directions;
+		std::vector<ParticleDirection> prefered_directions;
+		std::vector<Color> colors;
+
+	};
 //=======================================================================
 	class Object 
 	{
@@ -175,5 +206,30 @@ namespace sur
 		void Bind(bool render);
 
 	};
+//=======================================================================
+	class ParticleSystem
+	{
+	private:
 
+		struct Particle
+		{
+			Vec2 pos;
+			Color color;
+			Particle() = default;
+			Particle(Vec2 pos, Color color) : pos(pos), color(color) {}
+		};
+
+		std::vector<Particle> particles;
+		std::vector<Vec2> offsets;
+		ParticleSettings* settings;
+
+	public:
+
+		ParticleSystem() = default;
+
+		ParticleSystem(ParticleSettings* settings);
+
+		void Bind(bool render);
+		
+	};
 }

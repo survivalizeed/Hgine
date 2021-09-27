@@ -89,6 +89,28 @@ sur::Vec2f sur::CalculateOrigin(const std::vector<Vec2f>& points)
     return tmp / static_cast<f32>(points.size());
 }
 
+sur::Vec2f sur::Direction(Vec2f first, Vec2f second)
+{
+    bool xz = false, yz = false;
+    Vec2f direction(first - second);
+    if (direction.x == 0)
+    {
+        direction.x = 1;
+        xz = true;
+    }
+    if (direction.y == 0)
+    {
+        direction.y = 1;
+        yz = true;
+    }
+    direction.normalize();
+    if (xz)
+        direction.x = 0;
+    if (yz)
+        direction.y = 0;
+    return direction;
+}
+
 std::string sur::GetExeDirectory()
 {
     char buffer[MAX_PATH];
