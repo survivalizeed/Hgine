@@ -12,38 +12,46 @@ int main() {
 
 	Renderer renderer(Color(0, 0, 0), true, 0.f, false);
 	renderer.FPS();
+	
+	sur::ParticleSettings settings;
+	for (i32 i = 0; i < 255; ++i)
+		settings.colors.push_back(Color(10, i, i / 2));
+	settings.emission = 50000;
+	settings.emission_point_minimal(350, 350);
+	settings.emission_point_maximal(400, 400);
+	settings.min_noise = 1;
+	settings.max_noise = 4;
+	settings.min_distance_to_middle = 50.f;
+	settings.max_distance_to_middle = 200.f;
 
-	Sprite s("C:\\Users\\gero\\Pictures\\Adrian.png", Sprite::FileType::PNG, { 0,0 }, "n");
+	sur::ParticleSystem system(&settings);
 
-	std::vector<Vec2> backup(s.points);
+	sur::ParticleSettings settings2;
+	for (i32 i = 0; i < 255; ++i)
+		settings2.colors.push_back(Color(10, i32(i / 1.4f), i));
+	settings2.emission = 5000;
+	settings2.emission_point_minimal(350, 350);
+	settings2.emission_point_maximal(400, 400);
+	settings2.min_noise = 1;
+	settings2.max_noise = 5;
+	settings2.max_distance_to_middle = 50.f;
 
-	f32 angle = 0;
+
+	sur::ParticleSystem system2(&settings2);
+
 	for (;;) {
 		renderer.Clear();
-		s.Bind(true);
-		for (i32 i = 0; i < s.points.size(); ++i) {
-			backup[i] = ATS(Rotate2D(STA(backup[i]), {375, 375}, (i32)angle));
+
+		system.Bind(true);
+		system2.Bind(true);
+		if (Input::Mouse::RClick()) {
+			Vec2f pos = Vec2f(sur::RandomRange(0, 750), sur::RandomRange(0, 750));
+			system.MoveTowards(pos, 0, 4, 6);
+			system2.MoveTowards(pos, 0, 4, 6);
 		}
-		if(Input::Keyboard::KeyHeld(R))
-			angle += 1.f;
-		if (Input::Keyboard::KeyHeld(W)) {
-			for (auto& iter : backup)
-				iter += {0, 1};
-		}
-		if (Input::Keyboard::KeyHeld(A)) {
-			for (auto& iter : backup)
-				iter += {-1, 0};
-		}
-		if (Input::Keyboard::KeyHeld(S)) {
-			for (auto& iter : backup)
-				iter += {0, -1};
-		}
-		if (Input::Keyboard::KeyHeld(D)) {
-			for (auto& iter : backup)
-				iter += {1, 0};
-		}
-		for (i32 i = 0; i < backup.size(); i++)
-			s.points[i] = backup[i];
+		
+
 		renderer.Render();
 	}
+	
 }
