@@ -21,8 +21,6 @@ extern sur::Vec2 _aspect_ratio;
 
 extern Color* _render_buffer;
 
-extern bool _debug;
-
 extern bool _use_light;
 
 extern f32 _ambient_light;

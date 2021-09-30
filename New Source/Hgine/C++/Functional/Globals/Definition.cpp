@@ -19,8 +19,6 @@ sur::Vec2 _aspect_ratio;
 
 Color* _render_buffer;
 
-bool _debug = false;
-
 bool _use_light;
 
 f32 _ambient_light;

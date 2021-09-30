@@ -25,13 +25,6 @@ constexpr i32 Second = 1000;
 constexpr i32 Minute = 60000;
 constexpr f32 PI = 3.141f;
 
-enum class Dimension
-{
-    X,
-    Y,
-    Z
-};
-
 namespace sur
 {
     struct Vec2f
@@ -241,7 +234,7 @@ namespace sur
     //
     struct Vec3f
     {
-        f32 x, y, z;
+        f32 x = 0.f, y = 0.f, z = 0.f;
 
         Vec3f() = default;
 

@@ -118,3 +118,53 @@ std::string sur::GetExeDirectory()
     std::string f(buffer);
     return f.substr(0, f.find_last_of("\\/")) + "\\";
 }
+
+sur::Vec3f sur::CalculateOrigin3D(const std::vector<Vec3f>& points)
+{
+    Vec3f tmp;
+    for (auto& iter : points) {
+        tmp = tmp + iter;
+    }
+    return Vec3f(tmp.x / static_cast<f32>(points.size()), tmp.y / static_cast<f32>(points.size()), tmp.z / static_cast<f32>(points.size()));
+}
+
+std::vector<sur::Vec3f> sur::MeshTriangleContainerToVec3fs(const std::vector<TriangleContainer>& container)
+{
+    std::vector<Vec3f> points;
+    for (i32 i = 0; i < container.size(); ++i) {
+        points.push_back(container[i].a);
+        points.push_back(container[i].b);
+        points.push_back(container[i].c);
+    }
+    return points;
+}
+
+sur::Vec3f sur::RotateX(Vec3f vec, Vec3f origin, i32 angle)
+{
+    Vec3f tmpv(origin - vec);
+    Mat3x3 tmpm(
+        1, 0, 0,
+        0, cos(angle * PI / 180), -sin(angle * PI / 180),
+        0, sin(angle * PI / 180), cos(angle * PI / 180));
+    return tmpm.multiplyWithVector(tmpv) + origin;
+}
+
+sur::Vec3f sur::RotateY(Vec3f vec, Vec3f origin, i32 angle)
+{
+    Vec3f tmpv(origin - vec);
+    Mat3x3 tmpm(
+        cos(angle * PI / 180), 0, sin(angle * PI / 180),
+        0, 1, 0,
+        -sin(angle * PI / 180), 0, cos(angle * PI / 180));
+    return tmpm.multiplyWithVector(tmpv) + origin;
+}
+
+sur::Vec3f sur::RotateZ(Vec3f vec, Vec3f origin, i32 angle)
+{
+    Vec3f tmpv(origin - vec);
+    Mat3x3 tmpm(
+        cos(angle * PI / 180), -sin(angle * PI / 180), 0,
+        sin(angle * PI / 180), cos(angle * PI / 180), 0,
+        0, 0, 1);
+    return tmpm.multiplyWithVector(tmpv) + origin;
+}
