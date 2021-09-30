@@ -17,7 +17,7 @@ namespace sur
 
 	};
 
-	enum class ParticleDirection
+	enum ParticleDirection
 	{
 
 		North,
@@ -28,6 +28,7 @@ namespace sur
 		South_West,
 		West,
 		North_West
+
 	};
 
 	struct ParticleSettings 
@@ -36,6 +37,7 @@ namespace sur
 		i32 emission;
 		i32 min_noise;
 		i32 max_noise;	
+		i32 prefered_directions_intensity;	// The higher, the lower the chance
 		f32 min_distance_to_middle = 0;
 		f32 max_distance_to_middle = 0;
 		Vec2f origin;
@@ -211,7 +213,7 @@ namespace sur
 	{
 	private:
 
-		struct Particle
+		struct Particle : public Object
 		{
 			Vec2 pos;
 			Color color;
@@ -228,6 +230,8 @@ namespace sur
 		ParticleSystem() = default;
 
 		ParticleSystem(ParticleSettings* settings);
+
+		void MoveTowards(Vec2f position, i32 moveQueueIndex, f32 minSpeed, f32 maxSpeed);
 
 		void Bind(bool render);
 		
