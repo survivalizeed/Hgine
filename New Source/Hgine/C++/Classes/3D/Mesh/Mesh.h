@@ -21,23 +21,14 @@ namespace sur
 
 		i32 angleX = 0, angleY = 0, angleZ = 0;
 
-
 		std::vector<TriangleContainer> triCon;
-
-
-		enum class Dimension
-		{
-
-			X,
-			Y,
-			Z
-
-		};
 
 		Vec3f origin;
 		Vec3f position;
 		Mat3x3 projection;
 		Color color;
+
+		Mesh() = default;
 
 		Mesh(const std::string& file, Vec3f position, Color color, Vec3f origin, const Mat3x3& projection = { 1,0,0,0,1,0,0,0,0 });
 

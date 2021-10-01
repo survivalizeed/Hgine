@@ -27,6 +27,15 @@ constexpr f32 PI = 3.141f;
 
 namespace sur
 {
+    enum class Dimension
+    {
+
+        X,
+        Y,
+        Z
+
+    };
+
     struct Vec2f
     {
 
@@ -82,7 +91,6 @@ namespace sur
 
         Vec2f operator+(const Vec2f& other) const { return { x + other.x, y + other.y }; }
         Vec2f operator-(const Vec2f& other) const { return { x - other.x, y - other.y }; }
-        f32 operator*(const Vec2f& other) const { return x * other.x + y * other.y; }
         Vec2f operator/(const Vec2f& other) const { return { x / other.x, y / other.y }; }
 
         Vec2f operator+(f32 value) const { return { x + value, y + value }; }
@@ -93,8 +101,9 @@ namespace sur
         Vec2f operator+=(const Vec2f& other) { return { x += other.x, y += other.y }; }
         Vec2f operator-=(const Vec2f& other) { return { x -= other.x, y -= other.y }; }
 
-        Vec2f operator--() { return { x - 1, y - 1 }; }
-        Vec2f operator++() { return { x + 1, y + 1 }; }
+        void operator--() { x -= 1; y -= 1; }
+        void operator++() { x += 1; y += 1; }
+
         bool operator==(const Vec2f& other) const { return (x == other.x && y == other.y) ? true : false; }
         bool operator!=(const Vec2f& other) const { return (x != other.x && y != other.y) ? true : false; }
 
@@ -153,7 +162,6 @@ namespace sur
 
         Vec2 operator+(const Vec2& other) const { return { x + other.x, y + other.y }; }
         Vec2 operator-(const Vec2& other) const { return { x - other.x, y - other.y }; }
-        i32 operator*(const Vec2& other) const { return x * other.x + y * other.y; }
         Vec2 operator/(const Vec2& other) const { return { x / other.x, y / other.y }; }
 
         Vec2 operator+(i32 value) const { return { x + value, y + value }; }
@@ -164,11 +172,12 @@ namespace sur
         Vec2 operator+=(const Vec2& other) { return { x += other.x, y += other.y }; }
         Vec2 operator-=(const Vec2& other) { return { x -= other.x, y -= other.y }; }
 
-        Vec2 operator--() { return { x - 1, y - 1 }; }
-        Vec2 operator++() { return { x + 1, y + 1 }; }
+        void operator--() { x -= 1; y -= 1; }
+        void operator++() { x += 1; y += 1; }
+
         bool operator==(const Vec2& other) const { return (x == other.x && y == other.y) ? true : false; }
         bool operator!=(const Vec2& other) const { return (x != other.x && y != other.y) ? true : false; }
-       
+
         friend std::ostream& operator<<(std::ostream& os, const Vec2& vector2d)
         {
             os << "X: " << vector2d.x << " Y: " << vector2d.y;
@@ -257,7 +266,7 @@ namespace sur
             z /= mag;
         }
 
-        Vec3f cross(const Vec3f& other) 
+        Vec3f cross(const Vec3f& other)
         {
             Vec3f tmp;
             tmp.x = y * other.z - z * other.y;
@@ -266,7 +275,7 @@ namespace sur
             return tmp;
         }
 
-        f32 dot(const Vec3f& other) 
+        f32 dot(const Vec3f& other)
         {
             return x * other.x + y * other.y + z * other.z;
         }
@@ -278,14 +287,30 @@ namespace sur
             this->z = z;
         }
 
-        Vec3f operator+(const Vec3f& other) { return { x + other.x, y + other.y, z + other.z }; }
-        Vec3f operator-(const Vec3f& other) { return { x - other.x, y - other.y, z - other.z }; }
+        Vec3f operator+(const Vec3f& other) const { return { x + other.x, y + other.y, z + other.z }; }
+        Vec3f operator-(const Vec3f& other) const { return { x - other.x, y - other.y, z - other.z }; }
+        Vec3f operator/(const Vec3f& other) const { return { x / other.x, y / other.y, z / other.z }; }
+
+        Vec3f operator+(f32 value) const { return { x + value, y + value, z + value }; }
+        Vec3f operator-(f32 value) const { return { x - value, y - value, z - value }; }
+        Vec3f operator*(f32 value) const { return { x * value, y * value, z * value }; }
+        Vec3f operator/(f32 value) const { return { x / value, y / value, z / value }; }
+
+        Vec3f operator+=(const Vec3f& other) { return { x += other.x, y += other.y, z += other.z }; }
+        Vec3f operator-=(const Vec3f& other) { return { x -= other.x, y -= other.y, z -= other.z }; }
+
+        void operator--() { x -= 1; y -= 1; z -= 1; }
+        void operator++() { x -= 1; y -= 1; z -= 1; }
+
+        bool operator==(const Vec3f& other) const { return (x == other.x && y == other.y && z == other.z) ? true : false; }
+        bool operator!=(const Vec3f& other) const { return (x != other.x && y != other.y && z != other.z) ? true : false; }
 
         friend std::ostream& operator<<(std::ostream& os, const Vec3f& vector)
         {
             os << "X: " << vector.x << " Y: " << vector.y << " Z: " << vector.z;
             return os;
         }
+
     };
 
     struct Mat3x3
@@ -370,7 +395,6 @@ namespace sur
         sRGB operator*(f32 value) { return { i32(r * value), i32(g * value), i32(b * value) }; }
         bool operator==(const sRGB& other) { return (r == other.r && g == other.g && b == other.b) ? true : false; }
     };
-
 }
 
 //

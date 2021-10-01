@@ -11,16 +11,16 @@ sur::ParticleSystem::ParticleSystem(ParticleSettings* settings)
 	);
 	for (i32 i = 0; i < settings->emission; ++i) {
 		Vec2 local_position(
-			sur::RandomRange(0, Pixel(settings->emission_point_maximal.x - settings->emission_point_minimal.x)),
-			sur::RandomRange(0, Pixel(settings->emission_point_maximal.y - settings->emission_point_minimal.y))
+			RandomRange(0, Pixel(settings->emission_point_maximal.x - settings->emission_point_minimal.x)),
+			RandomRange(0, Pixel(settings->emission_point_maximal.y - settings->emission_point_minimal.y))
 		);
 		while (local_position == ATS(settings->middle)) {
 			local_position(
-				sur::RandomRange(0, Pixel(settings->emission_point_maximal.x - settings->emission_point_minimal.x)),
-				sur::RandomRange(0, Pixel(settings->emission_point_maximal.y - settings->emission_point_minimal.y))
+				RandomRange(0, Pixel(settings->emission_point_maximal.x - settings->emission_point_minimal.x)),
+				RandomRange(0, Pixel(settings->emission_point_maximal.y - settings->emission_point_minimal.y))
 			);
 		}
-		Color color = settings->colors[static_cast<size_t>(sur::RandomRange(0, static_cast<i32>(settings->colors.size()) - 1))];
+		Color color = settings->colors[static_cast<size_t>(RandomRange(0, static_cast<i32>(settings->colors.size()) - 1))];
 		particles.push_back({ local_position, color });
 		offsets.push_back({ 0,0 });
 	}
@@ -30,10 +30,10 @@ void sur::ParticleSystem::MoveTowards(Vec2f position, i32 moveQueueIndex, f32 mi
 {
 	i32 supportedThreads = std::thread::hardware_concurrency() == 0 ? 2 : std::thread::hardware_concurrency();
 	constexpr i32 minDataPerThread = 1000;
-	i32 maxAmountOfThread = ((i32)offsets.size() + minDataPerThread - 1) / minDataPerThread;
+	i32 maxAmountOfThread = (static_cast<i32>(offsets.size()) + minDataPerThread - 1) / minDataPerThread;
 	i32 amountOfThreads = supportedThreads > maxAmountOfThread ? maxAmountOfThread : supportedThreads;
 
-	i32 dataPerThread = (i32)offsets.size() / amountOfThreads;
+	i32 dataPerThread = static_cast<i32>(offsets.size()) / amountOfThreads;
 
 	std::vector<std::thread> threads(amountOfThreads - 1); // - 1, because main thread will be used too
 
@@ -41,9 +41,9 @@ void sur::ParticleSystem::MoveTowards(Vec2f position, i32 moveQueueIndex, f32 mi
 	{
 		for (i32 i = start; i < end; ++i)
 		{
-			Vec2f dir(sur::Direction(position, STA(particles[i].pos) + settings->emission_point_minimal + STA(offsets[i])));
+			Vec2f dir(Direction(position, STA(particles[i].pos) + settings->emission_point_minimal + STA(offsets[i])));
 			Vec2 move = particles[i].MoveQueue(
-				dir * static_cast<f32>(sur::RandomRange(static_cast<i32>(minSpeed), static_cast<i32>(maxSpeed))), moveQueueIndex
+				dir * static_cast<f32>(RandomRange(static_cast<i32>(minSpeed), static_cast<i32>(maxSpeed))), moveQueueIndex
 			);
 			if (move.x == 0 && move.y == 0)
 				continue;
@@ -65,19 +65,19 @@ void sur::ParticleSystem::Bind(bool render)
 	for (i32 i = 0; i < offsets.size(); ++i) {
 		bool l1 = false;
 		bool l2 = false;
-		i32 noise = sur::RandomRange(settings->min_noise, settings->max_noise);
-		ParticleDirection dir = static_cast<ParticleDirection>(sur::RandomRange(0, 8));
+		i32 noise = RandomRange(settings->min_noise, settings->max_noise);
+		ParticleDirection dir = static_cast<ParticleDirection>(RandomRange(0, 8));
 		if (settings->prefered_directions.size() > 0) {
-			bool makePrefered = sur::RandomRange(0, settings->prefered_directions_intensity) == 0 ? true : false;
+			bool makePrefered = RandomRange(0, settings->prefered_directions_intensity) == 0 ? true : false;
 			if (makePrefered) {
-				dir = settings->prefered_directions[static_cast<size_t>(sur::RandomRange(0, static_cast<i32>(settings->prefered_directions.size()) - 1))];
+				dir = settings->prefered_directions[static_cast<size_t>(RandomRange(0, static_cast<i32>(settings->prefered_directions.size()) - 1))];
 			}
 		}
 
 		while ((ATS(settings->middle) - (particles[i].pos + ATS(settings->emission_point_minimal) + offsets[i])).magnitude() > 
 			settings->max_distance_to_middle && settings->max_distance_to_middle != 0.f) {		
 			l1 = true;
-			Vec2f dir(sur::Direction(settings->middle, STA(particles[i].pos) + settings->emission_point_minimal + STA(offsets[i])));
+			Vec2f dir(Direction(settings->middle, STA(particles[i].pos) + settings->emission_point_minimal + STA(offsets[i])));
 			offsets[i] = offsets[i] + Vec2(static_cast<i32>(ceil(dir.x * noise * 2)), static_cast<i32>(ceil(dir.y * noise * 2)));
 		}
 		if (l1) continue;
@@ -85,7 +85,7 @@ void sur::ParticleSystem::Bind(bool render)
 		while ((ATS(settings->middle) - (particles[i].pos + ATS(settings->emission_point_minimal) + offsets[i])).magnitude() <
 			settings->min_distance_to_middle && settings->min_distance_to_middle != 0.f) {
 			l2 = true;
-			Vec2f dir(sur::Direction(settings->middle, STA(particles[i].pos) + settings->emission_point_minimal + STA(offsets[i])) * -1);
+			Vec2f dir(Direction(settings->middle, STA(particles[i].pos) + settings->emission_point_minimal + STA(offsets[i])) * -1);
 			if (dir.x == 0 && dir.y == 0)
 				dir.y = 1;
 			offsets[i] = offsets[i] + Vec2(static_cast<i32>(ceil(dir.x * noise * 2)), static_cast<i32>(ceil(dir.y * noise * 2)));
@@ -124,5 +124,3 @@ void sur::ParticleSystem::Bind(bool render)
 	for (i32 i = 0; i < particles.size(); ++i)
 		Set(particles[i].pos + ATS(settings->emission_point_minimal) + offsets[i], particles[i].color);
 }
-
-

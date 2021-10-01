@@ -30,11 +30,15 @@ namespace sur
 
 	std::string GetExeDirectory();
 	
+
+
 	struct TriangleContainer;
 
 	Vec3f CalculateOrigin3D(const std::vector<Vec3f>& points);
 
 	std::vector<Vec3f> MeshTriangleContainerToVec3fs(const std::vector<TriangleContainer>& container);
+
+	Vec3f Direction3D(Vec3f first, Vec3f second);
 
 	Vec3f RotateX(Vec3f vec, Vec3f origin, i32 angle);
 	

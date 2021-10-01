@@ -139,6 +139,35 @@ std::vector<sur::Vec3f> sur::MeshTriangleContainerToVec3fs(const std::vector<Tri
     return points;
 }
 
+sur::Vec3f sur::Direction3D(Vec3f first, Vec3f second)
+{
+    bool xz = false, yz = false, zz = false;
+    Vec3f direction(first - second);
+    if (direction.x == 0)
+    {
+        direction.x = 1;
+        xz = true;
+    }
+    if (direction.y == 0)
+    {
+        direction.y = 1;
+        yz = true;
+    }
+    if (direction.z == 0)
+    {
+        direction.z = 1;
+        zz = true;
+    }
+    direction.normalize();
+    if (xz)
+        direction.x = 0;
+    if (yz)
+        direction.y = 0;
+    if (zz)
+        direction.z = 0;
+    return direction;
+}
+
 sur::Vec3f sur::RotateX(Vec3f vec, Vec3f origin, i32 angle)
 {
     Vec3f tmpv(origin - vec);
