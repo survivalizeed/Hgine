@@ -63,3 +63,5 @@ using namespace std::chrono;
 #include "C++/Classes/2D/Algorithms/Form.h"
 #include "C++/Classes/2D/Classes/Objects.h"
 #include "C++/Classes/IniReader/IniReader.h"
+#include "C++/Classes/3D/Mesh/Mesh.h"
+#include "C++/Classes/3D/ParticleSystem3D/ParticleSystem3D.h"
