@@ -36,7 +36,7 @@ namespace sur
 
 		void Move(Vec3f direction);
 
-		void Bind(bool render, bool wireframe, i32 perspectiveThreshold = 0, i32 clipping = 40);
+		void Bind(bool render, bool wireframe, i32 perspectiveThreshold = 1000, i32 clipping = 40);
 
 	};
 }

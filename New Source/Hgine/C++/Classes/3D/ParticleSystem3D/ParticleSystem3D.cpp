@@ -123,7 +123,9 @@ void sur::ParticleSystem3D::Bind(bool render, i32 perspectiveThreshold, i32 clip
 			);
 		}
 		Vec3f projectedPoint = projection.multiplyWithVector(tmp);
-		transformed.push_back(projectedPoint + settings->middle);
+		if (projectedPoint.z + settings->middle.z > clipping) {
+			transformed.push_back(projectedPoint + settings->middle);
+		}
 	}
 	std::sort(transformed.begin(), transformed.end(), [](Vec3f& v1, Vec3f& v2) {
 		return v1.z > v2.z;
@@ -132,4 +134,9 @@ void sur::ParticleSystem3D::Bind(bool render, i32 perspectiveThreshold, i32 clip
 	for (i32 i = 0; i < transformed.size(); ++i) {
 		Set(transformed[i].toVec2(), particles[i].color);
 	}
+}
+
+sur::Vec3f sur::ParticleSystem3D::Particle::MoveQueue(Vec3f direction)
+{
+	
 }

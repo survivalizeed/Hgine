@@ -2,13 +2,24 @@
 
 #include "Functions.h"
 
-void sur::wndInitialize(Vec2 window_size, Vec2 aspect_ratio, std::string_view resource_path, std::string_view sound_path)
+void sur::hgineInitialize(Vec2 window_size, Vec2 aspect_ratio, std::string_view resource_path, std::string_view sound_path)
 {
     _window_size = window_size;
     _aspect_ratio = aspect_ratio;
     _resource_path = resource_path;
     _sound_path = sound_path;
     _render_buffer = new Color[window_size.x * window_size.y];
+    _asEngine = asCreateScriptEngine();
+    _asEngine->SetMessageCallback(asFUNCTION(
+        [](const asSMessageInfo* msg, void* param)
+        {
+            const char* type = "ERR ";
+            if (msg->type == asMSGTYPE_WARNING)
+                type = "WARN";
+            else if (msg->type == asMSGTYPE_INFORMATION)
+                type = "INFO";
+            printf("%s (%d, %d) : %s : %s\n", msg->section, msg->row, msg->col, type, msg->message);
+        }), 0, asCALL_CDECL);
 #ifdef _DEBUG
     if (_window_size.x == 0 || _window_size.y == 0) {
         Error("_window_size can't have x or y be 0");

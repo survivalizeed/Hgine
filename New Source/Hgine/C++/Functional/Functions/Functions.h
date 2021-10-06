@@ -6,7 +6,7 @@
 
 namespace sur 
 {
-	void wndInitialize(Vec2 window_size, Vec2 aspect_ratio, std::string_view resource_path, std::string_view sound_path);
+	void hgineInitialize(Vec2 window_size, Vec2 aspect_ratio, std::string_view resource_path, std::string_view sound_path);
 
 	void PlayWAV(const std::string& path, u32 params, i32 volume);
 

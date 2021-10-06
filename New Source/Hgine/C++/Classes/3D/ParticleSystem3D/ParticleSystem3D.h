@@ -40,10 +40,18 @@ namespace sur
 
 		struct Particle
 		{
-			Vec3f pos;
-			Color color;
+
+			Vec3f pos;		
+			Color color;			
 			Particle() = default;
 			Particle(Vec3f pos, Color color) : pos(pos), color(color) {}
+
+			Vec3f counter_neg;
+			Vec3f counter_pos;
+			Vec3f counter_counter_neg = { 1, 1, 1 };
+			Vec3f counter_counter_pos = { -1, -1, -1 };
+
+			Vec3f MoveQueue(Vec3f direction);
 		};
 
 		std::vector<Particle> particles;
@@ -65,7 +73,7 @@ namespace sur
 
 		void Move(Vec3f direction);
 
-		void Bind(bool render, i32 perspectiveThreshold = 0, i32 clipping = 40);
+		void Bind(bool render, i32 perspectiveThreshold = 1000, i32 clipping = 40);
 
 	};
 }

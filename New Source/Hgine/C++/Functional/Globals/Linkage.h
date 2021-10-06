@@ -32,3 +32,5 @@ extern std::string _sound_path;
 extern std::vector<sur::Object> _objects;
 
 extern std::vector<i32> _hashes;
+
+extern asIScriptEngine* _asEngine;

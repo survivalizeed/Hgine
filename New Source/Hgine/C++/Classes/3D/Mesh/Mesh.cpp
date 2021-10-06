@@ -190,13 +190,24 @@ void sur::Mesh::Bind(bool render, bool wireframe, i32 perspectiveThreshold, i32 
         return z1 > z2;
         }
     );
-    for (auto& iter : renderableTris) {
-        algorithm::DrawTriangle(
-            STA(Vec2((i32)iter.a.x, (i32)iter.a.y)),
-            STA(Vec2((i32)iter.b.x, (i32)iter.b.y)),
-            STA(Vec2((i32)iter.c.x, (i32)iter.c.y)), 
-            iter.color
-        );
+    if (wireframe) {
+        for (auto& iter : renderableTris) {
+            algorithm::DrawTriangleWire(
+                STA(Vec2((i32)iter.a.x, (i32)iter.a.y)),
+                STA(Vec2((i32)iter.b.x, (i32)iter.b.y)),
+                STA(Vec2((i32)iter.c.x, (i32)iter.c.y)),
+                iter.color
+            );
+        }
     }
-
+    else {
+        for (auto& iter : renderableTris) {
+            algorithm::DrawTriangle(
+                STA(Vec2((i32)iter.a.x, (i32)iter.a.y)),
+                STA(Vec2((i32)iter.b.x, (i32)iter.b.y)),
+                STA(Vec2((i32)iter.c.x, (i32)iter.c.y)),
+                iter.color
+            );
+        }
+    }
 }

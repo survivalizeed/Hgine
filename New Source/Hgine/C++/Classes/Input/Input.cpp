@@ -17,21 +17,21 @@ sur::Vec2f sur::Input::Mouse::Position()
 
 bool sur::Input::Mouse::LClick()
 {
-	if (GetKeyState(VK_LBUTTON) & 0x8000)
+	if (GetKeyState(VK_LBUTTON) & 0x8000 && GetForegroundWindow() == _window_hwnd)
 		return true;
 	return false;
 }
 
 bool sur::Input::Mouse::RClick()
 {
-	if (GetAsyncKeyState(VK_RBUTTON) & 0x8000)
+	if (GetAsyncKeyState(VK_RBUTTON) & 0x8000 && GetForegroundWindow() == _window_hwnd)
 		return true;
 	return false;
 }
 
 bool sur::Input::Keyboard::KeyHeld(Keys key)
 {
-	if (GetAsyncKeyState(key) & 0x8000)
+	if (GetAsyncKeyState(key) & 0x8000 && GetForegroundWindow() == _window_hwnd)
 		return true;
 	return false;
 }
@@ -41,7 +41,7 @@ bool sur::Input::Keyboard::KeyPress(Keys key)
 	bool space = false;
 	if (key == Keys::SPACE)
 		space = true;
-	if (GetAsyncKeyState(key) & 0x8000)
+	if (GetAsyncKeyState(key) & 0x8000 && GetForegroundWindow() == _window_hwnd)
 	{
 		if (space && pressed[26] != key)
 		{
