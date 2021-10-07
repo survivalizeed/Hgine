@@ -22,5 +22,6 @@ void AngelScript::AddFunction(std::string_view alias ,std::string_view declName)
 
 void* AngelScript::CallFunction(std::string_view alias, const std::string& parameters)
 {
-	return nullptr;
+	ctx->prepare(functions[alias.data()];
+	
 }
