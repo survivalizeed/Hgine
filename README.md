@@ -9,7 +9,7 @@
 
 Just an Engine which uses the gdiplus.h to display an array of pixels.  
 It is not the fastest Engine out there but it is really hardcoded and enough for some cool 2D games and some retro 3D games aswell.
-Make sure you are using C++ 20. For the best results compile it in x64 release, MSVC and -O2 optimization level!  I am calling it Hgine:)  
+Make sure you are using C++ 20. For the best results compile it in x86/x64 release, MSVC and -O2 optimization level!  I am calling it Hgine:)  
 
 #### If you want to change something or just found a bug please send me a pullrequest or contact me via discord.
 
