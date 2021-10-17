@@ -183,13 +183,13 @@ namespace sur
 
 		using Object::color;
 
-		Vec2 size;
-
 		void LoadHgineres(std::string_view path);
 
 		void LoadPng(std::string_view path, Color colorToAlpha);
 
 	public:
+
+		Vec2 size;
 
 		std::vector<Vec2> points;
 		std::vector<Color> colors;

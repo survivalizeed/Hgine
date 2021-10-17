@@ -93,7 +93,7 @@ void sur::Form::SetIndex(u32 index, i32 what)
 	indices[static_cast<size_t>(index)] = what;
 }
 
-i32 sur::Form::GetIndex(u32 index)
+sur::i32 sur::Form::GetIndex(u32 index)
 {
 	if (index >= indices.size()) {
 #ifdef _DEBUG

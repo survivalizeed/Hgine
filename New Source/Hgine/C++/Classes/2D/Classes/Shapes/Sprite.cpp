@@ -88,6 +88,9 @@ void sur::Sprite::LoadPng(std::string_view path, Color colorToAlpha)
     u32 width = 0, height = 0;
     static_cast<void>(lodepng::decode(image, width, height, path.data()));
 
+    size.x = width;
+    size.y = height;
+
     i32 x = 0;
     i32 y = 0;
     for (i32 i = 0; i < image.size(); i = i + 4) {
@@ -119,12 +122,10 @@ void sur::Sprite::LoadPng(std::string_view path, Color colorToAlpha)
             i--;
         }
     }
-
 }
 
 sur::Sprite::Sprite(std::string_view path, FileType filetype, Vec2f position, std::string_view name, Color colorToAlpha)
 {
-
     this->color = Color(0, 0, 0);
     this->position = position;
     this->type = Type::Sprite;

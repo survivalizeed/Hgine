@@ -14,8 +14,8 @@ namespace sur::algorithm
 	// Set both last parameters to "nullptr" if you don't want to invoke code.
 	// If you set both last parameters to "nullptr" the line will just display.
 	// The OnPixelYBreak function will be mostly used by the triangle algorithm.
-	inline void DrawLine(Vec2f start_point, Vec2f end_point, Color color, std::function<void(Vec2)> OnPixelSet, 
-		std::function<void(Vec2)> OnPixelYBreak) 
+	inline void DrawLine(Vec2f start_point, Vec2f end_point, Color color, std::function<void(Vec2)> OnPixelSet = nullptr, 
+		std::function<void(Vec2)> OnPixelYBreak = nullptr) 
 	{
 		if (OnPixelSet == nullptr)
 			OnPixelSet = [&](Vec2 position) {

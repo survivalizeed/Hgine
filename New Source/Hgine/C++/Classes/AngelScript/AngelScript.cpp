@@ -1,9 +1,16 @@
 
+#if _WIN32 || _WIN64
+#if _WIN64
+#else
 
 #include "AngelScript.h"
 
-AngelScript::AngelScript(std::string_view fileName)
+
+sur::AngelScript::AngelScript(std::string_view fileName, std::vector<std::string_view> registeredFunctionDecls, std::vector<void*> functions)
 {
+	for (int i = 0; i < registeredFunctionDecls.size(); ++i) {
+		_asEngine->RegisterGlobalFunction(registeredFunctionDecls[i].data(), asFUNCTION(functions[i]), asCALL_CDECL);
+	}
 	mod = _asEngine->GetModule(fileName.data(), asGM_ALWAYS_CREATE);
 	std::ifstream i(fileName.data());
 	if (!i)
@@ -15,13 +22,15 @@ AngelScript::AngelScript(std::string_view fileName)
 	ctx = _asEngine->CreateContext();
 }
 
-void AngelScript::AddFunction(std::string_view alias ,std::string_view declName)
+void sur::AngelScript::AddFunction(std::string_view alias ,std::string_view declName)
 {
 	functions[alias.data()] = mod->GetFunctionByDecl(declName.data());
 }
 
-void* AngelScript::CallFunction(std::string_view alias, const std::string& parameters)
+void sur::AngelScript::Release()
 {
-	ctx->prepare(functions[alias.data()];
-	
+	ctx->Release();
 }
+
+#endif
+#endif

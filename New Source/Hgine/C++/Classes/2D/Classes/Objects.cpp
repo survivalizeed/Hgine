@@ -75,7 +75,7 @@ sur::Type sur::Object::GetType()
 	return type;
 }
 
-i32 sur::Object::GetHash()
+sur::i32 sur::Object::GetHash()
 {
 	return hash;
 }

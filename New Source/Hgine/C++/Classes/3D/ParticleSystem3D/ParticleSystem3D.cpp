@@ -136,7 +136,7 @@ void sur::ParticleSystem3D::Bind(bool render, i32 perspectiveThreshold, i32 clip
 	}
 }
 
-sur::Vec3f sur::ParticleSystem3D::Particle::MoveQueue(Vec3f direction)
-{
-	
-}
+//sur::Vec3f sur::ParticleSystem3D::Particle::MoveQueue(Vec3f direction)
+//{
+//	
+//}
