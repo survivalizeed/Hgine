@@ -71,14 +71,14 @@ void sur::Set(Vec2 pos, Color color)
 {
     if (pos.x < 0 || pos.x > _window_size.x - 1 || pos.y < 0 || pos.y > _window_size.y - 1)
         return;
-    _render_buffer[pos.x + _window_size.x * pos.y] = color;
+    _render_buffer[pos.x + _window_size.x * pos.y] = Light::LightPixel(pos, color);
 }
 
 sur::Color sur::Get(Vec2 pos)
 {
     if (pos.x < 0 || pos.x > _window_size.x - 1 || pos.y < 0 || pos.y > _window_size.y - 1)
         Color(0, 0, 0);
-    return _render_buffer[pos.x + _window_size.y * pos.y];
+    return Light::LightPixel(pos, _render_buffer[pos.x + _window_size.y * pos.y]);
 }
 
 sur::Vec2f sur::Absolute(Vec2f vec)
@@ -140,9 +140,6 @@ sur::Vec2f sur::GetSquareOrSpriteStart(const GameObject& obj)
         return static_cast<const Square&>(obj).start_point + static_cast<const Square&>(obj).position;
     if (obj.GetType() == Type::Sprite)
         return static_cast<const Sprite&>(obj).position;
-#ifdef _DEBUG
-    Error("GetSquareOrSpriteStart(...) you can only pass in a Square or a Sprite");
-#endif
     return { 0.f, 0.f };
 }
 
@@ -152,9 +149,6 @@ sur::Vec2f sur::GetSquareOrSpriteEnd(const GameObject& obj)
         return static_cast<const Square&>(obj).end_point + static_cast<const Square&>(obj).position;
     if (obj.GetType() == Type::Sprite)
         return static_cast<const Sprite&>(obj).position + static_cast<const Sprite&>(obj).size;
-#ifdef _DEBUG
-    Error("GetSquareOrSpriteEnd(...) you can only pass in a Square or a Sprite");
-#endif
     return { 0.f, 0.f };
 }
 

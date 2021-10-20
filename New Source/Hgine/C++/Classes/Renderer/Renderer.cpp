@@ -8,8 +8,9 @@ namespace sur
 }
 
 sur::Renderer::Renderer(Color background, bool fillBackground, f32 ambient_light, bool use_light)
-	: background(background), fillBackground(fillBackground)
 {
+	this->background = background;
+	this->fillBackground = fillBackground;
 	dc = GetDC(_window_hwnd);
 	_ambient_light = ambient_light;
 	_use_light = use_light;
@@ -17,12 +18,6 @@ sur::Renderer::Renderer(Color background, bool fillBackground, f32 ambient_light
 
 void sur::Renderer::Clear() const
 {
-	for (auto& iter : _gameObjects) {
-		iter->oCEnlockGuard = false;
-		iter->oCStlockGuard = false;
-		iter->oCExlockGuard = false;
-	}
-
 	if (fillBackground)
 		std::fill(_render_buffer, _render_buffer + _window_size.x * _window_size.y, background);
 }

@@ -20,7 +20,8 @@ void sur::Square::Bind(bool render)
 	Vec2 local_start_point = ATS(start_point);
 	Vec2 local_end_point = ATS(end_point);
 
-	CheckCollision();
+	if(collider != Collider::None)
+		CheckCollision();
 
 	if (render) {
 		for (i32 i = local_start_point.y; i <= local_end_point.y; ++i) {

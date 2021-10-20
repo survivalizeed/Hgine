@@ -142,6 +142,8 @@ sur::Sprite::Sprite(std::string_view path, FileType filetype, Vec2f position, Co
 
 void sur::Sprite::Bind(bool render)
 {
+    if (collider != Collider::None)
+        CheckCollision();
     for (i32 i = 0; i < points.size(); ++i)
         Set(points[i] + ATS(position), colors[i]);
 }

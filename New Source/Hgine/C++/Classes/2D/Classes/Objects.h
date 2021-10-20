@@ -109,9 +109,6 @@ namespace sur
 	public:
 
 		Collider collider;
-		bool oCEnlockGuard = false;
-		bool oCStlockGuard = false;
-		bool oCExlockGuard = false;
 
 		bool anyCollisionLeft = false;
 
@@ -271,5 +268,22 @@ namespace sur
 
 		void Bind(bool render);
 		
+	};
+//=======================================================================
+	struct Light
+	{
+
+		f32 radius;
+		f32 threshold;
+		f32 falloffIntensity;
+		Color color;
+		Vec2f position;
+
+		Light() = default;
+
+		Light(Vec2f position, f32 radius, f32 threshold, f32 falloffIntensity, Color color);
+
+		static Color LightPixel(Vec2 pos, Color color);
+
 	};
 }

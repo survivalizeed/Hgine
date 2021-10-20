@@ -7,6 +7,7 @@
 namespace sur 
 {
 	class GameObject;
+	struct Light;
 }
 
 extern HWND _window_hwnd;
@@ -30,6 +31,8 @@ extern std::string _resource_path;
 extern std::string _sound_path;
 
 extern std::vector<sur::GameObject*> _gameObjects;
+
+extern std::vector<sur::Light*> _lights;
 
 extern std::vector<sur::i32> _hashes;
 
