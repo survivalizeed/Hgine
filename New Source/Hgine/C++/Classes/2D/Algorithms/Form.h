@@ -85,8 +85,4 @@ namespace sur::algorithm
 			DrawTriangle(coords[indices[i]], coords[indices[i + 1]], coords[indices[i + 2]], color);
 		}
 	}
-}
-
-
-
-	
+}	

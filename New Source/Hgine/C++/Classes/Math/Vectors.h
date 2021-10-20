@@ -29,6 +29,23 @@ namespace sur
             y *= -1.f;
         }
 
+        bool isZero()
+        {
+            return x == 0 && y == 0 ? true : false;
+        }
+
+        void closerToZeroByOne()
+        {
+            if (x > 0) 
+                x--;
+            else if (x < 0)
+                x++;
+            if (y > 0)
+                y--;
+            else if (y < 0) 
+                y++;
+        }
+
         void absolute()
         {
             x = abs(x);

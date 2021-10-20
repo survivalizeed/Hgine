@@ -16,8 +16,9 @@ sur::Line::Line(Vec2f start_point, Vec2f end_point, Color color, std::string_vie
 sur::Vec2 sur::Line::Move(Vec2f direction, i32 moveQueueIndex)
 {
 	Vec2 move = MoveQueue(direction, moveQueueIndex);
-	start_point += { static_cast<f32>(move.x), static_cast<f32>(move.y) };
-	end_point += { static_cast<f32>(move.x), static_cast<f32>(move.y) };
+	if (move.x == 0 && move.y == 0) return { 0, 0 };
+	start_point += STA(move);
+	end_point   += STA(move);
 	return move;
 }
 

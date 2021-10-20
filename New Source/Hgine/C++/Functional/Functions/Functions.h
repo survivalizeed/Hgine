@@ -18,8 +18,6 @@ namespace sur
 
 	Color Get(Vec2 pos);
 
-	bool Vec2fBetween(Vec2f v, Vec2f min, Vec2f max);
-
 	Vec2f Absolute(Vec2f vec);
 
 	f32 Distance(f32 first, f32 second);
@@ -30,7 +28,9 @@ namespace sur
 
 	Vec2f Direction(Vec2f first, Vec2f second);
 
-	//bool PointLaysInside(const std::vector<Vec2f>& coords, Vec2f point);
+	Vec2f GetSquareOrSpriteStart(const Object& obj);
+
+	Vec2f GetSquareOrSpriteEnd(const Object& obj);
 
 	std::string GetExeDirectory();
 	

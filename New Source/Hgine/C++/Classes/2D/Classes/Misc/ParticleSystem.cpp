@@ -11,13 +11,13 @@ sur::ParticleSystem::ParticleSystem(ParticleSettings* settings)
 	);
 	for (i32 i = 0; i < settings->emission; ++i) {
 		Vec2 local_position(
-			RandomRange(0, Pixel(settings->emission_point_maximal.x - settings->emission_point_minimal.x)),
-			RandomRange(0, Pixel(settings->emission_point_maximal.y - settings->emission_point_minimal.y))
+			RandomRange(0, Pixel(settings->emission_point_maximal.x - settings->emission_point_minimal.x, Axis::X)),
+			RandomRange(0, Pixel(settings->emission_point_maximal.y - settings->emission_point_minimal.y, Axis::Y))
 		);
 		while (local_position == ATS(settings->middle)) {
 			local_position(
-				RandomRange(0, Pixel(settings->emission_point_maximal.x - settings->emission_point_minimal.x)),
-				RandomRange(0, Pixel(settings->emission_point_maximal.y - settings->emission_point_minimal.y))
+				RandomRange(0, Pixel(settings->emission_point_maximal.x - settings->emission_point_minimal.x, Axis::X)),
+				RandomRange(0, Pixel(settings->emission_point_maximal.y - settings->emission_point_minimal.y, Axis::Y))
 			);
 		}
 		Color color = settings->colors[static_cast<size_t>(RandomRange(0, static_cast<i32>(settings->colors.size()) - 1))];

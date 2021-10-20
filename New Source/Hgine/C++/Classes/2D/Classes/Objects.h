@@ -9,11 +9,20 @@ namespace sur
 	enum class Type 
 	{
 
-		Rectangle,
+		Square,
 		Line,
 		Triangle,
 		Form,
 		Sprite,
+
+	};
+
+	enum class Collider
+	{
+
+		None,
+		AABB,
+		SAT  // Not supported yet
 
 	};
 
@@ -62,28 +71,37 @@ namespace sur
 		};
 
 		i32 hash;
-
 		Type type;
-
 		std::string name;
 
 		std::map<i32, MoveQueueContainer> mvContainer;	
+
+		void AABB(Object* current, Vec2 incomingDirection);
+
+		//bool SAT(Object* first, Object* second);	// Not supported yet
 
 	public:
 	
 		bool active;
 		Color color;
 		Vec2f position;
+		Collider collider;
+
+		cb_ptr<Object*> onCollisionEnter;	
+
+		cb_ptr<Object*> onCollisionStay;	
+
+		cb_ptr<Object*> onCollisionExit;
 
 		Vec2 MoveQueue(Vec2f direction, i32 moveQueueIndex);
 		
 		virtual Vec2 Move(Vec2f direction, i32 moveQueueIndex);
 
-		std::string_view GetName();
+		std::string_view GetName() const;
 	
-		Type GetType();
+		Type GetType() const;
 
-		i32 GetHash();
+		i32 GetHash() const;
 
 	};
 //=======================================================================
@@ -114,7 +132,7 @@ namespace sur
 
 		void SetPoint(u32 index, Vec2f position);
 
-		Vec2f GetPoint(u32 index);
+		Vec2f GetPoint(u32 index) const;
 
 		Vec2 Move(Vec2f direction, i32 moveQueueIndex) override;
 
@@ -131,7 +149,7 @@ namespace sur
 		enum class Modifier {
 			None,
 			InverseKinematic,
-			ConvexHull	// not supported yet
+			ConvexHull	// Not supported yet
 		} modifier;
 
 		enum class FillMode {
@@ -147,11 +165,11 @@ namespace sur
 
 		void SetPoint(u32 index, Vec2f position);
 
-		Vec2f GetPoint(u32 index);
+		Vec2f GetPoint(u32 index) const;
 
 		void SetIndex(u32 index, i32 what);
 
-		i32 GetIndex(u32 index);
+		i32 GetIndex(u32 index) const;
 
 		void Insert(u32 index, Vec2f position);
 
@@ -163,15 +181,21 @@ namespace sur
 
 	};
 //=======================================================================
-	struct Square : public Object
+	class Square : public Object
 	{
+	private:
+
+		bool previousCall = false;
+		bool collided = false;
+
+	public:
 
 		Vec2f start_point;
 		Vec2f end_point;
 
 		Square() = default;
 
-		Square(Vec2f start_point, Vec2f end_point, Color color, std::string_view name);
+		Square(Vec2f start_point, Vec2f end_point, Color color, Collider collider, std::string_view name);
 
 		void Bind(bool render);
 
@@ -189,7 +213,7 @@ namespace sur
 
 	public:
 
-		Vec2 size;
+		Vec2f size;
 
 		std::vector<Vec2> points;
 		std::vector<Color> colors;
@@ -203,7 +227,7 @@ namespace sur
 		Sprite() = default;
 
 		// colorToAlpha not required for filetype Hgineres
-		Sprite(std::string_view path, FileType filetype, Vec2f position, std::string_view name, Color colorToAlpha = Color(0,0,0));
+		Sprite(std::string_view path, FileType filetype, Vec2f position, Collider colliderType, std::string_view name, Color colorToAlpha = Color(0,0,0));
 
 		void Bind(bool render);
 

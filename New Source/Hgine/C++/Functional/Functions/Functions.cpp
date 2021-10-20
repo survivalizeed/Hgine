@@ -81,13 +81,6 @@ sur::Color sur::Get(Vec2 pos)
     return _render_buffer[pos.x + _window_size.y * pos.y];
 }
 
-bool sur::Vec2fBetween(Vec2f v, Vec2f min, Vec2f max)
-{
-    if (min.x <= v.x <= max.x && min.y <= v.y <= max.y)
-        return true;
-    return false;
-}
-
 sur::Vec2f sur::Absolute(Vec2f vec)
 {
     if (vec.x < 0)
@@ -141,48 +134,29 @@ sur::Vec2f sur::Direction(Vec2f first, Vec2f second)
     return direction;
 }
 
-//bool sur::PointLaysInside(const std::vector<Vec2f>& coords, Vec2f point)
-//{
-//    std::vector<Vec2> points;
-//    for (i32 i = 0; i < coords.size() - 1; i += 2)
-//        algorithm::DrawLine(coords[i], coords[i + 1], Color(0, 0, 0), [&](Vec2 p) {
-//            points.push_back(p);
-//        });
-//    std::sort(points.begin(), points.end(), [](Vec2& v1, Vec2& v2) {
-//        if (v1.y > v2.y)
-//            return true;
-//        else
-//            return false;
-//        }
-//    );
-//    i32 index = 0;
-//    std::vector<Vec2> tmp;
-//    for (i32 i = 0; i < points.size(); ++i) {
-//        tmp.push_back(points[i]);
-//        if (tmp[index].y != points[i].y)
-//        {
-//            tmp.erase(tmp.end() - 1);
-//            if (tmp.size() >= 3) {
-//                std::sort(tmp.begin(), tmp.end(), [](Vec2& v1, Vec2& v2) {
-//                    if (v1.x < v2.x)
-//                        return true;
-//                    else
-//                        return false;
-//                    }
-//                );
-//            }
-//            if (tmp[0].x > tmp[tmp.size() - 1].x)
-//                std::swap(tmp[0].x, tmp[tmp.size() - 1].x);
-//            if (!Vec2fBetween(point, { (f32)tmp[0].x, (f32)tmp[0].y }, { (f32)tmp[tmp.size() - 1].x, (f32)tmp[tmp.size() - 1].y })) {
-//                return false;
-//            }
-//            tmp.clear();
-//            index = 0;
-//            i--;
-//        }
-//    }
-//    return true;
-//}
+sur::Vec2f sur::GetSquareOrSpriteStart(const Object& obj)
+{
+    if (obj.GetType() == Type::Square)
+        return static_cast<const Square&>(obj).start_point + static_cast<const Square&>(obj).position;
+    if (obj.GetType() == Type::Sprite)
+        return static_cast<const Sprite&>(obj).position;
+#ifdef _DEBUG
+    Error("GetSquareOrSpriteStart(...) you can only pass in a Square or a Sprite");
+#endif
+    return { 0.f, 0.f };
+}
+
+sur::Vec2f sur::GetSquareOrSpriteEnd(const Object& obj)
+{
+    if (obj.GetType() == Type::Square)
+        return static_cast<const Square&>(obj).end_point + static_cast<const Square&>(obj).position;
+    if (obj.GetType() == Type::Sprite)
+        return static_cast<const Sprite&>(obj).position + static_cast<const Sprite&>(obj).size;
+#ifdef _DEBUG
+    Error("GetSquareOrSpriteEnd(...) you can only pass in a Square or a Sprite");
+#endif
+    return { 0.f, 0.f };
+}
 
 std::string sur::GetExeDirectory()
 {

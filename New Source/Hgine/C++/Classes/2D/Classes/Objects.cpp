@@ -58,24 +58,64 @@ sur::Vec2 sur::Object::MoveQueue(Vec2f direction, i32 moveQueueIndex)
 	return newDirection;
 }
 
+void sur::Object::AABB(sur::Object* current, Vec2 incomingDirection) {
+
+	auto PureAABBalgorithm = [=](sur::Object* first, sur::Object* second) -> bool
+	{
+		
+		Vec2f fsta = GetSquareOrSpriteStart(*first);
+		Vec2f fend = GetSquareOrSpriteEnd(*first);
+
+		Vec2f ssta = GetSquareOrSpriteStart(*second);
+		Vec2f send = GetSquareOrSpriteEnd(*second);
+
+		return algorithm::AABB(fsta, fend, ssta, send);
+	};
+	
+	bool alreadyDecreased = false;
+	for (i32 i = 0; i < _objects.size(); ++i) {
+		if (this == _objects[i] || (_objects[i]->type != Type::Square && _objects[i]->type != Type::Sprite)
+			|| _objects[i]->collider != Collider::AABB)
+			continue;
+		this->position += STA(incomingDirection);
+		while (PureAABBalgorithm(this, _objects[i])) {
+			this->position -= STA(incomingDirection);
+			alreadyDecreased = true;
+			incomingDirection.closerToZeroByOne();
+			if (incomingDirection.isZero())
+				break;
+		}
+		if (!alreadyDecreased)
+			this->position -= STA(incomingDirection);
+		alreadyDecreased = false;
+	}
+	position += STA(incomingDirection);
+}
+
 sur::Vec2 sur::Object::Move(Vec2f direction, i32 moveQueueIndex)
 {
 	Vec2 move = MoveQueue(direction, moveQueueIndex);
-	position += { static_cast<f32>(move.x), static_cast<f32>(move.y) };
+	if (move.x == 0 && move.y == 0) return { 0, 0 };
+	if (this->collider == Collider::AABB) {
+		AABB(this, move);
+	}
+	if (this->collider == Collider::None) {
+		this->position += STA(move);
+	}
 	return move;
 }
 
-std::string_view sur::Object::GetName()
+std::string_view sur::Object::GetName() const
 {
 	return name;
 }
 
-sur::Type sur::Object::GetType()
+sur::Type sur::Object::GetType() const
 {
 	return type;
 }
 
-sur::i32 sur::Object::GetHash()
+sur::i32 sur::Object::GetHash() const
 {
 	return hash;
 }

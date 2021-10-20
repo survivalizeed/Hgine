@@ -57,8 +57,6 @@ namespace sur
             Gdiplus::GdiplusShutdown(gdiplusToken);
         };
 
-        _closed = false;
-
         std::thread window_thread(win, &_window_hwnd);
         window_thread.detach();
         while (_window_hwnd == NULL) {

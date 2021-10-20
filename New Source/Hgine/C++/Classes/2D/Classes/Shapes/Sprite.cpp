@@ -77,8 +77,8 @@ void sur::Sprite::LoadHgineres(std::string_view path)
         {
             iter.y = maxY - iter.y;
         }
-        this->size.x = *std::max_element(MaxX.begin(), MaxX.end());
-        this->size.y = y;
+        this->size.x = Unit(*std::max_element(MaxX.begin(), MaxX.end()) - 1, Axis::X);
+        this->size.y = Unit(y - 1, Axis::Y);
     }
 }
 
@@ -88,8 +88,8 @@ void sur::Sprite::LoadPng(std::string_view path, Color colorToAlpha)
     u32 width = 0, height = 0;
     static_cast<void>(lodepng::decode(image, width, height, path.data()));
 
-    size.x = width;
-    size.y = height;
+    size.x = Unit(width - 1, Axis::X);
+    size.y = Unit(height - 1, Axis::Y);
 
     i32 x = 0;
     i32 y = 0;
@@ -124,13 +124,15 @@ void sur::Sprite::LoadPng(std::string_view path, Color colorToAlpha)
     }
 }
 
-sur::Sprite::Sprite(std::string_view path, FileType filetype, Vec2f position, std::string_view name, Color colorToAlpha)
+sur::Sprite::Sprite(std::string_view path, FileType filetype, Vec2f position, Collider collider, std::string_view name, Color colorToAlpha)
 {
     this->color = Color(0, 0, 0);
     this->position = position;
     this->type = Type::Sprite;
+    this->collider = collider;
     this->name = name;
     this->hash = static_cast<i32>(std::hash<std::string>{}(name.data()));
+    _objects.push_back(this);
 
     if (filetype == FileType::Hgineres)
         LoadHgineres(path);

@@ -72,7 +72,7 @@ void sur::Form::SetPoint(u32 index, Vec2f position)
 	}
 }
 
-sur::Vec2f sur::Form::GetPoint(u32 index)
+sur::Vec2f sur::Form::GetPoint(u32 index) const
 {
 	if (index >= points.size()) {
 #ifdef _DEBUG
@@ -93,7 +93,7 @@ void sur::Form::SetIndex(u32 index, i32 what)
 	indices[static_cast<size_t>(index)] = what;
 }
 
-sur::i32 sur::Form::GetIndex(u32 index)
+sur::i32 sur::Form::GetIndex(u32 index) const
 {
 	if (index >= indices.size()) {
 #ifdef _DEBUG
@@ -129,8 +129,9 @@ void sur::Form::Remove(u32 index)
 sur::Vec2 sur::Form::Move(Vec2f direction, i32 moveQueueIndex)
 {
 	Vec2 move = MoveQueue(direction, moveQueueIndex);
+	if (move.x == 0 && move.y == 0) return { 0, 0 };
 	for(auto& iter : points)
-		iter += { static_cast<f32>(move.x), static_cast<f32>(move.y) };
+		iter += STA(move);
 	return move;
 }
 
