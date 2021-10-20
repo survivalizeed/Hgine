@@ -58,53 +58,6 @@ sur::Vec2 sur::Object::MoveQueue(Vec2f direction, i32 moveQueueIndex)
 	return newDirection;
 }
 
-void sur::Object::AABB(sur::Object* current, Vec2 incomingDirection) {
-
-	auto PureAABBalgorithm = [=](sur::Object* first, sur::Object* second) -> bool
-	{
-		
-		Vec2f fsta = GetSquareOrSpriteStart(*first);
-		Vec2f fend = GetSquareOrSpriteEnd(*first);
-
-		Vec2f ssta = GetSquareOrSpriteStart(*second);
-		Vec2f send = GetSquareOrSpriteEnd(*second);
-
-		return algorithm::AABB(fsta, fend, ssta, send);
-	};
-	
-	bool alreadyDecreased = false;
-	for (i32 i = 0; i < _objects.size(); ++i) {
-		if (this == _objects[i] || (_objects[i]->type != Type::Square && _objects[i]->type != Type::Sprite)
-			|| _objects[i]->collider != Collider::AABB)
-			continue;
-		this->position += STA(incomingDirection);
-		while (PureAABBalgorithm(this, _objects[i])) {
-			this->position -= STA(incomingDirection);
-			alreadyDecreased = true;
-			incomingDirection.closerToZeroByOne();
-			if (incomingDirection.isZero())
-				break;
-		}
-		if (!alreadyDecreased)
-			this->position -= STA(incomingDirection);
-		alreadyDecreased = false;
-	}
-	position += STA(incomingDirection);
-}
-
-sur::Vec2 sur::Object::Move(Vec2f direction, i32 moveQueueIndex)
-{
-	Vec2 move = MoveQueue(direction, moveQueueIndex);
-	if (move.x == 0 && move.y == 0) return { 0, 0 };
-	if (this->collider == Collider::AABB) {
-		AABB(this, move);
-	}
-	if (this->collider == Collider::None) {
-		this->position += STA(move);
-	}
-	return move;
-}
-
 std::string_view sur::Object::GetName() const
 {
 	return name;
@@ -118,4 +71,94 @@ sur::Type sur::Object::GetType() const
 sur::i32 sur::Object::GetHash() const
 {
 	return hash;
+}
+
+void sur::GameObject::CheckCollision()
+{
+	anyCollisionLeft = false;
+
+	for (i32 i = static_cast<i32>(previousCall.size()); i < _gameObjects.size(); ++i) {
+		previousCall.push_back(false);
+		collided.push_back(false);
+	}
+	for (i32 i = 0; i < collided.size(); ++i) {
+		collided[i] = false;
+	}
+	for (i32 i = 0; i < _gameObjects.size(); ++i) {
+		if (this == _gameObjects[i] || _gameObjects[i]->collider != Collider::AABB)
+			continue;
+		if (algorithm::AABB(GetSquareOrSpriteStart(*this) - STA({ 1,1 }), GetSquareOrSpriteEnd(*this) + STA({ 1,1 }),
+			GetSquareOrSpriteStart(*_gameObjects[i]), GetSquareOrSpriteEnd(*_gameObjects[i]))) {
+
+			if (!previousCall[i]) {
+				if (this->onCollisionEnter != nullptr)
+					this->onCollisionEnter(this, _gameObjects[i]);
+				if (_gameObjects[i]->onCollisionEnter != nullptr)
+					_gameObjects[i]->onCollisionEnter(_gameObjects[i], this);
+			}
+			if (this->onCollisionStay != nullptr)
+				this->onCollisionStay(this, _gameObjects[i]);
+			if (_gameObjects[i]->onCollisionStay != nullptr)
+				_gameObjects[i]->onCollisionStay(_gameObjects[i], this);
+			collided[i] = true;
+			anyCollisionLeft = true;
+		}
+	}
+	for (i32 i = 0; i < collided.size(); ++i)
+		if (collided[i])
+			previousCall[i] = true;
+
+	for (i32 i = 0; i < collided.size(); ++i) {
+		if (!collided[i] && previousCall[i]) {
+			if (this->onCollisionExit != nullptr)
+				this->onCollisionExit(this, _gameObjects[i]);
+			if (_gameObjects[i]->onCollisionExit != nullptr)
+				_gameObjects[i]->onCollisionExit(_gameObjects[i], this);
+
+			previousCall[i] = false;
+		}
+	}
+
+}
+
+void sur::GameObject::AABBmove(sur::GameObject* current, Vec2 incomingDirection) {
+
+	auto MakeAABB = [=](sur::GameObject* first, sur::GameObject* second) -> bool
+	{
+		Vec2f fsta = GetSquareOrSpriteStart(*first);
+		Vec2f fend = GetSquareOrSpriteEnd(*first);
+
+		Vec2f ssta = GetSquareOrSpriteStart(*second);
+		Vec2f send = GetSquareOrSpriteEnd(*second);
+		return algorithm::AABB(fsta, fend, ssta, send);
+	};
+
+	bool alreadyDecreased = false;
+	for (i32 i = 0; i < _gameObjects.size(); ++i) {
+		if (this == _gameObjects[i] || _gameObjects[i]->collider != Collider::AABB)
+			continue;
+		this->position += STA(incomingDirection);
+		while (MakeAABB(this, _gameObjects[i])) {
+			this->position -= STA(incomingDirection);
+			alreadyDecreased = true;
+			incomingDirection.closerToZeroByOne();
+			if (incomingDirection.isZero())
+				break;
+		}
+		if (!alreadyDecreased)
+			this->position -= STA(incomingDirection);
+		alreadyDecreased = false;
+	}
+	position += STA(incomingDirection);
+}
+
+sur::Vec2 sur::GameObject::Move(Vec2f direction, i32 moveQueueIndex)
+{
+	Vec2 move = MoveQueue(direction, moveQueueIndex);
+	if (move.x == 0 && move.y == 0) return { 0, 0 };
+	if (this->collider == Collider::AABB)
+		AABBmove(this, move);
+	if(this->collider == Collider::None)
+		this->position += STA(move);
+	return move;
 }

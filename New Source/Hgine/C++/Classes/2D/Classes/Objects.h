@@ -76,7 +76,6 @@ namespace sur
 
 		std::map<i32, MoveQueueContainer> mvContainer;	
 
-		void AABB(Object* current, Vec2 incomingDirection);
 
 		//bool SAT(Object* first, Object* second);	// Not supported yet
 
@@ -85,23 +84,42 @@ namespace sur
 		bool active;
 		Color color;
 		Vec2f position;
-		Collider collider;
-
-		cb_ptr<Object*> onCollisionEnter;	
-
-		cb_ptr<Object*> onCollisionStay;	
-
-		cb_ptr<Object*> onCollisionExit;
 
 		Vec2 MoveQueue(Vec2f direction, i32 moveQueueIndex);
-		
-		virtual Vec2 Move(Vec2f direction, i32 moveQueueIndex);
 
 		std::string_view GetName() const;
 	
 		Type GetType() const;
 
 		i32 GetHash() const;
+
+	};
+//=======================================================================
+	class GameObject : public Object
+	{
+	protected:
+
+		std::vector<bool> previousCall;
+		std::vector<bool> collided;
+
+		void AABBmove(GameObject* current, Vec2 incomingDirection);
+
+		void CheckCollision();
+
+	public:
+
+		Collider collider;
+		bool oCEnlockGuard = false;
+		bool oCStlockGuard = false;
+		bool oCExlockGuard = false;
+
+		bool anyCollisionLeft = false;
+
+		cb_ptr<GameObject*> onCollisionEnter;											
+		cb_ptr<GameObject*> onCollisionStay;
+		cb_ptr<GameObject*> onCollisionExit;
+
+		Vec2 Move(Vec2f direction, i32 moveQueueIndex);
 
 	};
 //=======================================================================
@@ -115,7 +133,7 @@ namespace sur
 
 		Line(Vec2f start_point, Vec2f end_point, Color color, std::string_view name);
 
-		Vec2 Move(Vec2f direction, i32 moveQueueIndex) override;
+		Vec2 Move(Vec2f direction, i32 moveQueueIndex);
 
 		void Bind(bool render);
 
@@ -134,7 +152,7 @@ namespace sur
 
 		Vec2f GetPoint(u32 index) const;
 
-		Vec2 Move(Vec2f direction, i32 moveQueueIndex) override;
+		Vec2 Move(Vec2f direction, i32 moveQueueIndex);
 
 		void Bind(bool render, bool wireframe);
 
@@ -175,20 +193,14 @@ namespace sur
 
 		void Remove(u32 index);
 
-		Vec2 Move(Vec2f direction, i32 moveQueueIndex) override;
+		Vec2 Move(Vec2f direction, i32 moveQueueIndex);
 
 		void Bind(bool render, bool wireframe);
 
 	};
 //=======================================================================
-	class Square : public Object
+	struct Square : public GameObject
 	{
-	private:
-
-		bool previousCall = false;
-		bool collided = false;
-
-	public:
 
 		Vec2f start_point;
 		Vec2f end_point;
@@ -201,7 +213,7 @@ namespace sur
 
 	};
 //=======================================================================
-	class Sprite : public Object 
+	class Sprite : public GameObject 
 	{
 	private:
 

@@ -4,7 +4,7 @@
 
 namespace sur
 {
-	class Object;
+	class GameObject;
 }
 
 HWND _window_hwnd;
@@ -27,7 +27,7 @@ std::string _resource_path;
 
 std::string _sound_path;
 
-std::vector<sur::Object*> _objects;
+std::vector<sur::GameObject*> _gameObjects;
 
 std::vector<sur::i32> _hashes;
 

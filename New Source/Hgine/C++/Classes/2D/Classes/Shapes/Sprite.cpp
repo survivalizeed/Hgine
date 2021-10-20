@@ -132,7 +132,7 @@ sur::Sprite::Sprite(std::string_view path, FileType filetype, Vec2f position, Co
     this->collider = collider;
     this->name = name;
     this->hash = static_cast<i32>(std::hash<std::string>{}(name.data()));
-    _objects.push_back(this);
+    _gameObjects.push_back(this);
 
     if (filetype == FileType::Hgineres)
         LoadHgineres(path);

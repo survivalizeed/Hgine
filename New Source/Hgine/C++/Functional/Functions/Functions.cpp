@@ -134,7 +134,7 @@ sur::Vec2f sur::Direction(Vec2f first, Vec2f second)
     return direction;
 }
 
-sur::Vec2f sur::GetSquareOrSpriteStart(const Object& obj)
+sur::Vec2f sur::GetSquareOrSpriteStart(const GameObject& obj)
 {
     if (obj.GetType() == Type::Square)
         return static_cast<const Square&>(obj).start_point + static_cast<const Square&>(obj).position;
@@ -146,7 +146,7 @@ sur::Vec2f sur::GetSquareOrSpriteStart(const Object& obj)
     return { 0.f, 0.f };
 }
 
-sur::Vec2f sur::GetSquareOrSpriteEnd(const Object& obj)
+sur::Vec2f sur::GetSquareOrSpriteEnd(const GameObject& obj)
 {
     if (obj.GetType() == Type::Square)
         return static_cast<const Square&>(obj).end_point + static_cast<const Square&>(obj).position;

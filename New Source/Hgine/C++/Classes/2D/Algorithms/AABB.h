@@ -27,6 +27,18 @@ namespace sur::algorithm
 		if (collision) goto leave;
 
 		collision = PointLaysInBetweenSquare(Vec2f(fEnd.x, fStart.y), sStart, sEnd);
+		if (collision) goto leave;
+
+		collision = PointLaysInBetweenSquare(sStart, fStart, fEnd);
+		if (collision) goto leave;
+
+		collision = PointLaysInBetweenSquare(Vec2f(sStart.x, sEnd.y), fStart, fEnd);
+		if (collision) goto leave;
+
+		collision = PointLaysInBetweenSquare(sEnd, fStart, fEnd);
+		if (collision) goto leave;
+
+		collision = PointLaysInBetweenSquare(Vec2f(sEnd.x, sStart.y), fStart, fEnd);
 
 	leave:
 		return collision;
@@ -53,6 +65,18 @@ namespace sur::algorithm
 		if (collision) goto leave;
 
 		collision = PointLaysInBetweenSquare(Vec2(fEnd.x, fStart.y), sStart, sEnd);
+		if (collision) goto leave;
+
+		collision = PointLaysInBetweenSquare(sStart, fStart, fEnd);
+		if (collision) goto leave;
+
+		collision = PointLaysInBetweenSquare(Vec2(sStart.x, sEnd.y), fStart, fEnd);
+		if (collision) goto leave;
+
+		collision = PointLaysInBetweenSquare(sEnd, fStart, fEnd);
+		if (collision) goto leave;
+
+		collision = PointLaysInBetweenSquare(Vec2(sEnd.x, sStart.y), fStart, fEnd);
 
 	leave:
 		return collision;

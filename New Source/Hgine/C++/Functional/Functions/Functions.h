@@ -28,9 +28,9 @@ namespace sur
 
 	Vec2f Direction(Vec2f first, Vec2f second);
 
-	Vec2f GetSquareOrSpriteStart(const Object& obj);
+	Vec2f GetSquareOrSpriteStart(const GameObject& obj);
 
-	Vec2f GetSquareOrSpriteEnd(const Object& obj);
+	Vec2f GetSquareOrSpriteEnd(const GameObject& obj);
 
 	std::string GetExeDirectory();
 	
