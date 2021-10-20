@@ -12,6 +12,8 @@
 #pragma warning(disable: 4003)
 #pragma warning(disable: 4715)
 #pragma warning(disable: 4018)
+#pragma warning(disable: 4552)
+
 
 #include <Windows.h>
 #include <gdiplus.h>
@@ -74,6 +76,7 @@ extern "C"
 #include "C++/Classes/Math/Datatypes.h"
 #include "C++/Classes/Math/Vectors.h"
 #include "C++/Classes/Math/Matrices.h"
+#include "C++/Classes/2D/Algorithms/AABB.h"
 #include "C++/Functional/Globals/Linkage.h"
 #include "C++/Functional/Misc/Window_Creation.h"
 #include "C++/Functional/Misc/CrossKnown.h"
