@@ -91,12 +91,4 @@ extern "C"
 #include "C++/Classes/3D/Mesh/Mesh.h"
 #include "C++/Classes/3D/ParticleSystem3D/ParticleSystem3D.h"
 
-#define oCEnterLockBegin(current) if(current->oCEnlockGuard) return
-#define oCStayLockBegin(current)  if(current->oCStlockGuard) return
-#define oCExitLockBegin(current)  if(current->oCExlockGuard) return
-
-#define oCEnterLockEnd(current) current->oCEnlockGuard = true
-#define oCStayLockEnd(current)  current->oCStlockGuard = true
-#define oCExitLockEnd(current)  current->oCExlockGuard = true
-
 
