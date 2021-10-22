@@ -69,6 +69,7 @@ sur::i32 sur::RandomRange(i32 min, i32 max)
 
 void sur::Set(Vec2 pos, Color color)
 {
+    pos += _camera_offset;
     if (pos.x < 0 || pos.x > _window_size.x - 1 || pos.y < 0 || pos.y > _window_size.y - 1)
         return;
     _render_buffer[pos.x + _window_size.x * pos.y] = Light::LightPixel(pos, color);

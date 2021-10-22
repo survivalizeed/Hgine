@@ -2,7 +2,7 @@
 
 #include "../Objects.h"
 
-sur::Light::Light(Vec2f position, f32 radius, f32 threshold, f32 falloffIntensity, Color color)
+sur::Light::Light(Vec2f position, f32 radius, f32 threshold, f32 falloffIntensity, Color color, std::string_view name)
 {
 #ifdef _DEBUG
 	if (!_use_light) {
@@ -14,6 +14,8 @@ sur::Light::Light(Vec2f position, f32 radius, f32 threshold, f32 falloffIntensit
 	this->threshold = threshold;
 	this->falloffIntensity = falloffIntensity;
 	this->color = color;
+    this->type = Type::Light;
+    this->hash = static_cast<i32>(std::hash<std::string>{}(name.data()));
 	_lights.push_back(this);
 }
 
@@ -82,5 +84,13 @@ sur::Color sur::Light::LightPixel(Vec2 pos, Color color)
     sRGB tmp(0, 0, 0);
     tmp.ToRGB(color);
     return OverFlowCheck(saved + tmp * _ambient_light).ToColor();
+}
+
+sur::Vec2 sur::Light::Move(Vec2f direction, i32 moveQueueIndex)
+{
+    Vec2 move = MoveQueue(direction, moveQueueIndex);
+    if (move.x == 0 && move.y == 0) return { 0, 0 };
+    position += STA(move);
+    return move;
 }
 

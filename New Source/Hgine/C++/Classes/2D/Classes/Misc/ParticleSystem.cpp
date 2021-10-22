@@ -2,10 +2,13 @@
 
 #include "../Objects.h"
 
-sur::ParticleSystem::ParticleSystem(ParticleSettings* settings)
+sur::ParticleSystem::ParticleSystem(ParticleSettings* settings, std::string_view name)
 {
 	this->settings = settings;
-	settings->middle(
+	this->name = name;
+	this->type = Type::ParticleSystem;
+	this->hash = static_cast<i32>(std::hash<std::string>{}(name.data()));
+	position(
 		f32(settings->emission_point_minimal.x + 0.5f * (settings->emission_point_maximal.x - settings->emission_point_minimal.x)),
 		f32(settings->emission_point_minimal.y + 0.5f * (settings->emission_point_maximal.y - settings->emission_point_minimal.y))
 	);
@@ -14,7 +17,7 @@ sur::ParticleSystem::ParticleSystem(ParticleSettings* settings)
 			RandomRange(0, Pixel(settings->emission_point_maximal.x - settings->emission_point_minimal.x, Axis::X)),
 			RandomRange(0, Pixel(settings->emission_point_maximal.y - settings->emission_point_minimal.y, Axis::Y))
 		);
-		while (local_position == ATS(settings->middle)) {
+		while (local_position == ATS(position)) {
 			local_position(
 				RandomRange(0, Pixel(settings->emission_point_maximal.x - settings->emission_point_minimal.x, Axis::X)),
 				RandomRange(0, Pixel(settings->emission_point_maximal.y - settings->emission_point_minimal.y, Axis::Y))
@@ -60,6 +63,16 @@ void sur::ParticleSystem::MoveTowards(Vec2f position, i32 moveQueueIndex, f32 mi
 		threads[i].join();
 }
 
+sur::Vec2 sur::ParticleSystem::Move(Vec2f direction, i32 moveQueueIndex)
+{
+	Vec2 move = MoveQueue(direction, moveQueueIndex);
+	if (move.x == 0 && move.y == 0) return { 0, 0 };
+	position += STA(move);
+	for (auto& iter : offsets)
+		iter += move;
+	return move;
+}
+
 void sur::ParticleSystem::Bind(bool render)
 {
 	for (i32 i = 0; i < offsets.size(); ++i) {
@@ -74,18 +87,18 @@ void sur::ParticleSystem::Bind(bool render)
 			}
 		}
 
-		while ((ATS(settings->middle) - (particles[i].pos + ATS(settings->emission_point_minimal) + offsets[i])).magnitude() > 
+		while ((ATS(position) - (particles[i].pos + ATS(settings->emission_point_minimal) + offsets[i])).magnitude() > 
 			settings->max_distance_to_middle && settings->max_distance_to_middle != 0.f) {		
 			l1 = true;
-			Vec2f dir(Direction(settings->middle, STA(particles[i].pos) + settings->emission_point_minimal + STA(offsets[i])));
+			Vec2f dir(Direction(position, STA(particles[i].pos) + settings->emission_point_minimal + STA(offsets[i])));
 			offsets[i] = offsets[i] + Vec2(static_cast<i32>(ceil(dir.x * noise * 2)), static_cast<i32>(ceil(dir.y * noise * 2)));
 		}
 		if (l1) continue;
 
-		while ((ATS(settings->middle) - (particles[i].pos + ATS(settings->emission_point_minimal) + offsets[i])).magnitude() <
+		while ((ATS(position) - (particles[i].pos + ATS(settings->emission_point_minimal) + offsets[i])).magnitude() <
 			settings->min_distance_to_middle && settings->min_distance_to_middle != 0.f) {
 			l2 = true;
-			Vec2f dir(Direction(settings->middle, STA(particles[i].pos) + settings->emission_point_minimal + STA(offsets[i])) * -1);
+			Vec2f dir(Direction(position, STA(particles[i].pos) + settings->emission_point_minimal + STA(offsets[i])) * -1);
 			if (dir.x == 0 && dir.y == 0)
 				dir.y = 1;
 			offsets[i] = offsets[i] + Vec2(static_cast<i32>(ceil(dir.x * noise * 2)), static_cast<i32>(ceil(dir.y * noise * 2)));

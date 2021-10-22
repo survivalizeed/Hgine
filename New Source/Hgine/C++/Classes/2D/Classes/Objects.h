@@ -14,6 +14,8 @@ namespace sur
 		Triangle,
 		Form,
 		Sprite,
+		ParticleSystem,
+		Light
 
 	};
 
@@ -49,8 +51,6 @@ namespace sur
 		i32 prefered_directions_intensity;	// The higher, the lower the chance
 		f32 min_distance_to_middle = 0;
 		f32 max_distance_to_middle = 0;
-		Vec2f origin;
-		Vec2f middle;
 		Vec2f emission_point_minimal;
 		Vec2f emission_point_maximal;
 		std::vector<ParticleDirection> blocked_directions;
@@ -59,33 +59,38 @@ namespace sur
 
 	};
 //=======================================================================
-	class Object 
+	class MvQ
 	{
 	protected:
 
 		struct MoveQueueContainer {
 			Vec2f counter_neg;
 			Vec2f counter_pos;
-			Vec2 counter_counter_neg = { 1, 1};
+			Vec2 counter_counter_neg = { 1, 1 };
 			Vec2 counter_counter_pos = { -1, -1 };
 		};
+
+		std::map<i32, MoveQueueContainer> mvContainer;
+
+	public:
+
+		Vec2 MoveQueue(Vec2f direction, i32 moveQueueIndex);
+
+	};
+//=======================================================================
+	class Object : public MvQ
+	{
+	protected:
 
 		i32 hash;
 		Type type;
 		std::string name;
-
-		std::map<i32, MoveQueueContainer> mvContainer;	
-
-
-		//bool SAT(Object* first, Object* second);	// Not supported yet
 
 	public:
 	
 		bool active;
 		Color color;
 		Vec2f position;
-
-		Vec2 MoveQueue(Vec2f direction, i32 moveQueueIndex);
 
 		std::string_view GetName() const;
 	
@@ -242,7 +247,7 @@ namespace sur
 
 	};
 //=======================================================================
-	class ParticleSystem
+	class ParticleSystem : public Object
 	{
 	private:
 
@@ -254,6 +259,8 @@ namespace sur
 			Particle(Vec2 pos, Color color) : pos(pos), color(color) {}
 		};
 
+		using Object::color;
+
 		std::vector<Particle> particles;
 		std::vector<Vec2> offsets;
 		ParticleSettings* settings;
@@ -262,28 +269,45 @@ namespace sur
 
 		ParticleSystem() = default;
 
-		ParticleSystem(ParticleSettings* settings);
+		ParticleSystem(ParticleSettings* settings, std::string_view name);
 
 		void MoveTowards(Vec2f position, i32 moveQueueIndex, f32 minSpeed, f32 maxSpeed);
+
+		Vec2 Move(Vec2f direction, i32 moveQueueIndex);
 
 		void Bind(bool render);
 		
 	};
 //=======================================================================
-	struct Light
+	struct Light : public Object
 	{
 
 		f32 radius;
 		f32 threshold;
 		f32 falloffIntensity;
-		Color color;
-		Vec2f position;
 
 		Light() = default;
 
-		Light(Vec2f position, f32 radius, f32 threshold, f32 falloffIntensity, Color color);
+		Light(Vec2f position, f32 radius, f32 threshold, f32 falloffIntensity, Color color, std::string_view name);
 
 		static Color LightPixel(Vec2 pos, Color color);
+
+		Vec2 Move(Vec2f direction, i32 moveQueueIndex);
+
+	};
+//=======================================================================
+	struct Camera : public MvQ
+	{
+
+		Vec2f position;
+		
+		Camera() = default;
+
+		Camera(Vec2f position, bool active);
+
+		void MakeActive();
+
+		Vec2 Move(Vec2f direction, i32 moveQueueIndex);
 
 	};
 }

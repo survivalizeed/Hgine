@@ -18,6 +18,11 @@ sur::Renderer::Renderer(Color background, bool fillBackground, f32 ambient_light
 
 void sur::Renderer::Clear() const
 {
+	if (_active_camera != nullptr) {
+		Vec2f tmp(_active_camera->position);
+		tmp.invert();
+		_camera_offset = ATS(tmp);
+	}
 	if (fillBackground)
 		std::fill(_render_buffer, _render_buffer + _window_size.x * _window_size.y, background);
 }
