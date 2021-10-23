@@ -4,11 +4,6 @@
 
 sur::Light::Light(Vec2f position, f32 radius, f32 threshold, f32 falloffIntensity, Color color, std::string_view name)
 {
-#ifdef _DEBUG
-	if (!_use_light) {
-		Reminder("You are using lights without having them turned on");
-	}
-#endif
 	this->position = position;
 	this->radius = radius;
 	this->threshold = threshold;

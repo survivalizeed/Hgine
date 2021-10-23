@@ -102,18 +102,8 @@ void sur::Sprite::LoadPng(std::string_view path, Color colorToAlpha)
             x = 0;
         }
     }
-    std::vector<Vec2> tmp(points);
-    std::sort(tmp.begin(), tmp.end(), [](Vec2& l, Vec2& r) {
-        if (l.y > r.y)
-            return true;
-        else
-            return false;
-        }
-    );
-    i32 maxY = tmp[0].y;
-
     for (auto& iter : points) {
-        iter.y = maxY - iter.y;
+        iter.y = height - iter.y;
     }
     for (i32 i = 0; i < colors.size(); ++i) {
         if (colors[i] == colorToAlpha) {
@@ -122,9 +112,49 @@ void sur::Sprite::LoadPng(std::string_view path, Color colorToAlpha)
             i--;
         }
     }
+    std::vector<Vec2> tmp(points);
+    std::sort(tmp.begin(), tmp.end(), [](Vec2& l, Vec2& r) {
+        if (l.x < r.x)
+            return true;
+        else
+            return false;
+        }
+    );
+    i32 minX = tmp[0].x;
+    std::sort(tmp.begin(), tmp.end(), [](Vec2& l, Vec2& r) {
+        if (l.y < r.y)
+            return true;
+        else
+            return false;
+        }
+    );
+    i32 minY = tmp[0].y;
+    for (auto& iter : points) {
+        iter -= {minX, minY};
+    }
+    std::vector<Vec2> tmp2(points);
+    std::sort(tmp2.begin(), tmp2.end(), [](Vec2& l, Vec2& r) {
+        if (l.x > r.x)
+            return true;
+        else
+            return false;
+        }
+    );
+    i32 maxX = tmp2[0].x;
+    std::sort(tmp2.begin(), tmp2.end(), [](Vec2& l, Vec2& r) {
+        if (l.y > r.y)
+            return true;
+        else
+            return false;
+        }
+    );
+    i32 maxY = tmp2[0].y;
+
+    size.x = Unit(maxX, Axis::X);
+    size.y = Unit(maxY, Axis::Y);
 }
 
-sur::Sprite::Sprite(std::string_view path, FileType filetype, Vec2f position, Collider collider, std::string_view name, Color colorToAlpha)
+sur::Sprite::Sprite(std::string_view file, FileType filetype, Vec2f position, Collider collider, std::string_view name, Color colorToAlpha)
 {
     this->color = Color(0, 0, 0);
     this->position = position;
@@ -135,9 +165,19 @@ sur::Sprite::Sprite(std::string_view path, FileType filetype, Vec2f position, Co
     _gameObjects.push_back(this);
 
     if (filetype == FileType::Hgineres)
-        LoadHgineres(path);
+        LoadHgineres(file);
     else if (filetype == FileType::PNG)
-        LoadPng(path, colorToAlpha);
+        LoadPng(file, colorToAlpha);
+}
+
+void sur::Sprite::Scale(Vec2f scaleOrigin, Vec2f scale)
+{
+    this->scaleOrigin = scaleOrigin;
+    this->scale(
+        scale.x, 0, 0,
+        0, scale.y, 0,
+        0, 0, 1
+    );
 }
 
 void sur::Sprite::Bind(bool render)
@@ -145,5 +185,5 @@ void sur::Sprite::Bind(bool render)
     if (collider != Collider::None)
         CheckCollision();
     for (i32 i = 0; i < points.size(); ++i)
-        Set(points[i] + ATS(position), colors[i]);
+        Set(ATS(scale.Forward2D(STA(points[i]) - scaleOrigin) + scaleOrigin) + ATS(position), colors[i]);
 }

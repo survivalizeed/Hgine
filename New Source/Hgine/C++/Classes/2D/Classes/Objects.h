@@ -219,6 +219,9 @@ namespace sur
 	{
 	private:
 
+		Vec2f scaleOrigin;
+		Mat3x3 scale = Mat3x3(1, 0, 0, 0, 1, 0, 0, 0, 1);
+
 		using Object::color;
 
 		void LoadHgineres(std::string_view path);
@@ -241,7 +244,9 @@ namespace sur
 		Sprite() = default;
 
 		// colorToAlpha not required for filetype Hgineres
-		Sprite(std::string_view path, FileType filetype, Vec2f position, Collider colliderType, std::string_view name, Color colorToAlpha = Color(0,0,0));
+		Sprite(std::string_view file, FileType filetype, Vec2f position, Collider colliderType, std::string_view name, Color colorToAlpha = Color(0,0,0));
+
+		void Scale(Vec2f scaleOrigin, Vec2f scale);
 
 		void Bind(bool render);
 
@@ -310,4 +315,37 @@ namespace sur
 		Vec2 Move(Vec2f direction, i32 moveQueueIndex);
 
 	};
+//=======================================================================
+	class Font {
+	private:
+
+		Sprite all;
+
+	public:
+
+		std::string align;
+
+		std::vector<Sprite> chars;
+
+		Font() = default;
+
+		Font(std::string_view file, Vec2 cellSize, i32 charCount, std::string_view align, Color colorToAlpha);
+		
+	};
+//=======================================================================
+	struct Text
+	{
+
+		i32 spacingX;
+		Vec2f position;
+		std::string text;
+		Font* font;
+
+		Text() = default;
+	
+		Text(Font* font, Vec2f position, i32 spacingX, std::string_view text);
+
+		void Bind(bool render);
+	};
+//=======================================================================
 }
