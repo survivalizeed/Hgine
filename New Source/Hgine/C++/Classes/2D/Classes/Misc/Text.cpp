@@ -16,7 +16,7 @@ void sur::Text::Scale(f32 intensity)
 	for (i32 i = 0; i < font->chars.size(); ++i) {
 		font->chars[i].Scale(position, { intensity, intensity });
 	}
-	spacingX = original_spacingX * intensity;
+	spacingX = i32(original_spacingX * intensity);
 }
 
 void sur::Text::Bind(bool render)

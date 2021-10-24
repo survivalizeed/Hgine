@@ -8,7 +8,7 @@
 #include "../../../Lodepng/lodepng.h"
 #pragma warning( pop )
 
-sur::Font::Font(std::string_view file, Vec2 cellSize, i32 charCount, std::string_view align, Color colorToAlpha)
+sur::Font::Font(std::string_view file, i32 charCount, std::string_view align, Color colorToAlpha)
 {
     this->align = align;
     std::vector<unsigned char> image;
@@ -30,30 +30,38 @@ sur::Font::Font(std::string_view file, Vec2 cellSize, i32 charCount, std::string
     }; 
     for (i32 i = 0; i < charCount; ++i) {
         chars.push_back(Sprite("Empty", Sprite::FileType::Empty, {0,0}, Collider::None, "Empty", Color(0, 0, 0)));
-        for (i32 x = 0; x < cellSize.x; ++x) {
-            for (i32 y = 0; y < cellSize.y; ++y) {
-                chars[i].points.push_back({ x,y });
-            }
-        }    
+        //for (i32 x = 0; x < cellSize.x; ++x) {
+        //    for (i32 y = 0; y < cellSize.y; ++y) {
+        //        
+        //    }
+        //}    
     }
-    i32 incX = 0, incY = 0;
+    i32 offsetX = 0;
     for (i32 i = 0; i < charCount; ++i) {
-        for (i32 x = 0; x < cellSize.x; ++x) {
-            for (i32 y = 0; y < cellSize.y; ++y) {
-                chars[i].colors.push_back(GetPixel({ x + incX * cellSize.x, y + incY * cellSize.y}));
+        for (;;) {
+            if (offsetX >= width)
+                goto leave;
+            for (i32 j = 0; j < height; ++j) {
+                if (GetPixel({ offsetX, j }) != Color(0, 0, 0))
+                    goto jmp;
             }
-        }
-        if ((incX + 2) * cellSize.x <= width) {
-            incX++;
-        }
-        else {
-            incY++;
-            incX = 0;
+            if (chars[i].colors.size() == 0) {
+                offsetX++;
+                continue;
+            }
+            break;
+        jmp:
+            for (i32 j = 0; j < height; ++j) {
+                chars[i].points.push_back({ offsetX,j });
+                chars[i].colors.push_back(GetPixel({ offsetX, j }));
+            }
+            offsetX++;
         }
     }
+    leave:
     for (i32 i = 0; i < charCount; ++i) {
         for (auto& iter : chars[i].points) {
-            iter.y = cellSize.y - iter.y;
+            iter.y = height - iter.y;
         }
     }
     for(i32 c = 0; c < charCount; ++c){
@@ -107,5 +115,15 @@ sur::Font::Font(std::string_view file, Vec2 cellSize, i32 charCount, std::string
         chars[i].size.x = Unit(maxX, Axis::X);
         chars[i].size.y = Unit(maxY, Axis::Y);
         chars[i].original_size = chars[i].size;
+    }
+}
+
+void sur::Font::OffsetChar(char character, Vec2 offset)
+{
+    for (i32 i = 0; i < align.size(); ++i) {
+        if (character == align[i]) {
+            for (auto& iter : chars[i].points)
+                iter += offset;
+        }
     }
 }

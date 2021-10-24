@@ -228,8 +228,6 @@ namespace sur
 
 		void LoadPng(std::string_view path, Color colorToAlpha);
 
-		
-
 	public:
 
 		Vec2f size;		// This can variate if you for example scale the sprite
@@ -332,8 +330,10 @@ namespace sur
 
 		Font() = default;
 
-		Font(std::string_view file, Vec2 cellSize, i32 charCount, std::string_view align, Color colorToAlpha);
+		Font(std::string_view file, i32 charCount, std::string_view align, Color colorToAlpha);
 		
+		void OffsetChar(char character, Vec2 offset);
+
 	};
 //=======================================================================
 	struct Text
