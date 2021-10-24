@@ -32,6 +32,9 @@ Server: https://discord.gg/ymVn8ZsbeT
 #### 9. Go to Properties. Make sure all plattforms and configurations are set to: "All". -> C/C++ -> Language -> C++20
 #### 10. (Optional) Go to Properties. Make sure plattforms are set to: "All" and configurations are set to: "Release". -> C/C++ -> Codegeneration -> RuntimeLibrary = /MT
 #### 11. (Recommended) Go to Properties. Make sure plattforms are set to: "All" and configurations are set to: "Release". -> C/C++ -> Optimization: Optimization = /O2 Inline functions = /Ob2 Intrinsic functions = /Oi Preferred = /Ot
+#### 11. Press the build button again and it should compile with some linker errors
+#### 12. Go to Hgine -> C++ -> Classes -> Audio -> Audio.h and change the #pragma comment stuff to the correct path where the lib is located at
+#### 13. Go to Hgine -> C++ -> Classes -> LuaScript -> LuaScrip.h and chage the #pragma comment stuff to the correct path where the lib is located at
 
 ## Make it work (Old)
 To make the Engine work you just need to download the source folder and import it into a visual studio project.  
