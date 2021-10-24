@@ -36,7 +36,7 @@ Server: https://discord.gg/ymVn8ZsbeT
 #### 12. Go to Hgine -> C++ -> Classes -> Audio -> Audio.h and change the #pragma comment stuff to the correct path where the lib is located at
 #### 13. Go to Hgine -> C++ -> Classes -> LuaScript -> LuaScrip.h and chage the #pragma comment stuff to the correct path where the lib is located at
 #### Important: If you want to compile in x64 you have to go to Hgine/Extern/Includes and exclude the AngelScript folder. Now everything should compile fine!
-#### 14. Go and copy the x86 bass.dll into your release and debug folder. Go anc copy the x64 bass.dll into your x64/release and x64/debug folder
+#### 14. Go and copy the x86 bass.dll into your release and debug folder. Go anc copy the x64 bass.dll into your x64/release and x64/debug folder. Simply where your exe is at.
 ### Done
 
 ## Make it work (Old)
