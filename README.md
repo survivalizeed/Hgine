@@ -29,8 +29,8 @@ Server: https://discord.gg/ymVn8ZsbeT
 #### 6. Go back to Visual Studio and click the refresh button in the files explorer. Now you should see the "Hgine" folder
 #### 7. Right-Click the Hgine folder and click "add to project"
 #### 8. Now press the build button. You should get a lot of errors.
-#### 9. Go to Properties. Make sure all plattforms and configurations are set to: "All". -> C/C++ -> Language -> C++20
-#### 10. (Optional) Go to Properties. Make sure plattforms are set to: "All" and configurations are set to: "Release". -> C/C++ -> Codegeneration -> RuntimeLibrary = /MT
+#### 9. Go to Properties. Make sure plattforms and configurations are set to: "All". -> C/C++ -> Language -> C++20
+#### 10. (Optional) Go to Properties. Make sure plattforms are set to: "All" and configurations are set to: "Release". -> C/C++ -> Codegeneration: RuntimeLibrary = /MT
 #### 11. (Recommended) Go to Properties. Make sure plattforms are set to: "All" and configurations are set to: "Release". -> C/C++ -> Optimization: Optimization = /O2 Inline functions = /Ob2 Intrinsic functions = /Oi Preferred = /Ot
 #### 11. Press the build button again and it should compile with some linker errors
 #### 12. Go to Hgine -> C++ -> Classes -> Audio -> Audio.h and change the #pragma comment stuff to the correct path where the lib is located at
