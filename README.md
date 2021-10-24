@@ -20,6 +20,13 @@ Most of the time Im collecting new code to then publish it.
 Discord: survivalizeed#7659  
 Server: https://discord.gg/ymVn8ZsbeT
 
+## Creating a new project in Visual Studio
+#### 1. Create an empty project 
+#### 2. In the files explorer click "show all files"
+#### 3. Create a "Source" folder for yourself 
+#### 4. RightClick your project and click "open in file explorer"
+#### 5. Now you should see your "Source" folder with some visual studio files. Copy the "Hgine" folder next to the Source folder. Make sure you don't copy the main.cpp file
+#### 6. Go back to Visual Studio and press the refresh button in the files explorer. Now you should see the "Hgine" folder
 
 ## Make it work (Old)
 To make the Engine work you just need to download the source folder and import it into a visual studio project.  
