@@ -77,6 +77,7 @@ void sur::Set(Vec2 pos, Color color)
 
 sur::Color sur::Get(Vec2 pos)
 {
+    pos += _camera_offset;
     if (pos.x < 0 || pos.x > _window_size.x - 1 || pos.y < 0 || pos.y > _window_size.y - 1)
         Color(0, 0, 0);
     return Light::LightPixel(pos, _render_buffer[pos.x + _window_size.y * pos.y]);

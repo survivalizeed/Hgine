@@ -77,8 +77,9 @@ void sur::Sprite::LoadHgineres(std::string_view path)
         {
             iter.y = maxY - iter.y;
         }
-        this->size.x = Unit(*std::max_element(MaxX.begin(), MaxX.end()) - 1, Axis::X);
-        this->size.y = Unit(y - 1, Axis::Y);
+        size.x = Unit(*std::max_element(MaxX.begin(), MaxX.end()) - 1, Axis::X);
+        size.y = Unit(y - 1, Axis::Y);
+        original_size = size;
     }
 }
 
@@ -152,6 +153,7 @@ void sur::Sprite::LoadPng(std::string_view path, Color colorToAlpha)
 
     size.x = Unit(maxX, Axis::X);
     size.y = Unit(maxY, Axis::Y);
+    original_size = size;
 }
 
 sur::Sprite::Sprite(std::string_view file, FileType filetype, Vec2f position, Collider collider, std::string_view name, Color colorToAlpha)
@@ -173,6 +175,8 @@ sur::Sprite::Sprite(std::string_view file, FileType filetype, Vec2f position, Co
 void sur::Sprite::Scale(Vec2f scaleOrigin, Vec2f scale)
 {
     this->scaleOrigin = scaleOrigin;
+    size.x = original_size.x * scale.x;
+    size.y = original_size.y * scale.y;
     this->scale(
         scale.x, 0, 0,
         0, scale.y, 0,

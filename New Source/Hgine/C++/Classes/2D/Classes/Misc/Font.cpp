@@ -106,5 +106,6 @@ sur::Font::Font(std::string_view file, Vec2 cellSize, i32 charCount, std::string
 
         chars[i].size.x = Unit(maxX, Axis::X);
         chars[i].size.y = Unit(maxY, Axis::Y);
+        chars[i].original_size = chars[i].size;
     }
 }

@@ -228,9 +228,12 @@ namespace sur
 
 		void LoadPng(std::string_view path, Color colorToAlpha);
 
+		
+
 	public:
 
-		Vec2f size;
+		Vec2f size;		// This can variate if you for example scale the sprite
+		Vec2f original_size;
 
 		std::vector<Vec2> points;
 		std::vector<Color> colors;
@@ -337,6 +340,8 @@ namespace sur
 	{
 
 		i32 spacingX;
+		i32 original_spacingX;
+
 		Vec2f position;
 		std::string text;
 		Font* font;
@@ -344,6 +349,8 @@ namespace sur
 		Text() = default;
 	
 		Text(Font* font, Vec2f position, i32 spacingX, std::string_view text);
+
+		void Scale(f32 intensity);
 
 		void Bind(bool render);
 	};

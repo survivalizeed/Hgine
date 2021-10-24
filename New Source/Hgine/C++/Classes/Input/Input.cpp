@@ -12,7 +12,7 @@ sur::Vec2f sur::Input::Mouse::Position()
 	if (point.x > _window_size.x - 1 || point.y > _window_size.y - 1)
 		return STA(Vec2(_window_size.x - 1, _window_size.y - 1));
 	point.y = _window_size.y - point.y;
-	return STA(Vec2(point.x, point.y));
+	return STA(Vec2(point.x, point.y) - _camera_offset);
 }
 
 bool sur::Input::Mouse::LClick()

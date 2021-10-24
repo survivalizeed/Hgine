@@ -7,7 +7,16 @@ sur::Text::Text(Font* font, Vec2f position, i32 spacingX, std::string_view text)
 	this->font = font;
 	this->position = position;
 	this->spacingX = spacingX;
+	this->original_spacingX = spacingX;
 	this->text = text;
+}
+
+void sur::Text::Scale(f32 intensity)
+{
+	for (i32 i = 0; i < font->chars.size(); ++i) {
+		font->chars[i].Scale(position, { intensity, intensity });
+	}
+	spacingX = original_spacingX * intensity;
 }
 
 void sur::Text::Bind(bool render)
