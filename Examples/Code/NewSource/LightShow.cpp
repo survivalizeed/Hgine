@@ -14,17 +14,17 @@ int main() {
 
 	Square s1({ 0, 0 }, { 750,750 }, Color(255, 255, 255), Collider::AABB, "s1");
 	
-	Light s({ 750 / 2, 750 / 2 }, 0.f, 5000.f, 0.f, Color(255, 255, 0));
+	Light s({ 750 / 2, 750 / 2 }, 0.f, 5000.f, 0.f, Color(255, 255, 0), "s");
 
-	Light greenblue({ 200,200 }, 0.f, 20000.f, 5.f, Color(0, 255, 255));
+	Light greenblue({ 200,200 }, 0.f, 20000.f, 5.f, Color(0, 255, 255), "greenblue");
 
-	Light blue({ 200,200 }, 0.f, 20000.f, 5.f, Color(0, 0, 255));
+	Light blue({ 200,200 }, 0.f, 20000.f, 5.f, Color(0, 0, 255), "blue");
 
-	Light green({ 200,200 }, 0.f, 20000.f, 5.f, Color(0, 255, 0));
+	Light green({ 200,200 }, 0.f, 20000.f, 5.f, Color(0, 255, 0), "green");
 
-	Light red({ 200,200 }, 0.f, 20000.f, 5.f, Color(255, 0, 0));
+	Light red({ 200,200 }, 0.f, 20000.f, 5.f, Color(255, 0, 0), "red");
 
-	Light pink({ 200,200 }, 0.f, 20000.f, 5.f, Color(255, 0, 255));
+	Light pink({ 200,200 }, 0.f, 20000.f, 5.f, Color(255, 0, 255), "pink");
 
 	f32 greenblueStartangle = 0.f;
 	f32 greenStartangle = 90.f;
