@@ -21,22 +21,23 @@ Discord: survivalizeed#7659
 Server: https://discord.gg/ymVn8ZsbeT
 
 ## Creating a new project in Visual Studio (New)
-#### 1. Create an empty project 
-#### 2. In the files explorer click "show all files"
-#### 3. (Recommended) Create a "Source" folder for yourself 
-#### 4. Right-Click your project and click "open in file explorer"
-#### 5. Now you should see your "Source" folder with some visual studio files. Copy the "Hgine" folder next to the Source folder. Make sure you don't copy the main.cpp file
-#### 6. Go back to Visual Studio and click the refresh button in the files explorer. Now you should see the "Hgine" folder
-#### 7. Right-Click the Hgine folder and click "add to project"
-#### 8. Now press the build button. You should get a lot of errors.
-#### 9. Go to Properties. Make sure plattforms and configurations are set to: "All". -> C/C++ -> Language -> C++20
-#### 10. (Optional) Go to Properties. Make sure plattforms are set to: "All" and configurations are set to: "Release". -> C/C++ -> Codegeneration: RuntimeLibrary = /MT
-#### 11. (Recommended) Go to Properties. Make sure plattforms are set to: "All" and configurations are set to: "Release". -> C/C++ -> Optimization: Optimization = /O2 Inline functions = /Ob2 Intrinsic functions = /Oi Preferred = /Ot
-#### 11. Press the build button again and it should compile with some linker errors
-#### 12. Go to Hgine -> C++ -> Classes -> Audio -> Audio.h and change the #pragma comment stuff to the correct path where the lib is located at
-#### 13. Go to Hgine -> C++ -> Classes -> LuaScript -> LuaScrip.h and chage the #pragma comment stuff to the correct path where the lib is located at
+#### 1. Create an empty project in Visual Studio
+#### 2. Download the new source with the download button above
+#### 3. In the Visual Studio files explorer click "show all files"
+#### 4. (Recommended) Create a "Source" folder for yourself in the Visual Studio files explorer
+#### 5. Right-Click your project and click "open in file explorer"
+#### 6. Now you should see your "Source" folder with some Visual Studio files. Copy the "Hgine" folder next to the Source folder. Make sure you don't copy the main.cpp file
+#### 7. Go back to Visual Studio and click the refresh button in the files explorer. Now you should see the "Hgine" folder
+#### 8. Right-Click the Hgine folder and click "add to project"
+#### 9. Now press the build button. You should get a lot of errors.
+#### 10. Go to Properties. Make sure plattforms and configurations are set to: "All". -> C/C++ -> Language -> C++20
+#### 11. (Optional) Go to Properties. Make sure plattforms are set to: "All" and configurations are set to: "Release". -> C/C++ -> Codegeneration: RuntimeLibrary = /MT
+#### 12. (Recommended) Go to Properties. Make sure plattforms are set to: "All" and configurations are set to: "Release". -> C/C++ -> Optimization: Optimization = /O2 Inline functions = /Ob2 Intrinsic functions = /Oi Preferred = /Ot
+#### 13. Press the build button again and it should compile with some linker errors
+#### 14. Go to Hgine -> C++ -> Classes -> Audio -> Audio.h and change the #pragma comment stuff to the correct path where the lib is located at
+#### 15. Go to Hgine -> C++ -> Classes -> LuaScript -> LuaScrip.h and chage the #pragma comment stuff to the correct path where the lib is located at
 #### Important: If you want to compile in x64 you have to go to Hgine/Extern/Includes and exclude the AngelScript folder. Now everything should compile fine!
-#### 14. Go and copy the x86 bass.dll into your release and debug folder. Go anc copy the x64 bass.dll into your x64/release and x64/debug folder. Simply where your exe is at.
+#### 16. Go and copy the x86 bass.dll into your release and debug folder. Go anc copy the x64 bass.dll into your x64/release and x64/debug folder. Simply where your exe is at.
 ### Done
 
 ## Make it work (Old)
