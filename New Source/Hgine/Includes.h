@@ -32,6 +32,7 @@
 #include <functional>
 #include <string_view>
 #include <map>
+#include <optional>
 
 #define log(x) std::cout << x << "\n";
 
