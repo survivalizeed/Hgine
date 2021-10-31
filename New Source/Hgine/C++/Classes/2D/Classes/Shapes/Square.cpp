@@ -5,11 +5,10 @@
 
 bool sur::Square::CheckOutOfScreen()
 {
-	Vec2f local_start_point; 
-	Vec2f local_end_point; 
-	local_start_point = start_point + STA(_camera_offset);
-	local_end_point = end_point + STA(_camera_offset);
-
+	Vec2f local_start_point;
+	Vec2f local_end_point;
+	local_start_point = start_point + position + STA(_camera_offset);
+	local_end_point = end_point + position + STA(_camera_offset);
 	if ((local_start_point.x < 0 && local_end_point.x < 0) || (local_start_point.y < 0 && local_end_point.y < 0))
 		return true;
 	if ((local_start_point.x > _window_size.x && local_end_point.x > _window_size.x) ||
