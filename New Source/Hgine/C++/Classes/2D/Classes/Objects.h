@@ -85,11 +85,15 @@ namespace sur
 		i32 hash;
 		Type type;
 		std::string name;
+			
+		Vec2f original_position;
 
 	public:
 	
+		bool childOfCamera;
 		bool active;
 		Color color;
+		
 		Vec2f position;
 
 		std::string_view GetName() const;
@@ -97,6 +101,10 @@ namespace sur
 		Type GetType() const;
 
 		i32 GetHash() const;
+
+		Vec2f GetVirtualPosition() const;
+
+		virtual void Bind(bool render) {};
 
 	};
 //=======================================================================
@@ -110,6 +118,8 @@ namespace sur
 		void AABBmove(GameObject* current, Vec2 incomingDirection);
 
 		void CheckCollision();
+
+		virtual bool CheckOutOfScreen() = 0;
 
 	public:
 
@@ -137,7 +147,7 @@ namespace sur
 
 		Vec2 Move(Vec2f direction, i32 moveQueueIndex);
 
-		void Bind(bool render);
+		void Bind(bool render) final;
 
 	};
 //=======================================================================
@@ -201,8 +211,13 @@ namespace sur
 
 	};
 //=======================================================================
-	struct Square : public GameObject
+	class Square : public GameObject
 	{
+	private:
+
+		bool CheckOutOfScreen() final;
+
+	public:
 
 		Vec2f start_point;
 		Vec2f end_point;
@@ -211,13 +226,13 @@ namespace sur
 
 		Square(Vec2f start_point, Vec2f end_point, Color color, Collider collider, std::string_view name);
 
-		void Bind(bool render);
+		void Bind(bool render) final;
 
 	};
 //=======================================================================
 	class Sprite : public GameObject 
 	{
-	private:
+	protected:
 
 		Vec2f scaleOrigin;
 		Mat3x3 scale = Mat3x3(1, 0, 0, 0, 1, 0, 0, 0, 1);
@@ -227,6 +242,8 @@ namespace sur
 		void LoadHgineres(std::string_view path);
 
 		void LoadPng(std::string_view path, Color colorToAlpha);
+
+		bool CheckOutOfScreen() final;
 
 	public:
 
@@ -249,7 +266,7 @@ namespace sur
 
 		void Scale(Vec2f scaleOrigin, Vec2f scale);
 
-		void Bind(bool render);
+		virtual void Bind(bool render) override;
 
 	};
 //=======================================================================
@@ -281,12 +298,17 @@ namespace sur
 
 		Vec2 Move(Vec2f direction, i32 moveQueueIndex);
 
-		void Bind(bool render);
+		void Bind(bool render) final;
 		
 	};
 //=======================================================================
-	struct Light : public Object
+	class Light : public Object
 	{
+	private:
+
+		using Object::Bind;
+
+	public:
 
 		f32 radius;
 		f32 threshold;
@@ -302,16 +324,23 @@ namespace sur
 
 	};
 //=======================================================================
-	struct Camera : public MvQ
+	class Camera : public MvQ
 	{
+	private:
 
 		Vec2f position;
 		
+	public:
+
 		Camera() = default;
 
 		Camera(Vec2f position, bool active);
 
 		void MakeActive();
+
+		void SetPosition(Vec2f position);
+
+		Vec2f GetPosition();
 
 		Vec2 Move(Vec2f direction, i32 moveQueueIndex);
 
@@ -336,8 +365,13 @@ namespace sur
 
 	};
 //=======================================================================
-	struct Text
+	class Text
 	{
+	private:
+
+		Vec2f original_position;
+
+	public:
 
 		i32 spacingX;
 		i32 original_spacingX;
@@ -352,7 +386,33 @@ namespace sur
 
 		void Scale(f32 intensity);
 
+		Vec2f GetVirtualPosition();
+
 		void Bind(bool render);
 	};
 //=======================================================================
+	class Button : public Sprite
+	{
+	private:
+
+		bool previousHover = false;
+		bool hover;
+
+	public:
+
+		using Sprite::Sprite;
+
+		cb_ptr_s<Button*> OnMouseHoverEnter;
+
+		cb_ptr_s<Button*> OnMouseHover;
+
+		cb_ptr_s<Button*> OnMouseHoverExit;
+
+		cb_ptr_s<Button*> OnMouseLClick;
+
+		cb_ptr_s<Button*> OnMouseRClick;
+
+		void Bind(bool render) final;
+
+	};
 }

@@ -28,14 +28,8 @@ sur::Font::Font(std::string_view file, i32 charCount, std::string_view align, Co
     auto GetPixel = [&](Vec2 pos) -> Color {
         return all.colors[pos.x + width * pos.y];
     }; 
-    for (i32 i = 0; i < charCount; ++i) {
+    for (i32 i = 0; i < charCount; ++i)
         chars.push_back(Sprite("Empty", Sprite::FileType::Empty, {0,0}, Collider::None, "Empty", Color(0, 0, 0)));
-        //for (i32 x = 0; x < cellSize.x; ++x) {
-        //    for (i32 y = 0; y < cellSize.y; ++y) {
-        //        
-        //    }
-        //}    
-    }
     i32 offsetX = 0;
     for (i32 i = 0; i < charCount; ++i) {
         for (;;) {

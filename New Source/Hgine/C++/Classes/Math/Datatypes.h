@@ -28,6 +28,9 @@ namespace sur
     template <typename CallBackType>
     using cb_ptr = std::function<void(CallBackType, CallBackType)>;
 
+    template <typename CallBackType>
+    using cb_ptr_s = std::function<void(CallBackType)>;
+
     struct sRGB
     { //sRGB because RGB is already taken ;)
 

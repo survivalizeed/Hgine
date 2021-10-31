@@ -5,6 +5,7 @@
 sur::Light::Light(Vec2f position, f32 radius, f32 threshold, f32 falloffIntensity, Color color, std::string_view name)
 {
 	this->position = position;
+    this->original_position = position;
 	this->radius = radius;
 	this->threshold = threshold;
 	this->falloffIntensity = falloffIntensity;

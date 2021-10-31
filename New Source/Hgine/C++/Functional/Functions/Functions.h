@@ -12,6 +12,8 @@ namespace sur
 
 	void SetVolume(i32 volume);
 
+	i64 GetMilliseconds();
+
 	i32 RandomRange(i32 min, i32 max);
 
 	void Set(Vec2 pos, Color color);

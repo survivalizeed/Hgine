@@ -156,10 +156,25 @@ void sur::Sprite::LoadPng(std::string_view path, Color colorToAlpha)
     original_size = size;
 }
 
+bool sur::Sprite::CheckOutOfScreen()
+{
+    Vec2f local_start_point; 
+    Vec2f local_end_point;
+    local_start_point = position + STA(_camera_offset);
+    local_end_point = position + size + STA(_camera_offset);
+    if ((local_start_point.x < 0 && local_end_point.x < 0) || (local_start_point.y < 0 && local_end_point.y < 0))
+        return true;
+    if ((local_start_point.x > _window_size.x && local_end_point.x > _window_size.x) ||
+        (local_start_point.y > _window_size.y && local_end_point.y > _window_size.y))
+        return true;
+    return false;
+}
+
 sur::Sprite::Sprite(std::string_view file, FileType filetype, Vec2f position, Collider collider, std::string_view name, Color colorToAlpha)
 {
     this->color = Color(0, 0, 0);
     this->position = position;
+    this->original_position = position;
     this->type = Type::Sprite;
     this->collider = collider;
     this->name = name;
@@ -186,8 +201,17 @@ void sur::Sprite::Scale(Vec2f scaleOrigin, Vec2f scale)
 
 void sur::Sprite::Bind(bool render)
 {
+    if (childOfCamera) {
+        position = original_position - STA(_camera_offset);
+    }
+    else {
+        original_position = position + STA(_camera_offset);
+    }
     if (collider != Collider::None)
         CheckCollision();
-    for (i32 i = 0; i < points.size(); ++i)
-        Set(ATS(scale.Forward2D(STA(points[i]) - scaleOrigin) + scaleOrigin) + ATS(position), colors[i]);
+    if (CheckOutOfScreen())
+        return;
+    if(render)
+        for (i32 i = 0; i < points.size(); ++i)
+            Set(ATS(scale.Forward2D(STA(points[i]) - scaleOrigin) + scaleOrigin) + ATS(position), colors[i]);
 }

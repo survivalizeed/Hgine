@@ -6,6 +6,7 @@ sur::Text::Text(Font* font, Vec2f position, i32 spacingX, std::string_view text)
 {
 	this->font = font;
 	this->position = position;
+	this->original_position = position;
 	this->spacingX = spacingX;
 	this->original_spacingX = spacingX;
 	this->text = text;
@@ -19,6 +20,11 @@ void sur::Text::Scale(f32 intensity)
 	spacingX = i32(original_spacingX * intensity);
 }
 
+sur::Vec2f sur::Text::GetVirtualPosition()
+{
+	return position - STA(_camera_offset);
+}
+
 void sur::Text::Bind(bool render)
 {
 	f32 xIncrementPool = 0;
@@ -29,6 +35,10 @@ void sur::Text::Bind(bool render)
 				index = j;
 				break;
 			}
+		}
+		if (text[i] == ' ') {
+			xIncrementPool += Unit(spacingX * 3, Axis::X);
+			continue;
 		}
 		font->chars[index].position({ position.x + i * Unit(spacingX, Axis::X) + xIncrementPool, position.y});
 		font->chars[index].Bind(true);

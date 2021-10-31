@@ -56,6 +56,12 @@ void sur::SetVolume(i32 volume)
 	waveOutSetVolume(NULL, volume);
 }
 
+sur::i64 sur::GetMilliseconds()
+{
+    using namespace std::chrono;
+    return (i64)duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
+}
+
 sur::i32 sur::RandomRange(i32 min, i32 max)
 {
     static bool once = false;
@@ -77,7 +83,6 @@ void sur::Set(Vec2 pos, Color color)
 
 sur::Color sur::Get(Vec2 pos)
 {
-    pos += _camera_offset;
     if (pos.x < 0 || pos.x > _window_size.x - 1 || pos.y < 0 || pos.y > _window_size.y - 1)
         Color(0, 0, 0);
     return Light::LightPixel(pos, _render_buffer[pos.x + _window_size.y * pos.y]);

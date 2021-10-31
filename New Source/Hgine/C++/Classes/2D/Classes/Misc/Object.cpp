@@ -16,3 +16,8 @@ sur::i32 sur::Object::GetHash() const
 {
 	return hash;
 }
+
+sur::Vec2f sur::Object::GetVirtualPosition() const
+{
+	return position - STA(_camera_offset);
+}

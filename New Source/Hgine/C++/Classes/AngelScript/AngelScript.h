@@ -10,7 +10,7 @@
 
 namespace sur
 {
-	enum AngelDatatype 
+	enum class AngelDatatype 
 	{
 
 		Int,
@@ -88,17 +88,17 @@ namespace sur
 			}
 			ctx->Execute();
 
-			if constexpr (type == Int)
+			if constexpr (type == AngelDatatype::Int)
 				return ctx->GetReturnDWord();
-			if constexpr (type == Long)
+			if constexpr (type == AngelDatatype::Long)
 				return ctx->GetReturnQWord();
-			if constexpr (type == Float)
+			if constexpr (type == AngelDatatype::Float)
 				return ctx->GetReturnFloat();
-			if constexpr (type == Double)
+			if constexpr (type == AngelDatatype::Double)
 				return ctx->GetReturnDouble();
-			if constexpr (type == Bool)
+			if constexpr (type == AngelDatatype::Bool)
 				return ctx->GetReturnByte();
-			if constexpr (type == Void)
+			if constexpr (type == AngelDatatype::Void)
 				return;
 		}
 

@@ -7,8 +7,8 @@
 namespace sur 
 {
 	class GameObject;
-	struct Light;
-	struct Camera;
+	class Light;
+	class Camera;
 }
 
 extern HWND _window_hwnd;
@@ -42,6 +42,8 @@ extern std::vector<sur::i32> _hashes;
 extern sur::Vec2 _camera_offset;
 
 extern sur::Camera* _active_camera;
+
+extern bool _is_camera_attached;
 
 #if _WIN32 || _WIN64
 #if _WIN64

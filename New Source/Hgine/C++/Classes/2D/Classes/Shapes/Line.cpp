@@ -8,6 +8,7 @@ sur::Line::Line(Vec2f start_point, Vec2f end_point, Color color, std::string_vie
 	this->end_point = end_point;
 	this->color = color;
 	this->position(0, 0);
+	this->original_position = position;
 	this->type = Type::Line;
 	this->name = name;
 	this->hash = static_cast<i32>(std::hash<std::string>{}(name.data()));
@@ -24,6 +25,12 @@ sur::Vec2 sur::Line::Move(Vec2f direction, i32 moveQueueIndex)
 
 void sur::Line::Bind(bool render)
 {
+	if (childOfCamera) {
+		position = original_position - STA(_camera_offset);
+	}
+	else {
+		original_position = position + STA(_camera_offset);
+	}
 	if (render) {
 		algorithm::DrawLine(start_point + position, end_point + position, color, nullptr, nullptr);
 	}

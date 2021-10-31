@@ -11,6 +11,7 @@ sur::Form::Form(const std::vector<Vec2f>& points, const std::vector<i32>& indice
 	this->fillMode = fillMode;
 	this->color = color;
 	this->position(0, 0);
+	this->original_position = position;
 	this->type = Type::Form;
 	this->name = name;
 	this->hash = static_cast<i32>(std::hash<std::string>{}(name.data()));
@@ -137,6 +138,12 @@ sur::Vec2 sur::Form::Move(Vec2f direction, i32 moveQueueIndex)
 
 void sur::Form::Bind(bool render, bool wireframe)
 {
+	if (childOfCamera) {
+		position = original_position - STA(_camera_offset);
+	}
+	else {
+		original_position = position + STA(_camera_offset);
+	}
 	std::vector<Vec2f> points_with_position(points);
 	for (auto& iter : points_with_position)
 		iter = iter + position;

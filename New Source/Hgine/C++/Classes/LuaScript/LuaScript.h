@@ -13,7 +13,7 @@
 
 namespace sur
 {
-	enum LuaDatatype
+	enum class LuaDatatype
 	{
 
 		Int,
@@ -42,13 +42,13 @@ namespace sur
 				Error(lua_tostring(handle, -1));
 			}
 			std::string tmp = lua_tostring(handle, -1);
-			if constexpr (type == Int)
+			if constexpr (type == LuaDatatype::Int)
 				return stoi(tmp);
-			if constexpr (type == Float)
+			if constexpr (type == LuaDatatype::Float)
 				return stof(tmp);
-			if constexpr (type == String)
+			if constexpr (type == LuaDatatype::String)
 				return tmp;
-			if constexpr (type == Void)
+			if constexpr (type == LuaDatatype::Void)
 				return;
 		}
 

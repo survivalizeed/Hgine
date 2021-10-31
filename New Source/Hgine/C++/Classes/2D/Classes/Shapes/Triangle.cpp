@@ -9,6 +9,7 @@ sur::Triangle::Triangle(Vec2f p1, Vec2f p2, Vec2f p3, Color color, std::string_v
 	this->p3 = p3;
 	this->color = color;
 	this->position(0, 0);
+	this->original_position = position;
 	this->type = Type::Triangle;
 	this->name = name;
 	this->hash = static_cast<i32>(std::hash<std::string>{}(name.data()));
@@ -57,11 +58,18 @@ sur::Vec2 sur::Triangle::Move(Vec2f direction, i32 moveQueueIndex)
 
 void sur::Triangle::Bind(bool render, bool wireframe)
 {
-	if (render)
+	if (childOfCamera) {
+		position = original_position - STA(_camera_offset);
+	}
+	else {
+		original_position = position + STA(_camera_offset);
+	}
+	if (render) {
 		if (wireframe)
 			algorithm::DrawTriangleWire(p1 + position, p2 + position, p3 + position, color);
 		else
 			algorithm::DrawTriangle(p1 + position, p2 + position, p3 + position, color);
+	}
 	
 }
 

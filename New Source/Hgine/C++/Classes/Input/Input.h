@@ -73,7 +73,7 @@ namespace sur
 
 		struct Mouse {
 
-			static Vec2f Position();
+			static std::optional<Vec2f> Position();
 			static bool LClick();
 			static bool RClick();
 

@@ -2,15 +2,15 @@
 
 #include "Input.h"
 
-sur::Vec2f sur::Input::Mouse::Position()
+std::optional<sur::Vec2f> sur::Input::Mouse::Position()
 {
 	POINT point;
 	GetCursorPos(&point);
 	ScreenToClient(_window_hwnd, &point);
 	if (point.x < 0 || point.y < 0)
-		return { 0, 0 };
+		return std::nullopt;
 	if (point.x > _window_size.x - 1 || point.y > _window_size.y - 1)
-		return STA(Vec2(_window_size.x - 1, _window_size.y - 1));
+		return std::nullopt;
 	point.y = _window_size.y - point.y;
 	return STA(Vec2(point.x, point.y) - _camera_offset);
 }
