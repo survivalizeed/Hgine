@@ -22,7 +22,7 @@ Server: https://discord.gg/ymVn8ZsbeT
 
 ## Creating a new project in Visual Studio (New)
 #### 1. Create an empty project in Visual Studio
-#### 2. Download the new source with the download button above
+#### 2. Download the new source with the download button above or open git bash and enter: git clone https://github.com/survivalizeed/RawHgine
 #### 3. In the Visual Studio files explorer click "show all files"
 #### 4. (Recommended) Create a "Source" folder for yourself in the Visual Studio files explorer
 #### 5. Right-Click your project and click "open in file explorer"
