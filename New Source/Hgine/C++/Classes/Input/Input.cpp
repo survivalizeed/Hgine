@@ -15,18 +15,48 @@ std::optional<sur::Vec2f> sur::Input::Mouse::Position()
 	return STA(Vec2(point.x, point.y) - _camera_offset);
 }
 
-bool sur::Input::Mouse::LClick()
+bool sur::Input::Mouse::LClickHeld()
 {
-	if (GetKeyState(VK_LBUTTON) & 0x8000 && GetForegroundWindow() == _window_hwnd)
+	if (GetAsyncKeyState(VK_LBUTTON) & 0x8000 && GetForegroundWindow() == _window_hwnd)
 		return true;
 	return false;
 }
 
-bool sur::Input::Mouse::RClick()
+bool sur::Input::Mouse::RClickHeld()
 {
 	if (GetAsyncKeyState(VK_RBUTTON) & 0x8000 && GetForegroundWindow() == _window_hwnd)
 		return true;
 	return false;
+}
+
+bool sur::Input::Mouse::LClickPress()
+{
+	if (GetKeyState(VK_LBUTTON) & 0x8000 && GetForegroundWindow() == _window_hwnd) {
+		if (!mClick[0]) {
+			mClick[0] = true;
+			return true;
+		}
+		return false;
+	}
+	else {
+		mClick[0] = false;
+		return false;
+	}	
+}
+
+bool sur::Input::Mouse::RClickPress()
+{
+	if (GetKeyState(VK_RBUTTON) & 0x8000 && GetForegroundWindow() == _window_hwnd) {
+		if (!mClick[1]) {
+			mClick[1] = true;
+			return true;
+		}
+		return false;
+	}
+	else {
+		mClick[1] = false;
+		return false;
+	}
 }
 
 bool sur::Input::Keyboard::KeyHeld(Key key)

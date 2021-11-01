@@ -127,8 +127,10 @@ namespace sur
 
 		bool anyCollisionLeft = false;
 
-		cb_ptr<GameObject*> onCollisionEnter;											
+		cb_ptr<GameObject*> onCollisionEnter;	
+
 		cb_ptr<GameObject*> onCollisionStay;
+
 		cb_ptr<GameObject*> onCollisionExit;
 
 		Vec2 Move(Vec2f direction, i32 moveQueueIndex);
@@ -322,6 +324,8 @@ namespace sur
 
 		Vec2 Move(Vec2f direction, i32 moveQueueIndex);
 
+		void Refresh();
+
 	};
 //=======================================================================
 	class Camera : public MvQ
@@ -376,6 +380,7 @@ namespace sur
 		i32 spacingX;
 		i32 original_spacingX;
 
+		bool childOfCamera;
 		Vec2f position;
 		std::string text;
 		Font* font;
@@ -386,12 +391,10 @@ namespace sur
 
 		void Scale(f32 intensity);
 
-		Vec2f GetVirtualPosition();
-
 		void Bind(bool render);
 	};
 //=======================================================================
-	class Button : public Sprite
+	class ExtendedSprite : public Sprite
 	{
 	private:
 
@@ -402,15 +405,19 @@ namespace sur
 
 		using Sprite::Sprite;
 
-		cb_ptr_s<Button*> OnMouseHoverEnter;
+		cb_ptr_s<ExtendedSprite*> onHoverEnter;
 
-		cb_ptr_s<Button*> OnMouseHover;
+		cb_ptr_s<ExtendedSprite*> onHoverStay;
 
-		cb_ptr_s<Button*> OnMouseHoverExit;
+		cb_ptr_s<ExtendedSprite*> onHoverExit;
 
-		cb_ptr_s<Button*> OnMouseLClick;
+		cb_ptr_s<ExtendedSprite*> onLClickHeld;
 
-		cb_ptr_s<Button*> OnMouseRClick;
+		cb_ptr_s<ExtendedSprite*> onRClickHeld;
+
+		cb_ptr_s<ExtendedSprite*> onLClickPress;
+
+		cb_ptr_s<ExtendedSprite*> onRClickPress;
 
 		void Bind(bool render) final;
 

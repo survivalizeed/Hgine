@@ -75,6 +75,12 @@ sur::Vec2 sur::ParticleSystem::Move(Vec2f direction, i32 moveQueueIndex)
 
 void sur::ParticleSystem::Bind(bool render)
 {
+	if (childOfCamera) {
+		position = original_position - STA(_camera_offset);
+	}
+	else {
+		original_position = position + STA(_camera_offset);
+	}
 	for (i32 i = 0; i < offsets.size(); ++i) {
 		bool l1 = false;
 		bool l2 = false;

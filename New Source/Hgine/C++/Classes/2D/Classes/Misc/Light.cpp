@@ -90,3 +90,13 @@ sur::Vec2 sur::Light::Move(Vec2f direction, i32 moveQueueIndex)
     return move;
 }
 
+void sur::Light::Refresh()
+{
+    if (childOfCamera) {
+        position = original_position - STA(_camera_offset);
+    }
+    else {
+        original_position = position + STA(_camera_offset);
+    }
+}
+

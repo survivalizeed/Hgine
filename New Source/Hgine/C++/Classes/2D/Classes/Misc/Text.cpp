@@ -20,13 +20,14 @@ void sur::Text::Scale(f32 intensity)
 	spacingX = i32(original_spacingX * intensity);
 }
 
-sur::Vec2f sur::Text::GetVirtualPosition()
-{
-	return position - STA(_camera_offset);
-}
-
 void sur::Text::Bind(bool render)
 {
+	if (childOfCamera) {
+		position = original_position - STA(_camera_offset);
+	}
+	else {
+		original_position = position + STA(_camera_offset);
+	}
 	f32 xIncrementPool = 0;
 	i32 index = 0;
 	for (i32 i = 0; i < text.size(); ++i) {
