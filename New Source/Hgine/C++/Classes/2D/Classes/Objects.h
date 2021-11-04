@@ -4,6 +4,8 @@
 
 namespace sur
 {
+	class Input;
+
 	enum class Type
 	{
 
@@ -361,6 +363,10 @@ namespace sur
 	{
 	private:
 
+		Input* input1;
+		Input* input2;
+		Input* input3;
+
 		bool previousHover = false;
 		bool hover;
 
@@ -378,6 +384,33 @@ namespace sur
 
 		cb_ptr_s<ExtendedSprite*> onHoverExit;
 
+
+		cb_ptr_s<ExtendedSprite*> onHoverLClickHeld;
+
+		cb_ptr_s<ExtendedSprite*> onHoverRClickHeld;
+
+		cb_ptr_s<ExtendedSprite*> onHoverLClickPress;
+
+		cb_ptr_s<ExtendedSprite*> onHoverRClickPress;
+
+		cb_ptr_s<ExtendedSprite*> onHoverLClickRelease;
+
+		cb_ptr_s<ExtendedSprite*> onHoverRClickRelease;
+
+
+		cb_ptr_s<ExtendedSprite*> onNotHoverLClickHeld;
+
+		cb_ptr_s<ExtendedSprite*> onNotHoverRClickHeld;
+
+		cb_ptr_s<ExtendedSprite*> onNotHoverLClickPress;
+
+		cb_ptr_s<ExtendedSprite*> onNotHoverRClickPress;
+
+		cb_ptr_s<ExtendedSprite*> onNotHoverLClickRelease;
+
+		cb_ptr_s<ExtendedSprite*> onNotHoverRClickRelease;
+
+
 		cb_ptr_s<ExtendedSprite*> onLClickHeld;
 
 		cb_ptr_s<ExtendedSprite*> onRClickHeld;
@@ -386,7 +419,13 @@ namespace sur
 
 		cb_ptr_s<ExtendedSprite*> onRClickPress;
 
+		cb_ptr_s<ExtendedSprite*> onLClickRelease;
+										  
+		cb_ptr_s<ExtendedSprite*> onRClickRelease;
+
 		void Bind(bool render) final;
+
+		~ExtendedSprite();
 
 	};
 }

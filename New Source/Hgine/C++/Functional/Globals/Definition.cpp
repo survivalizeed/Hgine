@@ -43,7 +43,6 @@ sur::Vec2 _camera_offset;
 
 sur::Camera* _active_camera;
 
-
 #if _WIN32 || _WIN64
 #if _WIN64
 #else

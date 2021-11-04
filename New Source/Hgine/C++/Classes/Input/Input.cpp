@@ -2,7 +2,7 @@
 
 #include "Input.h"
 
-std::optional<sur::Vec2f> sur::Input::Mouse::Position()
+std::optional<sur::Vec2f> sur::Input::Position()
 {
 	POINT point;
 	GetCursorPos(&point);
@@ -15,21 +15,21 @@ std::optional<sur::Vec2f> sur::Input::Mouse::Position()
 	return STA(Vec2(point.x, point.y) - _camera_offset);
 }
 
-bool sur::Input::Mouse::LClickHeld()
+bool sur::Input::LClickHeld()
 {
 	if (GetAsyncKeyState(VK_LBUTTON) & 0x8000 && GetForegroundWindow() == _window_hwnd)
 		return true;
 	return false;
 }
 
-bool sur::Input::Mouse::RClickHeld()
+bool sur::Input::RClickHeld()
 {
 	if (GetAsyncKeyState(VK_RBUTTON) & 0x8000 && GetForegroundWindow() == _window_hwnd)
 		return true;
 	return false;
 }
 
-bool sur::Input::Mouse::LClickPress()
+bool sur::Input::LClickPress()
 {
 	if (GetAsyncKeyState(VK_LBUTTON) & 0x8000 && GetForegroundWindow() == _window_hwnd) {
 		if (!mClick[0]) {
@@ -39,12 +39,12 @@ bool sur::Input::Mouse::LClickPress()
 		return false;
 	}
 	else {
-		mClick[0] = false;
+		this->mClick[0] = false;
 		return false;
 	}	
 }
 
-bool sur::Input::Mouse::RClickPress()
+bool sur::Input::RClickPress()
 {
 	if (GetAsyncKeyState(VK_RBUTTON) & 0x8000 && GetForegroundWindow() == _window_hwnd) {
 		if (!mClick[1]) {
@@ -59,14 +59,39 @@ bool sur::Input::Mouse::RClickPress()
 	}
 }
 
-bool sur::Input::Keyboard::KeyHeld(Key key)
+bool sur::Input::LClickRelease()
+{
+	if (GetAsyncKeyState(VK_LBUTTON) & 0x8000 && GetForegroundWindow() == _window_hwnd) {
+		mClickRel[0] = true;
+	} 
+	else if (mClickRel[0]) {
+		mClickRel[0] = false;
+		return true;
+	}
+	return false;
+	
+}
+
+bool sur::Input::RClickRelease()
+{
+	if (GetAsyncKeyState(VK_RBUTTON) & 0x8000 && GetForegroundWindow() == _window_hwnd) {
+		mClickRel[1] = true;
+	}
+	else if (mClickRel[1]) {
+		mClickRel[1] = false;
+		return true;
+	}
+	return false;
+}
+
+bool sur::Input::KeyHeld(Key key)
 {
 	if (GetAsyncKeyState(key) & 0x8000 && GetForegroundWindow() == _window_hwnd)
 		return true;
 	return false;
 }
 
-bool sur::Input::Keyboard::KeyPress(Key key)
+bool sur::Input::KeyPress(Key key)
 {
 	if (GetAsyncKeyState(key) & 0x8000 && GetForegroundWindow() == _window_hwnd)
 	{
