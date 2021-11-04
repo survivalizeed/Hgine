@@ -33,11 +33,10 @@ Server: https://discord.gg/ymVn8ZsbeT
 #### 9. Now press the build button. You should get a lot of errors.
 #### 10. Go to Properties. Make sure plattforms and configurations are set to: "All". -> C/C++ -> Language -> C++20
 #### 11. (Optional) Go to Properties. Make sure plattforms are set to: "All" and configurations are set to: "Release". -> C/C++ -> Codegeneration: RuntimeLibrary = /MT
-#### 12. (Recommended) Go to Properties. Make sure plattforms are set to: "All" and configurations are set to: "Release". -> C/C++ -> Optimization: Optimization = /O2 Inline functions = /Ob2 Intrinsic functions = /Oi Preferred = /Ot
+#### 12. (Recommended) Go to Properties. Make sure plattforms are set to: "All" and configurations are set to: "Release". -> C/C++ -> Optimization: Optimization = /O2 Inline functions = /Ob2 Intrinsic functions = /Oi Preferred = /Ot | C/C++ -> Codegeneration -> floating point = /fp:fast
 #### 13. Press the build button again and it should compile with some linker errors
 #### 14. Go to Hgine -> C++ -> Classes -> Audio -> Audio.h and change the #pragma comment stuff to the correct path where the lib is located at
 #### 15. Go to Hgine -> C++ -> Classes -> LuaScript -> LuaScrip.h and chage the #pragma comment stuff to the correct path where the lib is located at
-#### Important: If you want to compile in x64 you have to go to Hgine/Extern/Includes and exclude the AngelScript folder. Now everything should compile fine!
 #### 16. Go and copy the x86 bass.dll into your release and debug folder. Go anc copy the x64 bass.dll into your x64/release and x64/debug folder. Simply where your exe is at.
 ### Done
 
