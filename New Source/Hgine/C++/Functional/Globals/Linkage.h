@@ -44,10 +44,3 @@ extern std::vector<sur::i32> _hashes;
 extern sur::Vec2 _camera_offset;
 
 extern sur::Camera* _active_camera;
-
-#if _WIN32 || _WIN64
-#if _WIN64
-#else
-extern asIScriptEngine* _asEngine;
-#endif
-#endif
