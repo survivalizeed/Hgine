@@ -36,7 +36,7 @@ Server: https://discord.gg/ymVn8ZsbeT
 #### 13. Press the build button again and it should compile with some linker errors
 #### 14. Go to Hgine -> C++ -> Classes -> Audio -> Audio.h and change the #pragma comment stuff to the correct path where the lib is located at (it is in the Hgine/Extern folder)
 #### 15. Go to Hgine -> C++ -> Classes -> LuaScript -> LuaScript.h and chage the #pragma comment stuff to the correct path where the lib is located at (it is in the Hgine/Extern folder)
-#### 16. Go and copy the x86 bass.dll into your release and debug folder. Go anc copy the x64 bass.dll into your x64/release and x64/debug folder. Simply where your exe is at.
+#### 16. Go and copy the x86 bass.dll into your release and debug folder. Go and copy the x64 bass.dll into your x64/release and x64/debug folder. Simply where your exe is loctaed at.
 ### Done
 
 ## Make it work (Old)
