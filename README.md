@@ -26,7 +26,7 @@ Server: https://discord.gg/ymVn8ZsbeT
 #### 3. In the Visual Studio files explorer click "show all files"
 #### 4. (Recommended) Create a "Source" folder for yourself in the Visual Studio files explorer
 #### 5. Right-Click your project and click "open in file explorer"
-#### 6. Now you should see your "Source" folder with some Visual Studio files. Copy the "Hgine" folder next to the Source folder. Make sure you don't copy the main.cpp file
+#### 6. Now you should see your "Source" folder from 4. with some Visual Studio files. Copy the "Hgine" folder next to the Source folder. Make sure you don't copy the main.cpp file
 #### 7. Go back to Visual Studio and click the refresh button in the files explorer. Now you should see the "Hgine" folder
 #### 8. Right-Click the Hgine folder and click "add to project"
 #### 9. Now press the build button. You should get a lot of errors.
