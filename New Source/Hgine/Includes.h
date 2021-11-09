@@ -65,13 +65,6 @@ extern "C"
 #include "Extern/Includes/Lua/lualib.h"
 }
 
-#if _WIN32 || _WIN64
-#if _WIN64
-#else
-#include "Extern/Includes/AngelScript/include/angelscript.h"
-#endif
-#endif
-
 #include "C++/Classes/LuaScript/LuaScript.h"
 #include "C++/Classes/Audio/Audio.h"
 #include "C++/Classes/Math/Datatypes.h"
@@ -88,9 +81,9 @@ extern "C"
 #include "C++/Classes/2D/Algorithms/Triangle.h"
 #include "C++/Classes/2D/Algorithms/Form.h"
 #include "C++/Classes/2D/Classes/Objects.h"
-#include "C++/Classes/2D/Classes/GUI.h"
 #include "C++/Classes/IniReader/IniReader.h"
 #include "C++/Classes/3D/Mesh/Mesh.h"
 #include "C++/Classes/3D/ParticleSystem3D/ParticleSystem3D.h"
+#include "C++/Classes/Manager/Manager.h"
 
 
