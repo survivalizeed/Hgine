@@ -18,7 +18,7 @@ The Engine is still under development and I am only one developer.
 Please don't wonder if I don't commit weekly.
 Most of the time Im collecting new code to then publish it.  
 Discord: survivalizeed#7659  
-Server: https://discord.gg/ymVn8ZsbeT
+Server: https://discord.gg/2B35mEXax8
 
 ## Creating a new project in Visual Studio (New)
 #### 1. Create an empty project in Visual Studio
